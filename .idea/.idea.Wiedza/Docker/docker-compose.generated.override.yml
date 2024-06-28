@@ -1,0 +1,21 @@
+# This is a generated file. Not intended for manual editing.
+version: "3.4"
+services:
+  wiedza.api:
+    build:
+      context: "C:\\Users\\yehor\\Desktop\\Wiedza"
+      dockerfile: "Wiedza.Api/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net8.0/Wiedza.Api.dll"
+    environment:
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "wiedzaapi:dev"
+    ports: []
+    volumes:
+    - "C:\\Users\\yehor\\.nuget\\packages:/home/app/.nuget/packages"
+    - "C:\\Users\\yehor\\Desktop\\Wiedza\\Wiedza.Api:/app:rw"
+    - "C:\\Users\\yehor\\Desktop\\Wiedza:/src:rw"
+    working_dir: "/app"
