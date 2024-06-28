@@ -1,0 +1,25 @@
+version: '3.4'
+
+services:
+  wiedza.api:
+    image: ${DOCKER_REGISTRY-}wiedzaapi
+    build:
+      context: .
+      dockerfile: Wiedza.Api/Dockerfile
+    depends_on:
+    - mssql
+    ports:
+    - 8080:8080
+    - 8081:8081
+  mssql:
+    image: mcr.microsoft.com/mssql/server:latest
+    volumes:
+    - mssql_data:/var/opt/mssql
+    environment:
+    - ACCEPT_EULA=Y
+    - MSSQL_SA_PASSWORD=Qwerty123@!Qwerty
+    ports:
+    - 1434:1433
+
+volumes:
+  mssql_data:

@@ -1,0 +1,13 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Wiedza.Core.Models;
+
+namespace Wiedza.Api.Data.Configs;
+
+internal class AdministratorDataConfig : IEntityTypeConfiguration<Administrator>
+{
+    public void Configure(EntityTypeBuilder<Administrator> builder)
+    {
+        builder.HasIndex(p => p.Username).IsUnique();
+    }
+}
