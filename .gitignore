@@ -366,3 +366,4 @@ MigrationBackup/
 FodyWeavers.xsd
 
 
+/Wiedza.Api/appsettings.secret.json

@@ -27,12 +27,22 @@ public sealed class DataContext : DbContext
     public DbSet<PersonComplaint> PersonComplaints { get; set; }
     public DbSet<PublicationComplaint> PublicationComplaints { get; set; }
 
-    public DataContext(DbContextOptions<DataContext> options) : base(options)
+    private static bool _isFirstCreation = true;
+
+    public DataContext(DbContextOptions<DataContext> options, ILogger<DataContext> logger) : base(options)
     {
+        if (_isFirstCreation is false) return;
+        try
+        {
+            Database.Migrate();
+        }
+        catch(Exception exception)
+        {
+            logger.LogCritical(exception, "Database migration is failed!");
+        }
 
+        _isFirstCreation = false;
     }
-
-    public void Migrate() => Database.Migrate();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

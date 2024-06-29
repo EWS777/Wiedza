@@ -4,12 +4,20 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Wiedza.Api.Configs;
 using Wiedza.Api.Data;
+using Wiedza.Api.Repositories;
+using Wiedza.Api.Repositories.Implemetations;
+using Wiedza.Api.Services;
+using Wiedza.Core.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Configuration.AddJsonFile("appsettings.secret.json", optional: true);
 
 builder.Services.AddSingleton<DatabaseConfiguration>();
+builder.Services.AddSingleton<JwtConfiguration>();
+
+builder.Services.AddScoped<IAuthRepository, DbAuthRepository>();
+builder.Services.AddScoped<IAuthService, DbAuthService>();
 
 builder.Services.AddDbContext<DataContext>((provider, optionsBuilder) =>
 {

@@ -544,7 +544,6 @@ namespace Wiedza.Api.Migrations
                         .HasColumnName("is_verificated");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("name");
@@ -554,7 +553,7 @@ namespace Wiedza.Api.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("password_hash");
 
-                    b.Property<float>("Rating")
+                    b.Property<float?>("Rating")
                         .HasColumnType("real")
                         .HasColumnName("rating");
 

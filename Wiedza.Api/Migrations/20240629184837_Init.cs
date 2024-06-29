@@ -56,7 +56,7 @@ namespace Wiedza.Api.Migrations
                 {
                     table.PrimaryKey("pk_files", x => x.id);
                 });
-            
+
             migrationBuilder.CreateTable(
                 name: "persons",
                 columns: table => new
@@ -64,13 +64,13 @@ namespace Wiedza.Api.Migrations
                     id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     username = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     password_hash = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     balance = table.Column<float>(type: "real", nullable: false),
                     is_verificated = table.Column<bool>(type: "bit", nullable: false),
-                    rating = table.Column<float>(type: "real", nullable: false),
+                    rating = table.Column<float>(type: "real", nullable: true),
                     avatar_bytes = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     account_state = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
                 },
