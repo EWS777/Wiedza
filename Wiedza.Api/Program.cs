@@ -19,6 +19,10 @@ builder.Services.AddSingleton<JwtConfiguration>();
 builder.Services.AddScoped<IAuthRepository, DbAuthRepository>();
 builder.Services.AddScoped<IAuthService, DbAuthService>();
 
+builder.Services.AddScoped<IProfileService, DbProfileService>();
+builder.Services.AddScoped<IProfileRepository, DbProfileRepository>();
+
+
 builder.Services.AddDbContext<DataContext>((provider, optionsBuilder) =>
 {
     var configuration = provider.GetRequiredService<DatabaseConfiguration>();
@@ -57,6 +61,5 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
 
 app.Run();
