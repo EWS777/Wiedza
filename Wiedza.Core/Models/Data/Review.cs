@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Wiedza.Core.Models;
+namespace Wiedza.Core.Models.Data;
 
 public class Review
 {

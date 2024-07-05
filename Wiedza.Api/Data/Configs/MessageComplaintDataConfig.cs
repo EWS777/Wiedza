@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Wiedza.Api.Data.ValueGenerators;
-using Wiedza.Core.Models.Complaints;
+using Wiedza.Core.Models.Data;
 using Wiedza.Core.Models.Enums;
 
 namespace Wiedza.Api.Data.Configs;

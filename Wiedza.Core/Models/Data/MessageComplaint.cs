@@ -1,6 +1,6 @@
 ﻿using Wiedza.Core.Models.Enums;
 
-namespace Wiedza.Core.Models.Complaints;
+namespace Wiedza.Core.Models.Data;
 
 public class MessageComplaint
 {

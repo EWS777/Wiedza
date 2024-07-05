@@ -1,8 +1,13 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Wiedza.Api.Configs;
+using Wiedza.Api.Configs.ConfigureOptions;
 using Wiedza.Api.Data;
 using Wiedza.Api.Repositories;
 using Wiedza.Api.Repositories.Implemetations;
@@ -12,6 +17,10 @@ using Wiedza.Core.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddJsonFile("appsettings.secret.json", optional: true);
+builder.Services.AddProblemDetails();
+
+
+builder.Services.AddSingleton<IConfigureOptions<JwtBearerOptions>, ConfigureJwtOptions>();
 
 builder.Services.AddSingleton<DatabaseConfiguration>();
 builder.Services.AddSingleton<JwtConfiguration>();
@@ -20,8 +29,10 @@ builder.Services.AddScoped<IAuthRepository, DbAuthRepository>();
 builder.Services.AddScoped<IAuthService, DbAuthService>();
 
 builder.Services.AddScoped<IProfileService, DbProfileService>();
-builder.Services.AddScoped<IProfileRepository, DbProfileRepository>();
+builder.Services.AddScoped<IPersonRepository, DbPersonRepository>();
 
+
+builder.Services.AddSingleton<ExceptionHandlerService>();
 
 builder.Services.AddDbContext<DataContext>((provider, optionsBuilder) =>
 {
@@ -35,7 +46,16 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 });
+
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo("/app/data/keys"))
+    .UseCryptographicAlgorithms(new AuthenticatedEncryptorConfiguration()
+    {
+        EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
+        ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
+    });
 
 builder.Services.AddAuthentication(options =>
 {

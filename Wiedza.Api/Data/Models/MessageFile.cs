@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
-using Wiedza.Core.Models;
+using Wiedza.Core.Models.Data;
 
 namespace Wiedza.Api.Data.Models;
 

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Wiedza.Api.Data;
-using Wiedza.Core.Models;
+using Wiedza.Core.Models.Data;
 using Wiedza.Core.Utilities;
 
 namespace Wiedza.Api.Repositories.Implemetations;

@@ -2,7 +2,7 @@
 using Wiedza.Api.Configs;
 using Wiedza.Api.Core;
 using Wiedza.Api.Repositories;
-using Wiedza.Core.Models;
+using Wiedza.Core.Models.Data;
 using Wiedza.Core.Requests;
 using Wiedza.Core.Responses;
 using Wiedza.Core.Services;

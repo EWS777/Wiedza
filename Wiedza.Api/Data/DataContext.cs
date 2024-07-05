@@ -1,8 +1,7 @@
 ﻿using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Wiedza.Api.Data.Models;
-using Wiedza.Core.Models;
-using Wiedza.Core.Models.Complaints;
+using Wiedza.Core.Models.Data;
 
 namespace Wiedza.Api.Data;
 

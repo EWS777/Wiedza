@@ -11,6 +11,8 @@ services:
     ports:
     - 8080:8080
     - 8081:8081
+    volumes:
+    - api_data:/app/data
   mssql:
     image: mcr.microsoft.com/mssql/server:latest
     volumes:
@@ -23,3 +25,4 @@ services:
 
 volumes:
   mssql_data:
+  api_data:
