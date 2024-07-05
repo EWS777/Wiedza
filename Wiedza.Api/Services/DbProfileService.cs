@@ -12,4 +12,9 @@ public class DbProfileService(IProfileRepository profileRepository) : IProfileSe
     {
         return await profileRepository.GetEditProfileAsync(idPerson);
     }
+
+    public async Task<Result<EditProfileResponse>> ChangeEditProfileAsync(EditProfileRequest editProfileRequest)
+    {
+        return await profileRepository.ChangeEditProfileAsync(editProfileRequest);
+    }
 }

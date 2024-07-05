@@ -8,4 +8,5 @@ namespace Wiedza.Api.Repositories;
 public interface IProfileRepository
 {
     public Task<Result<EditProfileResponse>> GetEditProfileAsync(Guid idPerson);
+    public Task<Result<EditProfileResponse>> ChangeEditProfileAsync(EditProfileRequest editProfileRequest);
 }

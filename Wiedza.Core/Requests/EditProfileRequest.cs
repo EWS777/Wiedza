@@ -1,10 +1,10 @@
-﻿namespace Wiedza.Core.Responses;
+﻿namespace Wiedza.Core.Requests;
 
-public class EditProfileResponse
+public class EditProfileRequest
 {
+    public Guid Id { get; set; }
     public string Username { get; set; }
     public string Name { get; set; }
-    public string Email { get; set; }
     public string Description { get; set; }
     public byte[]? Avatar { get; set; }
 }
