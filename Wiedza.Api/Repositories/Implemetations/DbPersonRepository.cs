@@ -35,4 +35,19 @@ public class DbPersonRepository(DataContext dataContext) : IPersonRepository
 
         return person;
     }
+
+    public async Task<Result<Person>> ChangePasswordAsync(Guid personId, string oldPasswordHash, string newPasswordHash)
+    {
+        var personResult = await GetPersonAsync(personId);
+        if (personResult.IsFailed) return personResult.Exception;
+        
+        if (newPasswordHash == oldPasswordHash) return new BadRequestException("The password is the same");
+        var person = await dataContext.Persons.SingleOrDefaultAsync(x => x.Id == personId && x.PasswordHash == oldPasswordHash);
+        if (person == null) return new BadRequestException("The password is not correct");
+        person.PasswordHash = newPasswordHash;
+
+        await dataContext.SaveChangesAsync();
+
+        return person;
+    }
 }

@@ -4,6 +4,8 @@ using SystemTextJsonPatch;
 using Wiedza.Api.Core.Extensions;
 using Wiedza.Api.Services;
 using Wiedza.Core.Models;
+using Wiedza.Core.Models.Data;
+using Wiedza.Core.Requests;
 using Wiedza.Core.Services;
 
 namespace Wiedza.Api.Controllers;
@@ -37,5 +39,15 @@ public class ProfilesController(
         var updateResult = await profileService.UpdateProfileAsync(userId, updateProfile.ApplyTo);
 
         return updateResult.Match(profile => profile, exceptionHandlerService.HandleException<Profile>);
+    }
+
+    [HttpPut, Route("change-password")]
+    public async Task<ActionResult<Person>> ChangePassword([FromBody] ChangePasswordRequest changePasswordRequest)
+    {
+        var userId = User.Claims.GetUserId();
+        Console.WriteLine($"Received userId: {userId}");
+        Console.WriteLine($"Received oldPassword: {changePasswordRequest.oldPassword}, newPassword: {changePasswordRequest.newPassword}");
+        var updatePassword = await profileService.ChangePasswordAsync(userId, changePasswordRequest);
+        return updatePassword.Match(profile => profile, exceptionHandlerService.HandleException<Person>);
     }
 }
