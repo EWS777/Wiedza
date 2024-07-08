@@ -31,7 +31,6 @@ builder.Services.AddScoped<IAuthService, DbAuthService>();
 builder.Services.AddScoped<IProfileService, DbProfileService>();
 builder.Services.AddScoped<IPersonRepository, DbPersonRepository>();
 
-
 builder.Services.AddSingleton<ExceptionHandlerService>();
 
 builder.Services.AddDbContext<DataContext>((provider, optionsBuilder) =>

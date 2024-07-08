@@ -8,4 +8,5 @@ public interface IAuthService
 {
     public Task<Result<LoginResponse>> LoginAsync(LoginRequest request);
     public Task<Result<LoginResponse>> RegisterAsync(RegisterRequest request);
+    public Task<Result<bool>> ChangePasswordAsync(Guid personId, ChangePasswordRequest changePasswordRequest);
 }

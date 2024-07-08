@@ -1,7 +1,22 @@
-﻿namespace Wiedza.Core.Requests;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class ChangePasswordRequest
+namespace Wiedza.Core.Requests;
+
+public class ChangePasswordRequest : IValidatableObject
 {
-    public string oldPassword { get; set; }
-    public string newPassword { get; set; }
+    public string OldPasswordHash { get; set; }
+    public string NewPasswordHash { get; set; }
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        var errors = new List<ValidationResult>();
+
+        if (string.IsNullOrWhiteSpace(OldPasswordHash)) 
+            errors.Add(new ValidationResult($"{nameof(OldPasswordHash)} is empty!", [OldPasswordHash]));
+
+        if (string.IsNullOrWhiteSpace(NewPasswordHash))
+            errors.Add(new ValidationResult($"{nameof(NewPasswordHash)} is empty!", [NewPasswordHash]));
+
+        return errors;
+    }
 }
