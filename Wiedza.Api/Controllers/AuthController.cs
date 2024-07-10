@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Wiedza.Api.Core.Extensions;
 using Wiedza.Api.Services;
+using Wiedza.Core.Exceptions;
 using Wiedza.Core.Requests;
 using Wiedza.Core.Responses;
 using Wiedza.Core.Services;
@@ -10,8 +11,7 @@ namespace Wiedza.Api.Controllers;
 
 [ApiController, Route("[controller]")]
 public class AuthController(
-    IAuthService authService,
-    ExceptionHandlerService exceptionHandlerService
+    IAuthService authService
         ) : ControllerBase
 {
     [HttpPost, Route("login")]
@@ -38,6 +38,6 @@ public class AuthController(
     {
         var userId = User.Claims.GetUserId();
         var updatePassword = await authService.ChangePasswordAsync(userId, changePasswordRequest);
-        return updatePassword.Match(_ => Ok("Password was changed!"), exception => exceptionHandlerService.HandleException(exception, HttpContext));
+        return updatePassword.Match(_ => Ok("Password was changed!"), e => throw e);
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Wiedza.Core.Exceptions;
@@ -36,9 +35,9 @@ public sealed class ExceptionHandlerService(ProblemDetailsFactory problemDetails
                 StatusCode = statusCode
             };
         }
-
         var details = problemDetailsFactory.CreateProblemDetails(context, statusCode, problemDetails.Title,
             detail: problemDetails.Detail, instance: problemDetails.Instance);
+
         return new ObjectResult(details)
         {
             StatusCode = statusCode

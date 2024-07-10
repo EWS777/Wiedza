@@ -4,6 +4,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Wiedza.Api.Configs;
@@ -80,5 +84,16 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseExceptionHandler(errApp =>
+{
+    var handlerService = errApp.ApplicationServices.GetRequiredService<ExceptionHandlerService>();
+    errApp.Run(async context =>
+    {
+        var feature = context.Features.GetRequiredFeature<IExceptionHandlerFeature>();
+        var result = handlerService.HandleException(feature.Error, context);
+        await result.ExecuteResultAsync(new ActionContext(context, context.GetRouteData(), new ControllerActionDescriptor()));
+    });
+});
 
 app.Run();
