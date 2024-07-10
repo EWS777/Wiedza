@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using StackExchange.Redis;
 using Wiedza.Api.Configs;
 using Wiedza.Api.Configs.ConfigureOptions;
 using Wiedza.Api.Data;
@@ -23,17 +24,18 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile("appsettings.secret.json", optional: true);
 builder.Services.AddProblemDetails();
 
-
 builder.Services.AddSingleton<IConfigureOptions<JwtBearerOptions>, ConfigureJwtOptions>();
 
 builder.Services.AddSingleton<DatabaseConfiguration>();
 builder.Services.AddSingleton<JwtConfiguration>();
+builder.Services.AddSingleton<RedisConfiguration>();
 
 builder.Services.AddScoped<IAuthRepository, DbAuthRepository>();
-builder.Services.AddScoped<IAuthService, DbAuthService>();
-
-builder.Services.AddScoped<IProfileService, DbProfileService>();
 builder.Services.AddScoped<IPersonRepository, DbPersonRepository>();
+builder.Services.AddScoped<ITokenRepository, RedisTokenRepository>();
+
+builder.Services.AddScoped<IAuthService, DbAuthService>();
+builder.Services.AddScoped<IProfileService, DbProfileService>();
 
 builder.Services.AddSingleton<ExceptionHandlerService>();
 
@@ -43,6 +45,12 @@ builder.Services.AddDbContext<DataContext>((provider, optionsBuilder) =>
     optionsBuilder
         .UseSqlServer(configuration.ConnectionString)
         .UseSnakeCaseNamingConvention();
+});
+
+builder.Services.AddScoped<ConnectionMultiplexer>(provider =>
+{
+    var redisConfiguration = provider.GetRequiredService<RedisConfiguration>();
+    return ConnectionMultiplexer.Connect(redisConfiguration.ConfigurationOptions);
 });
 
 builder.Services.AddControllers().AddJsonOptions(options =>

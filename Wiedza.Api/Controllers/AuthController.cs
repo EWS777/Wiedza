@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Wiedza.Api.Core.Extensions;
-using Wiedza.Api.Services;
-using Wiedza.Core.Exceptions;
 using Wiedza.Core.Requests;
 using Wiedza.Core.Responses;
 using Wiedza.Core.Services;
@@ -19,19 +17,23 @@ public class AuthController(
     {
         var result = await authService.LoginAsync(request);
 
-        return result.Match<ActionResult<LoginResponse>>(response => response,
-            exception => Unauthorized(exception.Message));
+        return result.Match<ActionResult<LoginResponse>>(response => response, e=> throw e);
     }
 
     [HttpPost, Route("register")]
     public async Task<ActionResult<LoginResponse>> Register([FromBody] RegisterRequest request)
     {
         var result = await authService.RegisterAsync(request);
-        return result.Match<ActionResult<LoginResponse>>(response => response,
-            exception => BadRequest(exception.Message));
+        return result.Match<ActionResult<LoginResponse>>(response => response, e => throw e);
     }
 
+    [HttpPost, Route("refresh")]
+    public async Task<ActionResult<LoginResponse>> Refresh([FromHeader(Name = "Authorization")] string authorization)
+    {
+        var refreshResult = await authService.RefreshTokenAsync(authorization.Replace("Bearer ", ""));
 
+        return refreshResult.Match(response => response, e => throw e);
+    }
 
     [HttpPut, Route("change-password"), Authorize]
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest changePasswordRequest)

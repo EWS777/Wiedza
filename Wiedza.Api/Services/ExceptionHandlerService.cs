@@ -13,6 +13,7 @@ public sealed class ExceptionHandlerService(ProblemDetailsFactory problemDetails
         {
             NotFoundException => (int)HttpStatusCode.NotFound,
             BadRequestException => (int)HttpStatusCode.BadRequest,
+            UnauthorizeException => (int)HttpStatusCode.Unauthorized,
             _ => (int)HttpStatusCode.InternalServerError
         };
 

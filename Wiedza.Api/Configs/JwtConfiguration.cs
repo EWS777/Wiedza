@@ -6,7 +6,7 @@ using Wiedza.Api.Core.Extensions;
 
 namespace Wiedza.Api.Configs;
 
-public class JwtConfiguration
+public sealed class JwtConfiguration
 {
     public string Issuer { get; set; }
     public string Audience { get; set; }
@@ -26,7 +26,7 @@ public class JwtConfiguration
         LifetimeValidator = (before, expires, token, parameters) => !(DateTime.UtcNow.AddMinutes(1) > expires)
     };
 
-    
+
 
     private readonly byte[] _secret;
 
@@ -36,7 +36,7 @@ public class JwtConfiguration
 
         Issuer = section.GetValueOrThrow<string>("Issuer");
         Audience = section.GetValueOrThrow<string>("Audience");
-        
+
         var tokenLifetimeSeconds = section.GetValueOrThrow<uint>("Lifetime");
         TokenLifetime = TimeSpan.FromSeconds(tokenLifetimeSeconds);
 
@@ -44,13 +44,15 @@ public class JwtConfiguration
         _secret = Encoding.UTF8.GetBytes(secretString);
     }
 
-    public string GetJwtToken(Guid userId, string role)
+    public string GetJwtToken(Guid userId, string role, string refreshToken, string session)
     {
-        var token = new JwtSecurityToken(issuer:Issuer, audience:Audience,
+        var token = new JwtSecurityToken(issuer: Issuer, audience: Audience,
             claims:
             [
                 new Claim("userId", userId.ToString()),
-                new Claim(ClaimTypes.Role, role)
+                new Claim(ClaimTypes.Role, role),
+                new Claim("session", session),
+                new Claim("refresh", refreshToken)
             ],
             expires: DateTime.UtcNow.Add(TokenLifetime),
             signingCredentials: new SigningCredentials(GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));

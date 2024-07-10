@@ -5,6 +5,12 @@ namespace Wiedza.Api.Configs;
 
 internal sealed class DatabaseConfiguration
 {
+    public string Server { get; }
+    public string User { get; }
+    public string Password { get; }
+    public string Database { get; }
+    public string ConnectionString { get; }
+
     public DatabaseConfiguration(IConfiguration configuration)
     {
         var section = configuration.GetSectionOrThrow("Database");
@@ -23,10 +29,4 @@ internal sealed class DatabaseConfiguration
             TrustServerCertificate = true
         }.ConnectionString;
     }
-
-    public string Server { get; }
-    public string User { get; }
-    public string Password { get; }
-    public string Database { get; }
-    public string ConnectionString { get; }
 }

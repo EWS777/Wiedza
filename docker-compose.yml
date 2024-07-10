@@ -8,6 +8,7 @@ services:
       dockerfile: Wiedza.Api/Dockerfile
     depends_on:
     - mssql
+    - redis
     ports:
     - 8080:8080
     - 8081:8081
@@ -15,6 +16,7 @@ services:
     - api_data:/app/data
   mssql:
     image: mcr.microsoft.com/mssql/server:latest
+    restart: always
     volumes:
     - mssql_data:/var/opt/mssql
     environment:
@@ -22,7 +24,15 @@ services:
     - MSSQL_SA_PASSWORD=Qwerty123@!Qwerty
     ports:
     - 1434:1433
+  redis:
+    image: redis
+    restart: always
+    volumes:
+    - redis_data:/data
+    ports:
+    - 6397:6379
 
 volumes:
   mssql_data:
   api_data:
+  redis_data:
