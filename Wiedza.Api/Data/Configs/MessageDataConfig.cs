@@ -11,7 +11,7 @@ internal class MessageDataConfig : IEntityTypeConfiguration<Message>
     {
         builder.Property(p => p.SendedAt).HasValueGenerator<DateTimeOffsetValueGenerator>();
 
-        builder.HasOne(p => p.Author).WithMany().HasForeignKey(p => p.AuthorId).OnDelete(DeleteBehavior.Restrict);
-        builder.HasOne(p => p.Chat).WithMany().HasForeignKey(p => p.ChatId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.Author).WithMany().HasForeignKey(p => p.AuthorId).OnDelete(DeleteBehavior.ClientCascade);
+        builder.HasOne(p => p.Chat).WithMany().HasForeignKey(p => p.ChatId).OnDelete(DeleteBehavior.ClientCascade);
     }
 }

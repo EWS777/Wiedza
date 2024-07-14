@@ -17,6 +17,6 @@ internal class PaymentDataConfig : IEntityTypeConfiguration<Payment>
         builder.Property(p => p.Country).HasMaxLength(50);
         builder.Property(p => p.City).HasMaxLength(50);
 
-        builder.HasOne(p => p.Person).WithMany().HasForeignKey(p => p.PersonId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.Person).WithMany().HasForeignKey(p => p.PersonId).OnDelete(DeleteBehavior.ClientCascade);
     }
 }

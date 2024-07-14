@@ -17,7 +17,7 @@ internal class PublicationComplaintDataConfig : IEntityTypeConfiguration<Publica
         builder.Property(p => p.CreatedAt).HasValueGenerator<DateTimeOffsetValueGenerator>();
 
         builder.HasOne(p => p.Author).WithMany().HasForeignKey(p => p.AuthorId);
-        builder.HasOne(p => p.Administrator).WithMany().HasForeignKey(p => p.AdministratorId).OnDelete(DeleteBehavior.Restrict);
-        builder.HasOne(p => p.AttachmentFile).WithMany().HasForeignKey(p => p.AttachmentFileId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.Administrator).WithMany().HasForeignKey(p => p.AdministratorId).OnDelete(DeleteBehavior.ClientCascade);
+        builder.HasOne(p => p.AttachmentFile).WithMany().HasForeignKey(p => p.AttachmentFileId).OnDelete(DeleteBehavior.ClientCascade);
     }
 }
