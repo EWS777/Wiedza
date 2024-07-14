@@ -2,7 +2,8 @@
 
 public enum PublicationStatus
 {
-    Ongoing,
+    Pending,
+    Active,
     Inactive,
     Completed
 }

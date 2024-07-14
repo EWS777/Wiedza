@@ -37,6 +37,9 @@ builder.Services.AddScoped<ITokenRepository, RedisTokenRepository>();
 builder.Services.AddScoped<IAuthService, DbAuthService>();
 builder.Services.AddScoped<IProfileService, DbProfileService>();
 
+builder.Services.AddScoped<IPublicationService, DbPublicationService>();
+builder.Services.AddScoped<IPublicationRepository, DbPublicationRepository>();
+
 builder.Services.AddSingleton<ExceptionHandlerService>();
 
 builder.Services.AddDbContext<DataContext>((provider, optionsBuilder) =>

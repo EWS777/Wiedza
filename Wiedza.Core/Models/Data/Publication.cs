@@ -13,8 +13,8 @@ public class Publication
     public PublicationStatus Status { get; set; }
     public DateTimeOffset ExpiresAt { get; set; }
 
-    public Category Category { get; set; }
-    public Guid CategoryId { get; set; }
+    public Category? Category { get; set; }
+    public Guid? CategoryId { get; set; }
     public Person Author { get; set; }
     public Guid AuthorId { get; set; }
 }
