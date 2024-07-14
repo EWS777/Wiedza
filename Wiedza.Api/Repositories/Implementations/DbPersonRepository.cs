@@ -4,7 +4,7 @@ using Wiedza.Core.Exceptions;
 using Wiedza.Core.Models.Data;
 using Wiedza.Core.Utilities;
 
-namespace Wiedza.Api.Repositories.Implemetations;
+namespace Wiedza.Api.Repositories.Implementations;
 
 public class DbPersonRepository(DataContext dataContext) : IPersonRepository
 {

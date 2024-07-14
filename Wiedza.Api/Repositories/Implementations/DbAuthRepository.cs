@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Wiedza.Api.Data;
+using Wiedza.Core.Exceptions;
 using Wiedza.Core.Models.Data;
 using Wiedza.Core.Utilities;
 
-namespace Wiedza.Api.Repositories.Implemetations;
+namespace Wiedza.Api.Repositories.Implementations;
 
 public class DbAuthRepository(DataContext dataContext) : IAuthRepository
 {
@@ -18,10 +19,10 @@ public class DbAuthRepository(DataContext dataContext) : IAuthRepository
     public async Task<Result<Person>> RegisterPersonAsync(string username, string email, string passwordHash)
     {
         var usernameAny = await dataContext.Persons.AnyAsync(p => p.Username == username);
-        if (usernameAny) return new Exception("Username is taken!");
+        if (usernameAny) return new InvalidCredentialsException("Username is taken!");
 
         var emailAny = await dataContext.Persons.AnyAsync(p => p.Email == email);
-        if (emailAny) return new Exception("Email is taken!");
+        if (emailAny) return new InvalidCredentialsException("Email is taken!");
 
         var person = new Person
         {

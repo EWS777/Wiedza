@@ -13,7 +13,7 @@ public sealed class ExceptionHandlerService(ProblemDetailsFactory problemDetails
         {
             NotFoundException => (int)HttpStatusCode.NotFound,
             BadRequestException => (int)HttpStatusCode.BadRequest,
-            UnauthorizeException => (int)HttpStatusCode.Unauthorized,
+            UnauthorizedException => (int)HttpStatusCode.Unauthorized,
             _ => (int)HttpStatusCode.InternalServerError
         };
 
@@ -43,20 +43,5 @@ public sealed class ExceptionHandlerService(ProblemDetailsFactory problemDetails
         {
             StatusCode = statusCode
         };
-    }
-
-    public Task<IActionResult> HandleExceptionAsync(Exception exception, HttpContext? context = null)
-    {
-        return Task.FromResult<IActionResult>(HandleException(exception, context));
-    }
-
-    public ActionResult<T> HandleException<T>(Exception exception, HttpContext? context = null)
-    {
-        return new ActionResult<T>(HandleException(exception, context));
-    }
-
-    public Task<ActionResult<T>> HandleExceptionAsync<T>(Exception exception, HttpContext? context = null)
-    {
-        return Task.FromResult(HandleException<T>(exception, context));
     }
 }

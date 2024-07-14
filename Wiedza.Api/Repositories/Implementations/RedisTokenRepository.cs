@@ -1,6 +1,6 @@
 ﻿using StackExchange.Redis;
 
-namespace Wiedza.Api.Repositories.Implemetations;
+namespace Wiedza.Api.Repositories.Implementations;
 
 public class RedisTokenRepository : ITokenRepository
 {

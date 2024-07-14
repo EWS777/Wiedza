@@ -15,7 +15,7 @@ using Wiedza.Api.Configs;
 using Wiedza.Api.Configs.ConfigureOptions;
 using Wiedza.Api.Data;
 using Wiedza.Api.Repositories;
-using Wiedza.Api.Repositories.Implemetations;
+using Wiedza.Api.Repositories.Implementations;
 using Wiedza.Api.Services;
 using Wiedza.Core.Services;
 
