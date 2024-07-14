@@ -179,7 +179,7 @@ namespace Wiedza.Api.Migrations
                     created_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     status = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     expires_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    category_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    category_id = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     author_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>

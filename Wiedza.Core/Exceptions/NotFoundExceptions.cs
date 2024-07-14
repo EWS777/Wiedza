@@ -8,3 +8,8 @@ public class PersonNotFoundException : NotFoundException
     public PersonNotFoundException(string username) : base($"Person with username `{username}` not found!") { }
 }
 
+public class PublicationNotFoundException : NotFoundException
+{
+    public PublicationNotFoundException(Guid publicationId) : base($"Publication with id `{publicationId}` not found!") { }
+}
+

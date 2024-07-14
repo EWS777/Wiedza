@@ -12,7 +12,7 @@ using Wiedza.Api.Data;
 namespace Wiedza.Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240714161929_Init")]
+    [Migration("20240714195707_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -524,7 +524,7 @@ namespace Wiedza.Api.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("author_id");
 
-                    b.Property<Guid>("CategoryId")
+                    b.Property<Guid?>("CategoryId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("category_id");
 
@@ -977,7 +977,6 @@ namespace Wiedza.Api.Migrations
                         .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
                         .HasConstraintName("fk_publications_categories_category_id");
 
                     b.Navigation("Author");

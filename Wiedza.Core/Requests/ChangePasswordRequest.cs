@@ -12,10 +12,10 @@ public class ChangePasswordRequest : IValidatableObject
         var errors = new List<ValidationResult>();
 
         if (string.IsNullOrWhiteSpace(OldPasswordHash)) 
-            errors.Add(new ValidationResult($"{nameof(OldPasswordHash)} is empty!", [OldPasswordHash]));
+            errors.Add(new ValidationResult($"{nameof(OldPasswordHash)} is empty!", [nameof(OldPasswordHash)]));
 
         if (string.IsNullOrWhiteSpace(NewPasswordHash))
-            errors.Add(new ValidationResult($"{nameof(NewPasswordHash)} is empty!", [NewPasswordHash]));
+            errors.Add(new ValidationResult($"{nameof(NewPasswordHash)} is empty!", [nameof(NewPasswordHash)]));
 
         return errors;
     }
