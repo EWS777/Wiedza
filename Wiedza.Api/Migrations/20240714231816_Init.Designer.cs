@@ -12,7 +12,7 @@ using Wiedza.Api.Data;
 namespace Wiedza.Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240714195707_Init")]
+    [Migration("20240714231816_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -698,10 +698,6 @@ namespace Wiedza.Api.Migrations
                         .HasColumnType("varbinary(max)")
                         .HasColumnName("image_document_bytes");
 
-                    b.Property<bool>("IsVerificated")
-                        .HasColumnType("bit")
-                        .HasColumnName("is_verificated");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -715,6 +711,12 @@ namespace Wiedza.Api.Migrations
                     b.Property<decimal>("Pesel")
                         .HasColumnType("decimal(20,0)")
                         .HasColumnName("pesel");
+
+                    b.Property<int>("Status")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0)
+                        .HasColumnName("status");
 
                     b.Property<string>("Surname")
                         .IsRequired()

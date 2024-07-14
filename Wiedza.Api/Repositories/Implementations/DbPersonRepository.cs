@@ -35,4 +35,11 @@ public class DbPersonRepository(DataContext dataContext) : IPersonRepository
 
         return person;
     }
+
+    public async Task<Result<Verification>> VerifyProfileAsync(Verification verification)
+    {
+        await dataContext.Verifications.AddAsync(verification);
+        await dataContext.SaveChangesAsync();
+        return verification;
+    }
 }

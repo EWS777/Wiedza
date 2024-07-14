@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SystemTextJsonPatch;
 using Wiedza.Api.Core.Extensions;
 using Wiedza.Core.Models;
+using Wiedza.Core.Models.Data;
 using Wiedza.Core.Requests;
 using Wiedza.Core.Services;
 
@@ -46,5 +47,13 @@ public class ProfilesController(
 
         var deleteResult = await authService.DeleteProfileAsync(userId, passwordHash);
         return deleteResult.Match(_ => Ok("Profile was deleted!"), e => throw e);
+    }
+
+    [HttpPost, Route("verification/")]
+    public async Task<ActionResult<Verification>> VerifyProfile([FromBody] VerifyProfileRequest verifyProfileRequest)
+    {
+        var userId = User.Claims.GetUserId();
+        var verify = await authService.VerifyProfileAsync(userId, verifyProfileRequest);
+        return verify.Match(_ => Ok("Verification was created!"), e => throw e);
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Wiedza.Api.Data.ValueGenerators;
 using Wiedza.Core.Models.Data;
+using Wiedza.Core.Models.Enums;
 
 namespace Wiedza.Api.Data.Configs;
 
@@ -14,6 +15,7 @@ internal class VerificationDataConfig : IEntityTypeConfiguration<Verification>
         builder.Property(p => p.Name).HasMaxLength(50);
         builder.Property(p => p.Surname).HasMaxLength(50);
         builder.Property(p => p.ImageDocumentBytes).HasMaxLength(10 * 1024 * 1024);
+        builder.Property(p => p.Status).HasDefaultValue(VerificationStatus.Pending);
 
         builder.HasOne(p => p.Person).WithMany().HasForeignKey(p => p.PersonId).OnDelete(DeleteBehavior.Restrict);
         builder.HasIndex(p => p.PersonId).IsUnique();

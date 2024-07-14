@@ -235,11 +235,11 @@ namespace Wiedza.Api.Migrations
                     pesel = table.Column<decimal>(type: "decimal(20,0)", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     verification_time = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    is_verificated = table.Column<bool>(type: "bit", nullable: false),
                     name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     surname = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     image_document_bytes = table.Column<byte[]>(type: "varbinary(max)", maxLength: 10485760, nullable: false),
-                    person_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    person_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    status = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
                 },
                 constraints: table =>
                 {
