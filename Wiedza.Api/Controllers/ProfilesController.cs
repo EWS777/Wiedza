@@ -3,13 +3,15 @@ using Microsoft.AspNetCore.Mvc;
 using SystemTextJsonPatch;
 using Wiedza.Api.Core.Extensions;
 using Wiedza.Core.Models;
+using Wiedza.Core.Requests;
 using Wiedza.Core.Services;
 
 namespace Wiedza.Api.Controllers;
 
 [ApiController, Route("[controller]"), Authorize]
 public class ProfilesController(
-    IProfileService profileService
+    IProfileService profileService,
+    IAuthService authService
 ) : ControllerBase
 {
     [HttpGet, Route("id/{personId:guid}")]
@@ -35,5 +37,14 @@ public class ProfilesController(
         var updateResult = await profileService.UpdateProfileAsync(userId, updateProfile.ApplyTo);
 
         return updateResult.Match(profile => profile, e => throw e);
+    }
+
+    [HttpPatch, Route("delete")]
+    public async Task<IActionResult> DeleteProfile([FromBody] string passwordHash)
+    {
+        var userId = User.Claims.GetUserId();
+
+        var deleteResult = await authService.DeleteProfileAsync(userId, passwordHash);
+        return deleteResult.Match(_ => Ok("Profile was deleted!"), e => throw e);
     }
 }

@@ -5,6 +5,7 @@ using Wiedza.Api.Core;
 using Wiedza.Api.Core.Extensions;
 using Wiedza.Api.Repositories;
 using Wiedza.Core.Exceptions;
+using Wiedza.Core.Models.Enums;
 using Wiedza.Core.Requests;
 using Wiedza.Core.Responses;
 using Wiedza.Core.Services;
@@ -24,8 +25,10 @@ public class DbAuthService(
         var passwordHash = GetPasswordHash(request.PasswordHash);
 
         var person = await authRepository.IsPersonCredentialsLegitAsync(request.UsernameOrEmail, passwordHash);
-
+        
         if (person is null) return new InvalidCredentialsException("User credentials are invalid!");
+
+        if (person.AccountState is not AccountState.Active) return new Exception("Your account is not active!");
 
         var (session, refreshToken) = await SetUserRefreshTokenAsync(person.Id);
 
@@ -85,6 +88,27 @@ public class DbAuthService(
         var result = await personRepository.UpdatePersonAsync(personId, person1 =>
         {
             person1.PasswordHash = newPasswordHash;
+        });
+
+        if (result.IsFailed) return result.Exception;
+        return true;
+    }
+
+    public async Task<Result<bool>> DeleteProfileAsync(Guid personId, string passwordHash)
+    {
+        var personResult = await personRepository.GetPersonAsync(personId);
+        if (personResult.IsFailed) return personResult.Exception;
+
+        var person = personResult.Value;
+
+        var oldPasswordHash = GetPasswordHash(passwordHash);
+        if (person.PasswordHash != oldPasswordHash) return new BadRequestException("Old password is incorrect");
+        
+        var result = await personRepository.UpdatePersonAsync(personId, person1 =>
+        {
+            person1.Username = null;
+            person1.Email = null;
+            person1.AccountState = AccountState.Deleted;
         });
 
         if (result.IsFailed) return result.Exception;

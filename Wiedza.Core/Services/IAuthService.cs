@@ -10,4 +10,5 @@ public interface IAuthService
     public Task<Result<LoginResponse>> RegisterAsync(RegisterRequest request);
     public Task<Result<LoginResponse>> RefreshTokenAsync(string jwtToken);
     public Task<Result<bool>> ChangePasswordAsync(Guid personId, ChangePasswordRequest changePasswordRequest);
+    public Task<Result<bool>> DeleteProfileAsync(Guid personId, string passwordHash);
 }

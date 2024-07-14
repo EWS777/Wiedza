@@ -12,7 +12,7 @@ using Wiedza.Api.Data;
 namespace Wiedza.Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240629184837_Init")]
+    [Migration("20240714161929_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -44,7 +44,7 @@ namespace Wiedza.Api.Migrations
                     b.ToTable("message_files", (string)null);
                 });
 
-            modelBuilder.Entity("Wiedza.Core.Models.Administrator", b =>
+            modelBuilder.Entity("Wiedza.Core.Models.Data.Administrator", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -71,7 +71,7 @@ namespace Wiedza.Api.Migrations
                     b.ToTable("administrators", (string)null);
                 });
 
-            modelBuilder.Entity("Wiedza.Core.Models.AttachmentFile", b =>
+            modelBuilder.Entity("Wiedza.Core.Models.Data.AttachmentFile", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -98,7 +98,7 @@ namespace Wiedza.Api.Migrations
                     b.ToTable("files", (string)null);
                 });
 
-            modelBuilder.Entity("Wiedza.Core.Models.Category", b =>
+            modelBuilder.Entity("Wiedza.Core.Models.Data.Category", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -123,7 +123,7 @@ namespace Wiedza.Api.Migrations
                     b.ToTable("categories", (string)null);
                 });
 
-            modelBuilder.Entity("Wiedza.Core.Models.Chat", b =>
+            modelBuilder.Entity("Wiedza.Core.Models.Data.Chat", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -143,7 +143,42 @@ namespace Wiedza.Api.Migrations
                     b.ToTable("chats", (string)null);
                 });
 
-            modelBuilder.Entity("Wiedza.Core.Models.Complaints.MessageComplaint", b =>
+            modelBuilder.Entity("Wiedza.Core.Models.Data.Message", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("author_id");
+
+                    b.Property<Guid>("ChatId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("chat_id");
+
+                    b.Property<DateTimeOffset?>("ReadedAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("readed_at");
+
+                    b.Property<DateTimeOffset>("SendedAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("sended_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_messages");
+
+                    b.HasIndex("AuthorId")
+                        .HasDatabaseName("ix_messages_author_id");
+
+                    b.HasIndex("ChatId")
+                        .HasDatabaseName("ix_messages_chat_id");
+
+                    b.ToTable("messages", (string)null);
+                });
+
+            modelBuilder.Entity("Wiedza.Core.Models.Data.MessageComplaint", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -203,176 +238,7 @@ namespace Wiedza.Api.Migrations
                     b.ToTable("message_complaints", (string)null);
                 });
 
-            modelBuilder.Entity("Wiedza.Core.Models.Complaints.PersonComplaint", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id");
-
-                    b.Property<Guid?>("AdministratorId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("administrator_id");
-
-                    b.Property<Guid>("AttachmentFileId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("attachment_file_id");
-
-                    b.Property<Guid>("AuthorId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("author_id");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset")
-                        .HasColumnName("created_at");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
-                        .HasColumnName("description");
-
-                    b.Property<DateTimeOffset?>("FinishedAt")
-                        .HasColumnType("datetimeoffset")
-                        .HasColumnName("finished_at");
-
-                    b.Property<Guid>("PersonId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("person_id");
-
-                    b.Property<int>("Status")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0)
-                        .HasColumnName("status");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("title");
-
-                    b.HasKey("Id")
-                        .HasName("pk_person_complaints");
-
-                    b.HasIndex("AdministratorId")
-                        .HasDatabaseName("ix_person_complaints_administrator_id");
-
-                    b.HasIndex("AttachmentFileId")
-                        .HasDatabaseName("ix_person_complaints_attachment_file_id");
-
-                    b.HasIndex("AuthorId")
-                        .HasDatabaseName("ix_person_complaints_author_id");
-
-                    b.HasIndex("PersonId")
-                        .HasDatabaseName("ix_person_complaints_person_id");
-
-                    b.ToTable("person_complaints", (string)null);
-                });
-
-            modelBuilder.Entity("Wiedza.Core.Models.Complaints.PublicationComplaint", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id");
-
-                    b.Property<Guid?>("AdministratorId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("administrator_id");
-
-                    b.Property<Guid>("AttachmentFileId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("attachment_file_id");
-
-                    b.Property<Guid>("AuthorId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("author_id");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset")
-                        .HasColumnName("created_at");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
-                        .HasColumnName("description");
-
-                    b.Property<DateTimeOffset?>("FinishAt")
-                        .HasColumnType("datetimeoffset")
-                        .HasColumnName("finish_at");
-
-                    b.Property<Guid>("PublicationId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("publication_id");
-
-                    b.Property<int>("Status")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0)
-                        .HasColumnName("status");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("title");
-
-                    b.HasKey("Id")
-                        .HasName("pk_publication_complaints");
-
-                    b.HasIndex("AdministratorId")
-                        .HasDatabaseName("ix_publication_complaints_administrator_id");
-
-                    b.HasIndex("AttachmentFileId")
-                        .HasDatabaseName("ix_publication_complaints_attachment_file_id");
-
-                    b.HasIndex("AuthorId")
-                        .HasDatabaseName("ix_publication_complaints_author_id");
-
-                    b.HasIndex("PublicationId")
-                        .HasDatabaseName("ix_publication_complaints_publication_id");
-
-                    b.ToTable("publication_complaints", (string)null);
-                });
-
-            modelBuilder.Entity("Wiedza.Core.Models.Message", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id");
-
-                    b.Property<Guid>("AuthorId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("author_id");
-
-                    b.Property<Guid>("ChatId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("chat_id");
-
-                    b.Property<DateTimeOffset?>("ReadedAt")
-                        .HasColumnType("datetimeoffset")
-                        .HasColumnName("readed_at");
-
-                    b.Property<DateTimeOffset>("SendedAt")
-                        .HasColumnType("datetimeoffset")
-                        .HasColumnName("sended_at");
-
-                    b.HasKey("Id")
-                        .HasName("pk_messages");
-
-                    b.HasIndex("AuthorId")
-                        .HasDatabaseName("ix_messages_author_id");
-
-                    b.HasIndex("ChatId")
-                        .HasDatabaseName("ix_messages_chat_id");
-
-                    b.ToTable("messages", (string)null);
-                });
-
-            modelBuilder.Entity("Wiedza.Core.Models.Offer", b =>
+            modelBuilder.Entity("Wiedza.Core.Models.Data.Offer", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -422,7 +288,7 @@ namespace Wiedza.Api.Migrations
                     b.ToTable("offers", (string)null);
                 });
 
-            modelBuilder.Entity("Wiedza.Core.Models.Payment", b =>
+            modelBuilder.Entity("Wiedza.Core.Models.Data.Payment", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -506,7 +372,7 @@ namespace Wiedza.Api.Migrations
                     b.ToTable("payments", (string)null);
                 });
 
-            modelBuilder.Entity("Wiedza.Core.Models.Person", b =>
+            modelBuilder.Entity("Wiedza.Core.Models.Data.Person", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -537,7 +403,6 @@ namespace Wiedza.Api.Migrations
                         .HasColumnName("description");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("email");
@@ -561,7 +426,6 @@ namespace Wiedza.Api.Migrations
                         .HasColumnName("rating");
 
                     b.Property<string>("Username")
-                        .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)")
                         .HasColumnName("username");
@@ -571,16 +435,85 @@ namespace Wiedza.Api.Migrations
 
                     b.HasIndex("Email")
                         .IsUnique()
-                        .HasDatabaseName("ix_persons_email");
+                        .HasDatabaseName("ix_persons_email")
+                        .HasFilter("[email] IS NOT NULL");
 
                     b.HasIndex("Username")
                         .IsUnique()
-                        .HasDatabaseName("ix_persons_username");
+                        .HasDatabaseName("ix_persons_username")
+                        .HasFilter("[username] IS NOT NULL");
 
                     b.ToTable("persons", (string)null);
                 });
 
-            modelBuilder.Entity("Wiedza.Core.Models.Publication", b =>
+            modelBuilder.Entity("Wiedza.Core.Models.Data.PersonComplaint", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<Guid?>("AdministratorId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("administrator_id");
+
+                    b.Property<Guid>("AttachmentFileId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("attachment_file_id");
+
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("author_id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("description");
+
+                    b.Property<DateTimeOffset?>("FinishedAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("finished_at");
+
+                    b.Property<Guid>("PersonId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("person_id");
+
+                    b.Property<int>("Status")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0)
+                        .HasColumnName("status");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("title");
+
+                    b.HasKey("Id")
+                        .HasName("pk_person_complaints");
+
+                    b.HasIndex("AdministratorId")
+                        .HasDatabaseName("ix_person_complaints_administrator_id");
+
+                    b.HasIndex("AttachmentFileId")
+                        .HasDatabaseName("ix_person_complaints_attachment_file_id");
+
+                    b.HasIndex("AuthorId")
+                        .HasDatabaseName("ix_person_complaints_author_id");
+
+                    b.HasIndex("PersonId")
+                        .HasDatabaseName("ix_person_complaints_person_id");
+
+                    b.ToTable("person_complaints", (string)null);
+                });
+
+            modelBuilder.Entity("Wiedza.Core.Models.Data.Publication", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -641,7 +574,74 @@ namespace Wiedza.Api.Migrations
                     b.ToTable("publications", (string)null);
                 });
 
-            modelBuilder.Entity("Wiedza.Core.Models.Review", b =>
+            modelBuilder.Entity("Wiedza.Core.Models.Data.PublicationComplaint", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<Guid?>("AdministratorId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("administrator_id");
+
+                    b.Property<Guid>("AttachmentFileId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("attachment_file_id");
+
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("author_id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("description");
+
+                    b.Property<DateTimeOffset?>("FinishAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("finish_at");
+
+                    b.Property<Guid>("PublicationId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("publication_id");
+
+                    b.Property<int>("Status")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0)
+                        .HasColumnName("status");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("title");
+
+                    b.HasKey("Id")
+                        .HasName("pk_publication_complaints");
+
+                    b.HasIndex("AdministratorId")
+                        .HasDatabaseName("ix_publication_complaints_administrator_id");
+
+                    b.HasIndex("AttachmentFileId")
+                        .HasDatabaseName("ix_publication_complaints_attachment_file_id");
+
+                    b.HasIndex("AuthorId")
+                        .HasDatabaseName("ix_publication_complaints_author_id");
+
+                    b.HasIndex("PublicationId")
+                        .HasDatabaseName("ix_publication_complaints_publication_id");
+
+                    b.ToTable("publication_complaints", (string)null);
+                });
+
+            modelBuilder.Entity("Wiedza.Core.Models.Data.Review", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -681,7 +681,7 @@ namespace Wiedza.Api.Migrations
                     b.ToTable("reviews", (string)null);
                 });
 
-            modelBuilder.Entity("Wiedza.Core.Models.Verification", b =>
+            modelBuilder.Entity("Wiedza.Core.Models.Data.Verification", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -736,7 +736,7 @@ namespace Wiedza.Api.Migrations
                     b.ToTable("verifications", (string)null);
                 });
 
-            modelBuilder.Entity("Wiedza.Core.Models.WebsiteBalance", b =>
+            modelBuilder.Entity("Wiedza.Core.Models.Data.WebsiteBalance", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -757,7 +757,7 @@ namespace Wiedza.Api.Migrations
                     b.ToTable("website_balances", (string)null);
                 });
 
-            modelBuilder.Entity("Wiedza.Core.Models.Withdraw", b =>
+            modelBuilder.Entity("Wiedza.Core.Models.Data.Withdraw", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -801,14 +801,14 @@ namespace Wiedza.Api.Migrations
 
             modelBuilder.Entity("Wiedza.Api.Data.Models.MessageFile", b =>
                 {
-                    b.HasOne("Wiedza.Core.Models.AttachmentFile", "AttachmentFile")
+                    b.HasOne("Wiedza.Core.Models.Data.AttachmentFile", "AttachmentFile")
                         .WithMany()
                         .HasForeignKey("AttachmentFileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_message_files_files_attachment_file_id");
 
-                    b.HasOne("Wiedza.Core.Models.Message", "Message")
+                    b.HasOne("Wiedza.Core.Models.Data.Message", "Message")
                         .WithMany()
                         .HasForeignKey("MessageId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -820,9 +820,9 @@ namespace Wiedza.Api.Migrations
                     b.Navigation("Message");
                 });
 
-            modelBuilder.Entity("Wiedza.Core.Models.Category", b =>
+            modelBuilder.Entity("Wiedza.Core.Models.Data.Category", b =>
                 {
-                    b.HasOne("Wiedza.Core.Models.Category", "ParentCategory")
+                    b.HasOne("Wiedza.Core.Models.Data.Category", "ParentCategory")
                         .WithMany()
                         .HasForeignKey("ParentCategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -831,9 +831,9 @@ namespace Wiedza.Api.Migrations
                     b.Navigation("ParentCategory");
                 });
 
-            modelBuilder.Entity("Wiedza.Core.Models.Chat", b =>
+            modelBuilder.Entity("Wiedza.Core.Models.Data.Chat", b =>
                 {
-                    b.HasOne("Wiedza.Core.Models.Offer", "Offer")
+                    b.HasOne("Wiedza.Core.Models.Data.Offer", "Offer")
                         .WithMany()
                         .HasForeignKey("OfferId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -843,22 +843,43 @@ namespace Wiedza.Api.Migrations
                     b.Navigation("Offer");
                 });
 
-            modelBuilder.Entity("Wiedza.Core.Models.Complaints.MessageComplaint", b =>
+            modelBuilder.Entity("Wiedza.Core.Models.Data.Message", b =>
                 {
-                    b.HasOne("Wiedza.Core.Models.Administrator", "Administrator")
+                    b.HasOne("Wiedza.Core.Models.Data.Person", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_messages_persons_author_id");
+
+                    b.HasOne("Wiedza.Core.Models.Data.Chat", "Chat")
+                        .WithMany()
+                        .HasForeignKey("ChatId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_messages_chats_chat_id");
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Chat");
+                });
+
+            modelBuilder.Entity("Wiedza.Core.Models.Data.MessageComplaint", b =>
+                {
+                    b.HasOne("Wiedza.Core.Models.Data.Administrator", "Administrator")
                         .WithMany()
                         .HasForeignKey("AdministratorId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("fk_message_complaints_administrators_administrator_id");
 
-                    b.HasOne("Wiedza.Core.Models.Person", "Author")
+                    b.HasOne("Wiedza.Core.Models.Data.Person", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_message_complaints_persons_author_id");
 
-                    b.HasOne("Wiedza.Core.Models.Message", "Message")
+                    b.HasOne("Wiedza.Core.Models.Data.Message", "Message")
                         .WithMany()
                         .HasForeignKey("MessageId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -872,29 +893,62 @@ namespace Wiedza.Api.Migrations
                     b.Navigation("Message");
                 });
 
-            modelBuilder.Entity("Wiedza.Core.Models.Complaints.PersonComplaint", b =>
+            modelBuilder.Entity("Wiedza.Core.Models.Data.Offer", b =>
                 {
-                    b.HasOne("Wiedza.Core.Models.Administrator", "Administrator")
+                    b.HasOne("Wiedza.Core.Models.Data.Person", "Person")
+                        .WithMany()
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_offers_persons_person_id");
+
+                    b.HasOne("Wiedza.Core.Models.Data.Publication", "Publication")
+                        .WithMany()
+                        .HasForeignKey("PulicationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_offers_publications_pulication_id");
+
+                    b.Navigation("Person");
+
+                    b.Navigation("Publication");
+                });
+
+            modelBuilder.Entity("Wiedza.Core.Models.Data.Payment", b =>
+                {
+                    b.HasOne("Wiedza.Core.Models.Data.Person", "Person")
+                        .WithMany()
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_payments_persons_person_id");
+
+                    b.Navigation("Person");
+                });
+
+            modelBuilder.Entity("Wiedza.Core.Models.Data.PersonComplaint", b =>
+                {
+                    b.HasOne("Wiedza.Core.Models.Data.Administrator", "Administrator")
                         .WithMany()
                         .HasForeignKey("AdministratorId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("fk_person_complaints_administrators_administrator_id");
 
-                    b.HasOne("Wiedza.Core.Models.AttachmentFile", "AttachmentFile")
+                    b.HasOne("Wiedza.Core.Models.Data.AttachmentFile", "AttachmentFile")
                         .WithMany()
                         .HasForeignKey("AttachmentFileId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_person_complaints_files_attachment_file_id");
 
-                    b.HasOne("Wiedza.Core.Models.Person", "Author")
+                    b.HasOne("Wiedza.Core.Models.Data.Person", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_person_complaints_persons_author_id");
 
-                    b.HasOne("Wiedza.Core.Models.Person", "Person")
+                    b.HasOne("Wiedza.Core.Models.Data.Person", "Person")
                         .WithMany()
                         .HasForeignKey("PersonId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -910,29 +964,50 @@ namespace Wiedza.Api.Migrations
                     b.Navigation("Person");
                 });
 
-            modelBuilder.Entity("Wiedza.Core.Models.Complaints.PublicationComplaint", b =>
+            modelBuilder.Entity("Wiedza.Core.Models.Data.Publication", b =>
                 {
-                    b.HasOne("Wiedza.Core.Models.Administrator", "Administrator")
+                    b.HasOne("Wiedza.Core.Models.Data.Person", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_publications_persons_author_id");
+
+                    b.HasOne("Wiedza.Core.Models.Data.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_publications_categories_category_id");
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("Wiedza.Core.Models.Data.PublicationComplaint", b =>
+                {
+                    b.HasOne("Wiedza.Core.Models.Data.Administrator", "Administrator")
                         .WithMany()
                         .HasForeignKey("AdministratorId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("fk_publication_complaints_administrators_administrator_id");
 
-                    b.HasOne("Wiedza.Core.Models.AttachmentFile", "AttachmentFile")
+                    b.HasOne("Wiedza.Core.Models.Data.AttachmentFile", "AttachmentFile")
                         .WithMany()
                         .HasForeignKey("AttachmentFileId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_publication_complaints_files_attachment_file_id");
 
-                    b.HasOne("Wiedza.Core.Models.Person", "Author")
+                    b.HasOne("Wiedza.Core.Models.Data.Person", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_publication_complaints_persons_author_id");
 
-                    b.HasOne("Wiedza.Core.Models.Publication", "Publication")
+                    b.HasOne("Wiedza.Core.Models.Data.Publication", "Publication")
                         .WithMany()
                         .HasForeignKey("PublicationId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -948,91 +1023,16 @@ namespace Wiedza.Api.Migrations
                     b.Navigation("Publication");
                 });
 
-            modelBuilder.Entity("Wiedza.Core.Models.Message", b =>
+            modelBuilder.Entity("Wiedza.Core.Models.Data.Review", b =>
                 {
-                    b.HasOne("Wiedza.Core.Models.Person", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_messages_persons_author_id");
-
-                    b.HasOne("Wiedza.Core.Models.Chat", "Chat")
-                        .WithMany()
-                        .HasForeignKey("ChatId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_messages_chats_chat_id");
-
-                    b.Navigation("Author");
-
-                    b.Navigation("Chat");
-                });
-
-            modelBuilder.Entity("Wiedza.Core.Models.Offer", b =>
-                {
-                    b.HasOne("Wiedza.Core.Models.Person", "Person")
-                        .WithMany()
-                        .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_offers_persons_person_id");
-
-                    b.HasOne("Wiedza.Core.Models.Publication", "Publication")
-                        .WithMany()
-                        .HasForeignKey("PulicationId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_offers_publications_pulication_id");
-
-                    b.Navigation("Person");
-
-                    b.Navigation("Publication");
-                });
-
-            modelBuilder.Entity("Wiedza.Core.Models.Payment", b =>
-                {
-                    b.HasOne("Wiedza.Core.Models.Person", "Person")
-                        .WithMany()
-                        .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_payments_persons_person_id");
-
-                    b.Navigation("Person");
-                });
-
-            modelBuilder.Entity("Wiedza.Core.Models.Publication", b =>
-                {
-                    b.HasOne("Wiedza.Core.Models.Person", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_publications_persons_author_id");
-
-                    b.HasOne("Wiedza.Core.Models.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_publications_categories_category_id");
-
-                    b.Navigation("Author");
-
-                    b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("Wiedza.Core.Models.Review", b =>
-                {
-                    b.HasOne("Wiedza.Core.Models.Person", "Author")
+                    b.HasOne("Wiedza.Core.Models.Data.Person", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_reviews_persons_author_id");
 
-                    b.HasOne("Wiedza.Core.Models.Person", "Person")
+                    b.HasOne("Wiedza.Core.Models.Data.Person", "Person")
                         .WithMany()
                         .HasForeignKey("PersonId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1044,9 +1044,9 @@ namespace Wiedza.Api.Migrations
                     b.Navigation("Person");
                 });
 
-            modelBuilder.Entity("Wiedza.Core.Models.Verification", b =>
+            modelBuilder.Entity("Wiedza.Core.Models.Data.Verification", b =>
                 {
-                    b.HasOne("Wiedza.Core.Models.Person", "Person")
+                    b.HasOne("Wiedza.Core.Models.Data.Person", "Person")
                         .WithMany()
                         .HasForeignKey("PersonId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1056,9 +1056,9 @@ namespace Wiedza.Api.Migrations
                     b.Navigation("Person");
                 });
 
-            modelBuilder.Entity("Wiedza.Core.Models.Withdraw", b =>
+            modelBuilder.Entity("Wiedza.Core.Models.Data.Withdraw", b =>
                 {
-                    b.HasOne("Wiedza.Core.Models.Person", "Person")
+                    b.HasOne("Wiedza.Core.Models.Data.Person", "Person")
                         .WithMany()
                         .HasForeignKey("PersonId")
                         .OnDelete(DeleteBehavior.Restrict)

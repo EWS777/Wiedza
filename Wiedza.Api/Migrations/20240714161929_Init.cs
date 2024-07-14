@@ -63,9 +63,9 @@ namespace Wiedza.Api.Migrations
                 {
                     id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    username = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    username = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true),
                     name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     password_hash = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     balance = table.Column<float>(type: "real", nullable: false),
@@ -540,13 +540,15 @@ namespace Wiedza.Api.Migrations
                 name: "ix_persons_email",
                 table: "persons",
                 column: "email",
-                unique: true);
+                unique: true,
+                filter: "[email] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "ix_persons_username",
                 table: "persons",
                 column: "username",
-                unique: true);
+                unique: true,
+                filter: "[username] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "ix_publication_complaints_administrator_id",
