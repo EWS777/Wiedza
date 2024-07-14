@@ -30,14 +30,16 @@ builder.Services.AddSingleton<DatabaseConfiguration>();
 builder.Services.AddSingleton<JwtConfiguration>();
 builder.Services.AddSingleton<RedisConfiguration>();
 
-builder.Services.AddScoped<IAuthRepository, DbAuthRepository>();
 builder.Services.AddScoped<IPersonRepository, DbPersonRepository>();
 builder.Services.AddScoped<ITokenRepository, RedisTokenRepository>();
+builder.Services.AddScoped<IPersonSaltRepository, DbPersonSaltRepository>();
 
 builder.Services.AddScoped<IAuthService, DbAuthService>();
 builder.Services.AddScoped<IProfileService, DbProfileService>();
 
 builder.Services.AddSingleton<ExceptionHandlerService>();
+
+builder.Services.AddScoped<DbUnitOfWork>();
 
 builder.Services.AddDbContext<DataContext>((provider, optionsBuilder) =>
 {

@@ -23,7 +23,17 @@ public class Profile : IValidatableObject
         AvatarBytes = person.AvatarBytes;
     }
 
-    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    public Profile(Profile other)
+    {
+        PersonId = other.PersonId;
+        Username = other.Username;
+        Name = other.Name;
+        Email = other.Email;
+        Description = other.Description;
+        AvatarBytes = other.AvatarBytes;
+    }
+
+public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
         var errors = new List<ValidationResult>();
 

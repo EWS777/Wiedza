@@ -25,6 +25,8 @@ public sealed class DataContext : DbContext
     public DbSet<MessageComplaint> MessageComplaints { get; set; }
     public DbSet<PersonComplaint> PersonComplaints { get; set; }
     public DbSet<PublicationComplaint> PublicationComplaints { get; set; }
+    public DbSet<PersonSalt> PersonSalts { get; set; }
+
 
     private static bool _isFirstCreation = true;
 

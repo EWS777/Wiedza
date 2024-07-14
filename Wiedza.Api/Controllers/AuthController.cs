@@ -17,7 +17,7 @@ public class AuthController(
     {
         var result = await authService.LoginAsync(request);
 
-        return result.Match<ActionResult<LoginResponse>>(response => response, e=> throw e);
+        return result.Match<ActionResult<LoginResponse>>(response => response, e => throw e);
     }
 
     [HttpPost, Route("register")]
