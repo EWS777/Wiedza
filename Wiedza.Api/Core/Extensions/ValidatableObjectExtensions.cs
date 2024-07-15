@@ -25,7 +25,7 @@ public static class ValidatableObjectExtensions
         return errorMessageSb.Remove(errorMessageSb.Length-2, 2).ToString();
     }
 
-    public static bool IsValidationFailed(this IValidatableObject validatable, out BadRequestException exception)
+    public static bool IsValidationFailed(this IValidatableObject validatable, out ValidationException exception)
     {
         var validationErrorMessage = validatable.GetValidationErrorMessage();
         if (validationErrorMessage is null)
@@ -34,7 +34,7 @@ public static class ValidatableObjectExtensions
             return false;
         }
 
-        exception = new BadRequestException(validationErrorMessage);
+        exception = new ValidationException(validationErrorMessage);
         return true;
     }
 }

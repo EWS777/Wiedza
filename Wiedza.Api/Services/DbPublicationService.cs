@@ -1,5 +1,8 @@
-﻿using Wiedza.Api.Repositories;
+﻿using Wiedza.Api.Core.Extensions;
+using Wiedza.Api.Repositories;
+using Wiedza.Core.Exceptions;
 using Wiedza.Core.Models.Data;
+using Wiedza.Core.Models.Enums;
 using Wiedza.Core.Requests;
 using Wiedza.Core.Services;
 using Wiedza.Core.Utilities;
@@ -8,6 +11,36 @@ namespace Wiedza.Api.Services;
 
 public class DbPublicationService(IPublicationRepository publicationRepository) : IPublicationService
 {
+    public async Task<Result<Publication>> GetPublicationAsync(ulong publicationId)
+    {
+        return await publicationRepository.GetPublicationAsync(publicationId);
+    }
+
+    public async Task<Publication[]> GetPublicationsAsync(bool? isProject = null)
+    {
+        return await publicationRepository.GetPublicationsAsync(isProject);
+    }
+
+    public async Task<Publication[]> GetPublicationsAsync(ulong fromId, int limit, bool? isProject = null)
+    {
+        return await publicationRepository.GetPublicationsAsync(fromId, limit, isProject);
+    }
+
+    public async Task<Publication[]> GetActivePublicationsAsync(bool? isProject = null)
+    {
+        return await publicationRepository.GetActivePublicationsAsync(isProject);
+    }
+
+    public async Task<Publication[]> GetActivePublicationsAsync(ulong fromId, int limit, bool? isProject = null)
+    {
+        return await publicationRepository.GetActivePublicationsAsync(fromId, limit, isProject);
+    }
+
+    public async Task<Publication[]> GetPersonPublications(Guid personId, bool? isProject = null)
+    {
+        return await publicationRepository.GetPersonPublications(personId, isProject);
+    }
+
     public async Task<Result<Publication>> AddPublicationAsync(Guid personId, AddPublicationRequest addPublicationRequest)
     {
         return await publicationRepository.AddPublicationAsync(new Publication
@@ -21,44 +54,46 @@ public class DbPublicationService(IPublicationRepository publicationRepository) 
         });
     }
 
-    public async Task<Result<Publication>> ModifyPublicationAsync(Guid personId, Guid publicationId, Action<Publication> modify)
+    public async Task<Result<Publication>> UpdatePublicationAsync(Guid personId, ulong publicationId, Action<PublicationUpdateRequest> update)
     {
-        var findPublication = await GetPublicationAsync(publicationId);
-        if (findPublication.IsFailed) return findPublication.Exception;
+        var publicationResult = await publicationRepository.GetPublicationAsync(publicationId);
+        if (publicationResult.IsFailed) return publicationResult.Exception;
 
-        var publication = findPublication.Value;
-        
-        modify(publication);
-        
-        var result = await publicationRepository.ModifyPublicationAsync(personId, publicationId, result =>
+        var publication = publicationResult.Value;
+        if (publication.AuthorId != personId) return new ForbiddenException("You are not an owner of the publication!");
+
+        var request = new PublicationUpdateRequest(publication);
+        update(request);
+        if (request.IsValidationFailed(out var exception)) return exception;
+
+        return await publicationRepository.UpdatePublicationAsync(publicationId, publication1 =>
         {
-            result.IsProject = publication.IsProject;
-            result.Title = publication.Title;
-            result.Description = publication.Description;
-            result.Price = publication.Price;
-            result.CategoryId = publication.CategoryId;
-            result.Status = publication.Status;
+            publication1.Title = request.Title;
+            publication1.Description = request.Description;
+            publication1.Price = request.Price;
+            publication1.CategoryId = request.CategoryId;
+
+            if (request.Status != PublicationUpdateStatus.Other)
+            {
+                publication1.Status = request.Status switch
+                {
+                    PublicationUpdateStatus.Active => PublicationStatus.Active,
+                    PublicationUpdateStatus.Inactive => PublicationStatus.Inactive,
+                    _ => throw new ArgumentOutOfRangeException(nameof(request.Status))
+                };
+            }
         });
-        return result;
     }
 
-    public async Task<Result<Publication>> GetPublicationAsync(Guid publicationId)
+    public async Task<Result<bool>> DeletePublicationAsync(Guid personId, ulong publicationId)
     {
-        var result = await publicationRepository.GetPublicationAsync(publicationId);
-        if (result.IsFailed) return result.Exception;
-        return result.Value;
-    }
-    
-    public async Task<Result<List<Publication>>> GetPublicationAsync(string type)
-    {
-        return await publicationRepository.GetPublicationAsync(type);
-    }
+        var publicationResult = await publicationRepository.GetPublicationAsync(publicationId);
+        if (publicationResult.IsFailed) return publicationResult.Exception;
 
-    public async Task<Result<bool>> DeletePublicationAsync(Guid personId, Guid publicationId)
-    {
-        var result = await publicationRepository.GetPublicationAsync(publicationId);
-        var publication = result.Value;
-        if (publication.AuthorId != personId) return new Exception("The person is can not modify this publication!");
+        var publication = publicationResult.Value;
+
+        if (publication.AuthorId != personId) return new ForbiddenException("You are not an owner of the publication!");
+
         return await publicationRepository.DeletePublicationAsync(publicationId);
     }
 }

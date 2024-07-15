@@ -1,4 +1,5 @@
-﻿using Wiedza.Core.Models.Enums;
+﻿using System.Text.Json.Serialization;
+using Wiedza.Core.Models.Enums;
 
 namespace Wiedza.Core.Models.Data;
 

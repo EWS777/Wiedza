@@ -13,7 +13,7 @@ public class PublicationComplaint
     public Person Author { get; set; }
     public Guid AuthorId { get; set; }
     public Publication Publication { get; set; }
-    public Guid PublicationId { get; set; }
+    public ulong PublicationId { get; set; }
     public AttachmentFile AttachmentFile { get; set; }
     public Guid AttachmentFileId { get; set; }
     public Administrator? Administrator { get; set; }

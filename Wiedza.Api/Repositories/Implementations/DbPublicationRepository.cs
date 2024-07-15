@@ -9,6 +9,74 @@ namespace Wiedza.Api.Repositories.Implementations;
 
 public class DbPublicationRepository(DataContext dataContext) : IPublicationRepository
 {
+    public async Task<Result<Publication>> GetPublicationAsync(ulong publicationId)
+    {
+        var publication = await dataContext.Publications.SingleOrDefaultAsync(x => x.Id == publicationId);
+        if (publication is null) return new PublicationNotFoundException(publicationId);
+        return publication;
+    }
+
+    public async Task<Publication[]> GetPublicationsAsync(bool? isProject = null)
+    {
+        var publications = dataContext.Publications;
+
+        if (isProject is not null)
+        {
+            return await publications.Where(p => p.IsProject == isProject).AsNoTracking().ToArrayAsync();
+        }
+
+        return await publications.AsNoTracking().ToArrayAsync();
+    }
+
+    public async Task<Publication[]> GetActivePublicationsAsync(bool? isProject = null)
+    {
+        var publications = dataContext.Publications.Where(p => p.Status == PublicationStatus.Active);
+
+        if (isProject is not null)
+        {
+            return await publications.Where(p => p.IsProject == isProject).AsNoTracking().ToArrayAsync();
+        }
+
+        return await publications.AsNoTracking().ToArrayAsync();
+    }
+
+    public async Task<Publication[]> GetPublicationsAsync(ulong fromId, int limit, bool? isProject = null)
+    {
+        var publications = dataContext.Publications
+            .OrderByDescending(p=>p.Id)
+            .Where(p => p.Id < fromId);
+
+        if (isProject is not null) publications = publications.Where(p => p.IsProject == isProject);
+
+        return await publications
+            .Take(limit)
+            .AsNoTracking().ToArrayAsync();
+    }
+
+    public async Task<Publication[]> GetActivePublicationsAsync(ulong fromId, int limit, bool? isProject = null)
+    {
+        var publications = dataContext.Publications
+            .OrderByDescending(p => p.Id)
+            .Where(p => p.Id < fromId)
+            .Where(p => p.Status == PublicationStatus.Active);
+
+        if (isProject is not null) publications = publications.Where(p => p.IsProject == isProject);
+
+        return await publications
+            .Take(limit)
+            .AsNoTracking().ToArrayAsync();
+    }
+
+    public async Task<Publication[]> GetPersonPublications(Guid personId, bool? isProject = null)
+    {
+        var publications = dataContext.Publications
+            .Where(p => p.AuthorId == personId);
+
+        if (isProject is not null) publications = publications.Where(p => p.IsProject == isProject);
+
+        return await publications.AsNoTracking().ToArrayAsync();
+    }
+
     public async Task<Publication> AddPublicationAsync(Publication publication)
     {
         await dataContext.Publications.AddAsync(publication);
@@ -16,42 +84,28 @@ public class DbPublicationRepository(DataContext dataContext) : IPublicationRepo
         return publication;
     }
 
-    public async Task<Result<Publication>> ModifyPublicationAsync(Guid personId, Guid publicationId, Action<Publication> modify)
+    public async Task<Result<Publication>> UpdatePublicationAsync(ulong publicationId, Action<Publication> update)
     {
         var publication = await dataContext.Publications.FirstOrDefaultAsync(x => x.Id == publicationId);
 
-        if (publication is null) return new Exception("The publication is not exist!");
+        if (publication is null) return new PublicationNotFoundException(publicationId);
+        
+        update(publication);
 
-        if (publication.AuthorId != personId) return new Exception("The person is can not modify this publication!");
-
-        modify(publication);
         await dataContext.SaveChangesAsync();
         return publication;
     }
 
-    public async Task<Result<Publication>> GetPublicationAsync(Guid publicationId)
+    public async Task<Result<bool>> DeletePublicationAsync(ulong publicationId)
     {
-        var publication = await dataContext.Publications.SingleOrDefaultAsync(x => x.Id == publicationId);
-        if (publication is null) return new PublicationNotFoundException(publicationId);
-        return publication;
-    }
-    
-    public async Task<Result<List<Publication>>> GetPublicationAsync(string type)
-    {
-        bool isProject = type.Equals("project");
-        var publication = 
-            await dataContext.Publications.Where(x => x.Status == PublicationStatus.Active && x.IsProject == isProject)
-                .ToListAsync();
-        
-        return publication;
-    }
+        var publicationResult = await GetPublicationAsync(publicationId);
 
-    public async Task<Result<bool>> DeletePublicationAsync(Guid publicationId)
-    {
-        var result = await dataContext.Publications.FirstOrDefaultAsync(x => x.Id == publicationId);
-        if (result is null) return new PublicationNotFoundException(publicationId);
-        result.Status = PublicationStatus.Completed;
-        dataContext.Publications.Remove(result);
+        if (publicationResult.IsFailed) return publicationResult.Exception;
+
+        var publication = publicationResult.Value;
+
+        dataContext.Publications.Remove(publication);
+
         await dataContext.SaveChangesAsync();
         return true;
     }

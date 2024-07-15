@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Wiedza.Core.Exceptions;
@@ -14,6 +15,8 @@ public sealed class ExceptionHandlerService(ProblemDetailsFactory problemDetails
             NotFoundException => (int)HttpStatusCode.NotFound,
             BadRequestException => (int)HttpStatusCode.BadRequest,
             UnauthorizedException => (int)HttpStatusCode.Unauthorized,
+            ValidationException => (int)HttpStatusCode.BadRequest,
+            ForbiddenException => (int)HttpStatusCode.Forbidden,
             _ => (int)HttpStatusCode.InternalServerError
         };
 

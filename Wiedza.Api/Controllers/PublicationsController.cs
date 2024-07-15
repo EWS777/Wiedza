@@ -13,8 +13,38 @@ public class PublicationsController(
     IPublicationService publicationService
     ) : ControllerBase
 {
-    [HttpPut]
-    [Authorize]
+    [HttpGet, Route("{publicationId}")]
+    public async Task<ActionResult<Publication>> GetPublication(ulong publicationId)
+    {
+        var publicationResult = await publicationService.GetPublicationAsync(publicationId);
+        return publicationResult.Match(profile => profile, e => throw e);
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<Publication[]>> GetActivePublications([FromQuery] ulong? fromId = null,
+        [FromQuery] int? limit = null, [FromQuery] bool? isProject = null)
+    {
+        if (fromId is null || limit is null)
+        {
+            return await publicationService.GetActivePublicationsAsync(isProject);
+        }
+
+        return await publicationService.GetActivePublicationsAsync(fromId.Value, limit.Value, isProject);
+    }
+
+    [HttpGet, Route("all")]
+    public async Task<ActionResult<Publication[]>> GetAllPublications([FromQuery] ulong? fromId = null,
+        [FromQuery] int? limit = null, [FromQuery] bool? isProject = null)
+    {
+        if (fromId is null || limit is null)
+        {
+            return await publicationService.GetPublicationsAsync(isProject);
+        }
+
+        return await publicationService.GetPublicationsAsync(fromId.Value, limit.Value, isProject);
+    }
+
+    [HttpPut, Authorize]
     public async Task<ActionResult<Publication>> AddPublication([FromBody] AddPublicationRequest addPublicationRequest)
     {
         var userId = User.Claims.GetUserId();
@@ -23,36 +53,22 @@ public class PublicationsController(
         return addResult.Match(post => post, e => throw e);
     }
 
-    [HttpPatch, Route("{publicationId:guid}")]
-    [Authorize]
-    public async Task<ActionResult<Publication>> ModifyPublication(Guid publicationId, [FromBody] JsonPatchDocument<Publication> publication)
+    [HttpPatch, Route("{publicationId}"), Authorize]
+    public async Task<ActionResult<Publication>> ModifyPublication(ulong publicationId, [FromBody] JsonPatchDocument<PublicationUpdateRequest> update)
     {
         var userId = User.Claims.GetUserId();
 
-        var result = await publicationService.ModifyPublicationAsync(userId, publicationId, publication.ApplyTo);
-        return result.Match(post => post, e => throw e);
+        var result = await publicationService.UpdatePublicationAsync(userId, publicationId, update.ApplyTo);
+
+        return result.Match(publication => publication, e => throw e);
     }
 
-    [HttpGet, Route("{publicationId:guid}")]
-    public async Task<ActionResult<Publication>> GetPublication(Guid publicationId)
-    {
-        var publicationResult = await publicationService.GetPublicationAsync(publicationId);
-        return publicationResult.Match(profile => profile, e => throw e);
-    }
-    
-    [HttpGet, Route("publications")]
-    public async Task<ActionResult<List<Publication>>> GetPublication([FromBody] string type)
-    {
-        var publicationResult = await publicationService.GetPublicationAsync(type);
-        return publicationResult.Match(result => result, e => throw e);
-    }
 
-    [HttpDelete, Route("delete")]
-    [Authorize]
-    public async Task<IActionResult> DeletePublication([FromBody]Guid publicationId)
+    [HttpDelete, Route("{publicationId}"), Authorize]
+    public async Task<IActionResult> DeletePublication([FromQuery] ulong publicationId)
     {
         var userId = User.Claims.GetUserId();
         var deletePublication = await publicationService.DeletePublicationAsync(userId, publicationId);
-        return deletePublication.Match(_=>Ok("Publication was deleted"), e => throw e);
+        return deletePublication.Match(_ => Ok("Publication was deleted"), e => throw e);
     }
 }

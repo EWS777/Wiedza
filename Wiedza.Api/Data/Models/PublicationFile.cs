@@ -8,7 +8,7 @@ namespace Wiedza.Api.Data.Models;
 public class PublicationFile
 {
     public Publication Publication { get; set; }
-    [ForeignKey(nameof(Publication))] public Guid PublicationId { get; set; }
+    [ForeignKey(nameof(Publication))] public ulong PublicationId { get; set; }
     public AttachmentFile AttachmentFile { get; set; }
     [ForeignKey(nameof(AttachmentFile))] public Guid AttachmentFileId { get; set; }
 }

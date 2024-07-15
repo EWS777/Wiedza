@@ -49,11 +49,9 @@ public class ProfilesController(
         return deleteResult.Match(_ => Ok("Profile was deleted!"), e => throw e);
     }
 
-    [HttpPost, Route("verification/")]
-    public async Task<ActionResult<Verification>> VerifyProfile([FromBody] VerifyProfileRequest verifyProfileRequest)
+    [HttpPost, Route("verification")]
+    public async Task<ActionResult<Verification>> VerifyProfile()
     {
-        var userId = User.Claims.GetUserId();
-        var verify = await authService.VerifyProfileAsync(userId, verifyProfileRequest);
-        return verify.Match(_ => Ok("Verification was created!"), e => throw e);
+        throw new NotImplementedException();
     }
 }
