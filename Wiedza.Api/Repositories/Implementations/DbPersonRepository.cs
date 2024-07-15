@@ -15,10 +15,25 @@ public class DbPersonRepository(DataContext dataContext) : IPersonRepository
         return person;
     }
 
-    public async Task<Result<Person>> GetPersonAsync(string username)
+    public async Task<Result<Person>> GetPersonAsync(string usernameOrEmail)
     {
-        var person = await dataContext.Persons.SingleOrDefaultAsync(p => p.Username == username);
-        if (person is null) return new PersonNotFoundException(username);
+        var person = await dataContext.Persons.SingleOrDefaultAsync(p => p.Username == usernameOrEmail 
+                                                                         || p.Email == usernameOrEmail);
+
+        if (person is null) return new PersonNotFoundException(usernameOrEmail);
+        return person;
+    }
+
+    public async Task<Result<Person>> AddPersonAsync(Person person)
+    {
+        if(await dataContext.Persons.AnyAsync(p=>p.Email == person.Email))
+            return new CreationException("Email is taken!");
+
+        if (await dataContext.Persons.AnyAsync(p => p.Username == person.Username))
+            return new CreationException("Username is taken!");
+
+        await dataContext.Persons.AddAsync(person);
+        await dataContext.SaveChangesAsync();
         return person;
     }
 

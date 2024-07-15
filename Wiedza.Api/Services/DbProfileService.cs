@@ -32,6 +32,8 @@ public class DbProfileService(IPersonRepository personRepository) : IProfileServ
 
         var profile = profileResult.Value;
 
+        profile = new Profile(profile);
+
         update(profile);
 
         if (profile.IsValidationFailed(out var exception)) return exception;

@@ -15,6 +15,6 @@ internal class OfferDataConfig : IEntityTypeConfiguration<Offer>
         builder.Property(p => p.Message).HasMaxLength(200);
 
         builder.HasOne(p => p.Publication).WithMany().HasForeignKey(p => p.PulicationId).OnDelete(DeleteBehavior.SetNull);
-        builder.HasOne(p => p.Person).WithMany().HasForeignKey(p => p.PersonId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.Person).WithMany().HasForeignKey(p => p.PersonId).OnDelete(DeleteBehavior.ClientCascade);
     }
 }

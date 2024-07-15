@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Wiedza.Api.Data;
 
@@ -11,9 +12,11 @@ using Wiedza.Api.Data;
 namespace Wiedza.Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240714180846_PersonSalt")]
+    partial class PersonSalt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -538,7 +541,7 @@ namespace Wiedza.Api.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("author_id");
 
-                    b.Property<Guid?>("CategoryId")
+                    b.Property<Guid>("CategoryId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("category_id");
 
@@ -712,6 +715,10 @@ namespace Wiedza.Api.Migrations
                         .HasColumnType("varbinary(max)")
                         .HasColumnName("image_document_bytes");
 
+                    b.Property<bool>("IsVerificated")
+                        .HasColumnType("bit")
+                        .HasColumnName("is_verificated");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -725,12 +732,6 @@ namespace Wiedza.Api.Migrations
                     b.Property<decimal>("Pesel")
                         .HasColumnType("decimal(20,0)")
                         .HasColumnName("pesel");
-
-                    b.Property<int>("Status")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0)
-                        .HasColumnName("status");
 
                     b.Property<string>("Surname")
                         .IsRequired()
@@ -853,7 +854,7 @@ namespace Wiedza.Api.Migrations
                     b.HasOne("Wiedza.Core.Models.Data.Category", "ParentCategory")
                         .WithMany()
                         .HasForeignKey("ParentCategoryId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("fk_categories_categories_parent_category_id");
 
                     b.Navigation("ParentCategory");
@@ -864,7 +865,7 @@ namespace Wiedza.Api.Migrations
                     b.HasOne("Wiedza.Core.Models.Data.Offer", "Offer")
                         .WithMany()
                         .HasForeignKey("OfferId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_chats_offers_offer_id");
 
@@ -876,14 +877,14 @@ namespace Wiedza.Api.Migrations
                     b.HasOne("Wiedza.Core.Models.Data.Person", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_messages_persons_author_id");
 
                     b.HasOne("Wiedza.Core.Models.Data.Chat", "Chat")
                         .WithMany()
                         .HasForeignKey("ChatId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_messages_chats_chat_id");
 
@@ -897,20 +898,20 @@ namespace Wiedza.Api.Migrations
                     b.HasOne("Wiedza.Core.Models.Data.Administrator", "Administrator")
                         .WithMany()
                         .HasForeignKey("AdministratorId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("fk_message_complaints_administrators_administrator_id");
 
                     b.HasOne("Wiedza.Core.Models.Data.Person", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_message_complaints_persons_author_id");
 
                     b.HasOne("Wiedza.Core.Models.Data.Message", "Message")
                         .WithMany()
                         .HasForeignKey("MessageId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_message_complaints_messages_message_id");
 
@@ -926,14 +927,14 @@ namespace Wiedza.Api.Migrations
                     b.HasOne("Wiedza.Core.Models.Data.Person", "Person")
                         .WithMany()
                         .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_offers_persons_person_id");
 
                     b.HasOne("Wiedza.Core.Models.Data.Publication", "Publication")
                         .WithMany()
                         .HasForeignKey("PulicationId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_offers_publications_pulication_id");
 
@@ -947,7 +948,7 @@ namespace Wiedza.Api.Migrations
                     b.HasOne("Wiedza.Core.Models.Data.Person", "Person")
                         .WithMany()
                         .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_payments_persons_person_id");
 
@@ -959,27 +960,27 @@ namespace Wiedza.Api.Migrations
                     b.HasOne("Wiedza.Core.Models.Data.Administrator", "Administrator")
                         .WithMany()
                         .HasForeignKey("AdministratorId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("fk_person_complaints_administrators_administrator_id");
 
                     b.HasOne("Wiedza.Core.Models.Data.AttachmentFile", "AttachmentFile")
                         .WithMany()
                         .HasForeignKey("AttachmentFileId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_person_complaints_files_attachment_file_id");
 
                     b.HasOne("Wiedza.Core.Models.Data.Person", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_person_complaints_persons_author_id");
 
                     b.HasOne("Wiedza.Core.Models.Data.Person", "Person")
                         .WithMany()
                         .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_person_complaints_persons_person_id");
 
@@ -997,14 +998,14 @@ namespace Wiedza.Api.Migrations
                     b.HasOne("Wiedza.Core.Models.Data.Person", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_publications_persons_author_id");
 
                     b.HasOne("Wiedza.Core.Models.Data.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_publications_categories_category_id");
 
@@ -1018,13 +1019,13 @@ namespace Wiedza.Api.Migrations
                     b.HasOne("Wiedza.Core.Models.Data.Administrator", "Administrator")
                         .WithMany()
                         .HasForeignKey("AdministratorId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("fk_publication_complaints_administrators_administrator_id");
 
                     b.HasOne("Wiedza.Core.Models.Data.AttachmentFile", "AttachmentFile")
                         .WithMany()
                         .HasForeignKey("AttachmentFileId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_publication_complaints_files_attachment_file_id");
 
@@ -1056,14 +1057,14 @@ namespace Wiedza.Api.Migrations
                     b.HasOne("Wiedza.Core.Models.Data.Person", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_reviews_persons_author_id");
 
                     b.HasOne("Wiedza.Core.Models.Data.Person", "Person")
                         .WithMany()
                         .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_reviews_persons_person_id");
 
@@ -1077,7 +1078,7 @@ namespace Wiedza.Api.Migrations
                     b.HasOne("Wiedza.Core.Models.Data.Person", "Person")
                         .WithMany()
                         .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_verifications_persons_person_id");
 
@@ -1089,7 +1090,7 @@ namespace Wiedza.Api.Migrations
                     b.HasOne("Wiedza.Core.Models.Data.Person", "Person")
                         .WithMany()
                         .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_withdraws_persons_person_id");
 

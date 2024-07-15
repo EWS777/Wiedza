@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Wiedza.Api.Data;
 
@@ -11,9 +12,11 @@ using Wiedza.Api.Data;
 namespace Wiedza.Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240714182047_RestrictToCascade")]
+    partial class RestrictToCascade
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -538,7 +541,7 @@ namespace Wiedza.Api.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("author_id");
 
-                    b.Property<Guid?>("CategoryId")
+                    b.Property<Guid>("CategoryId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("category_id");
 
@@ -712,6 +715,10 @@ namespace Wiedza.Api.Migrations
                         .HasColumnType("varbinary(max)")
                         .HasColumnName("image_document_bytes");
 
+                    b.Property<bool>("IsVerificated")
+                        .HasColumnType("bit")
+                        .HasColumnName("is_verificated");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -725,12 +732,6 @@ namespace Wiedza.Api.Migrations
                     b.Property<decimal>("Pesel")
                         .HasColumnType("decimal(20,0)")
                         .HasColumnName("pesel");
-
-                    b.Property<int>("Status")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0)
-                        .HasColumnName("status");
 
                     b.Property<string>("Surname")
                         .IsRequired()
