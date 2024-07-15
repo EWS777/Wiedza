@@ -40,13 +40,10 @@ public class ProfilesController(
         return updateResult.Match(profile => profile, e => throw e);
     }
 
-    [HttpPatch, Route("delete")]
+    [HttpDelete, Route("delete")]
     public async Task<IActionResult> DeleteProfile([FromBody] string passwordHash)
     {
-        var userId = User.Claims.GetUserId();
-
-        var deleteResult = await authService.DeleteProfileAsync(userId, passwordHash);
-        return deleteResult.Match(_ => Ok("Profile was deleted!"), e => throw e);
+        throw new NotImplementedException();
     }
 
     [HttpPost, Route("verification")]

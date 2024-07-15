@@ -131,23 +131,7 @@ public class DbAuthService(
 
     public async Task<Result<bool>> DeleteProfileAsync(Guid personId, string passwordHash)
     {
-        var personResult = await personRepository.GetPersonAsync(personId);
-        if (personResult.IsFailed) return personResult.Exception;
-
-        var person = personResult.Value;
-
-        var oldPasswordHash = GetPasswordHash(passwordHash);
-        if (person.PasswordHash != oldPasswordHash) return new BadRequestException("Old password is incorrect");
-        
-        var result = await personRepository.UpdatePersonAsync(personId, person1 =>
-        {
-            person1.Username = null;
-            person1.Email = null;
-            person1.AccountState = AccountState.Deleted;
-        });
-
-        if (result.IsFailed) return result.Exception;
-        return true;
+        throw new NotImplementedException();
     }
 
     public async Task<Result<Verification>> VerifyProfileAsync(Guid personId, VerifyProfileRequest verifyProfileRequest)
