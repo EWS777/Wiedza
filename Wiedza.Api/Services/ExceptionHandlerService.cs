@@ -8,7 +8,7 @@ namespace Wiedza.Api.Services;
 
 public sealed class ExceptionHandlerService(ProblemDetailsFactory problemDetailsFactory)
 {
-    public ActionResult HandleException(Exception exception, HttpContext? context = null)
+    public ActionResult HandleException(Exception exception, HttpContext context)
     {
         var statusCode = exception switch
         {
@@ -20,27 +20,19 @@ public sealed class ExceptionHandlerService(ProblemDetailsFactory problemDetails
             _ => (int)HttpStatusCode.InternalServerError
         };
 
-        string? instance = null;
+        var request = context.Request;
 
-        if (context is { Request: { } request }) instance = $"{request.Method} {request.Path}";
+        var instance = $"{request.Method} {request.Path}";
 
-        var problemDetails = new ProblemDetails()
+        var details = problemDetailsFactory.CreateProblemDetails(context, statusCode, exception.GetType().Name,
+            detail: exception.Message, instance: instance);
+        
+        details.Extensions.Add("extensions", new
         {
-            Status = statusCode,
-            Title = exception.GetType().Name,
-            Detail = exception.Message,
-            Instance = instance
-        };
-
-        if (context is null)
-        {
-            return new ObjectResult(problemDetails)
-            {
-                StatusCode = statusCode
-            };
-        }
-        var details = problemDetailsFactory.CreateProblemDetails(context, statusCode, problemDetails.Title,
-            detail: problemDetails.Detail, instance: problemDetails.Instance);
+            Message = exception.Message,
+            Source = exception.TargetSite?.ReflectedType?.FullName ?? exception.Source,
+            StackTrace = exception.StackTrace
+        });
 
         return new ObjectResult(details)
         {

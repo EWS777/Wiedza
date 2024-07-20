@@ -1,4 +1,5 @@
-﻿using Wiedza.Core.Models.Enums;
+﻿using Wiedza.Core.Models.Data.Base;
+using Wiedza.Core.Models.Enums;
 
 namespace Wiedza.Core.Models.Data;
 
@@ -11,7 +12,7 @@ public class Offer
     public float CompanyProfit { get; set; }
     public float FreelancerProfit { get; set; }
 
-    public Publication? Publication { get; set; }
+    public PublicationBase? Publication { get; set; }
     public ulong? PulicationId { get; set; }
 
     public Person Person { get; set; }

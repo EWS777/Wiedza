@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Wiedza.Core.Models.Data;
+using Wiedza.Core.Models.Data.Base;
 using Wiedza.Core.Models.Enums;
 
 namespace Wiedza.Core.Requests;
@@ -12,14 +12,14 @@ public class PublicationUpdateRequest : IValidatableObject
     public PublicationUpdateStatus Status { get; set; }
     public Guid? CategoryId { get; set; }
 
-    public PublicationUpdateRequest(Publication publication)
+    public PublicationUpdateRequest(PublicationBase publicationBase)
     {
-        Title = publication.Title;
-        Description = publication.Description;
-        Price = publication.Price;
-        CategoryId = publication.CategoryId;
+        Title = publicationBase.Title;
+        Description = publicationBase.Description;
+        Price = publicationBase.Price;
+        CategoryId = publicationBase.CategoryId;
 
-        Status = publication.Status switch
+        Status = publicationBase.Status switch
         {
             PublicationStatus.Active => PublicationUpdateStatus.Active,
             PublicationStatus.Inactive => PublicationUpdateStatus.Inactive,

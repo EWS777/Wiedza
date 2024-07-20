@@ -1,5 +1,7 @@
+using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Azure.Core;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
@@ -34,11 +36,11 @@ builder.Services.AddScoped<IPersonRepository, DbPersonRepository>();
 builder.Services.AddScoped<ITokenRepository, RedisTokenRepository>();
 builder.Services.AddScoped<IPersonSaltRepository, DbPersonSaltRepository>();
 
+builder.Services.AddScoped<IProjectRepository, DbProjectRepository>();
+builder.Services.AddScoped<IServiceRepository, DbServiceRepository>();
+
 builder.Services.AddScoped<IAuthService, DbAuthService>();
 builder.Services.AddScoped<IProfileService, DbProfileService>();
-
-builder.Services.AddScoped<IPublicationService, DbPublicationService>();
-builder.Services.AddScoped<IPublicationRepository, DbPublicationRepository>();
 
 builder.Services.AddScoped<IOfferService, DbOfferService>();
 builder.Services.AddScoped<IOfferRepository,DbOfferRepository>();

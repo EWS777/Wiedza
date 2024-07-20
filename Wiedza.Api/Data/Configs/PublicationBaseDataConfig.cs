@@ -1,14 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Wiedza.Api.Data.ValueGenerators;
-using Wiedza.Core.Models.Data;
+using Wiedza.Core.Models.Data.Base;
 using Wiedza.Core.Models.Enums;
 
 namespace Wiedza.Api.Data.Configs;
 
-internal class PublicationDataConfig : IEntityTypeConfiguration<Publication>
+internal class PublicationBaseDataConfig : IEntityTypeConfiguration<PublicationBase>
 {
-    public void Configure(EntityTypeBuilder<Publication> builder)
+    public void Configure(EntityTypeBuilder<PublicationBase> builder)
     {
         builder.Property(p => p.CreatedAt).HasValueGenerator<DateTimeOffsetValueGenerator>();
         builder.HasOne(p => p.Author).WithMany().HasForeignKey(p => p.AuthorId).OnDelete(DeleteBehavior.ClientCascade);
@@ -16,5 +16,7 @@ internal class PublicationDataConfig : IEntityTypeConfiguration<Publication>
         builder.Property(p => p.Status).HasDefaultValue(PublicationStatus.Pending);
         builder.Property(p => p.Title).HasMaxLength(50);
         builder.Property(p => p.Description).HasMaxLength(500);
+
+        builder.UseTpcMappingStrategy();
     }
 }

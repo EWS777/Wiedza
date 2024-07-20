@@ -1,4 +1,5 @@
-﻿using Wiedza.Core.Models.Enums;
+﻿using Wiedza.Core.Models.Data.Base;
+using Wiedza.Core.Models.Enums;
 
 namespace Wiedza.Core.Models.Data;
 
@@ -12,7 +13,7 @@ public class PublicationComplaint
     public DateTimeOffset? FinishAt { get; set; }
     public Person Author { get; set; }
     public Guid AuthorId { get; set; }
-    public Publication Publication { get; set; }
+    public PublicationBase PublicationBase { get; set; }
     public ulong PublicationId { get; set; }
     public AttachmentFile AttachmentFile { get; set; }
     public Guid AttachmentFileId { get; set; }

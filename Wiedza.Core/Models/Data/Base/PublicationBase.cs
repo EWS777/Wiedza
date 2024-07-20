@@ -1,11 +1,10 @@
 ﻿using Wiedza.Core.Models.Enums;
 
-namespace Wiedza.Core.Models.Data;
+namespace Wiedza.Core.Models.Data.Base;
 
-public class Publication
+public abstract class PublicationBase
 {
     public ulong Id { get; set; }
-    public bool IsProject { get; set; }
     public string Title { get; set; }
     public string Description { get; set; }
     public float Price { get; set; }
