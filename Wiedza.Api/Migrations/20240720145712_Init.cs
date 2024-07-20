@@ -39,8 +39,7 @@ namespace Wiedza.Api.Migrations
                         name: "fk_categories_categories_parent_category_id",
                         column: x => x.parent_category_id,
                         principalTable: "categories",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
@@ -119,8 +118,7 @@ namespace Wiedza.Api.Migrations
                         name: "fk_payments_persons_person_id",
                         column: x => x.person_id,
                         principalTable: "persons",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
@@ -145,33 +143,48 @@ namespace Wiedza.Api.Migrations
                         name: "fk_person_complaints_administrators_administrator_id",
                         column: x => x.administrator_id,
                         principalTable: "administrators",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "id");
                     table.ForeignKey(
                         name: "fk_person_complaints_files_attachment_file_id",
                         column: x => x.attachment_file_id,
                         principalTable: "files",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "id");
                     table.ForeignKey(
                         name: "fk_person_complaints_persons_author_id",
                         column: x => x.author_id,
                         principalTable: "persons",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "id");
                     table.ForeignKey(
                         name: "fk_person_complaints_persons_person_id",
                         column: x => x.person_id,
                         principalTable: "persons",
+                        principalColumn: "id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "person_salts",
+                columns: table => new
+                {
+                    person_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    salt = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_person_salts", x => x.person_id);
+                    table.ForeignKey(
+                        name: "fk_person_salts_persons_person_id",
+                        column: x => x.person_id,
+                        principalTable: "persons",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "publications",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    id = table.Column<decimal>(type: "decimal(20,0)", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     is_project = table.Column<bool>(type: "bit", nullable: false),
                     title = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
@@ -189,14 +202,12 @@ namespace Wiedza.Api.Migrations
                         name: "fk_publications_categories_category_id",
                         column: x => x.category_id,
                         principalTable: "categories",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "id");
                     table.ForeignKey(
                         name: "fk_publications_persons_author_id",
                         column: x => x.author_id,
                         principalTable: "persons",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
@@ -217,14 +228,12 @@ namespace Wiedza.Api.Migrations
                         name: "fk_reviews_persons_author_id",
                         column: x => x.author_id,
                         principalTable: "persons",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "id");
                     table.ForeignKey(
                         name: "fk_reviews_persons_person_id",
                         column: x => x.person_id,
                         principalTable: "persons",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
@@ -248,8 +257,7 @@ namespace Wiedza.Api.Migrations
                         name: "fk_verifications_persons_person_id",
                         column: x => x.person_id,
                         principalTable: "persons",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
@@ -271,8 +279,7 @@ namespace Wiedza.Api.Migrations
                         name: "fk_withdraws_persons_person_id",
                         column: x => x.person_id,
                         principalTable: "persons",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
@@ -285,7 +292,7 @@ namespace Wiedza.Api.Migrations
                     message = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     company_profit = table.Column<float>(type: "real", nullable: false),
                     freelancer_profit = table.Column<float>(type: "real", nullable: false),
-                    pulication_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    pulication_id = table.Column<decimal>(type: "decimal(20,0)", nullable: true),
                     person_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -295,14 +302,13 @@ namespace Wiedza.Api.Migrations
                         name: "fk_offers_persons_person_id",
                         column: x => x.person_id,
                         principalTable: "persons",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "id");
                     table.ForeignKey(
                         name: "fk_offers_publications_pulication_id",
                         column: x => x.pulication_id,
                         principalTable: "publications",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -316,7 +322,7 @@ namespace Wiedza.Api.Migrations
                     created_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     finish_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     author_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    publication_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    publication_id = table.Column<decimal>(type: "decimal(20,0)", nullable: false),
                     attachment_file_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     administrator_id = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
@@ -327,14 +333,12 @@ namespace Wiedza.Api.Migrations
                         name: "fk_publication_complaints_administrators_administrator_id",
                         column: x => x.administrator_id,
                         principalTable: "administrators",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "id");
                     table.ForeignKey(
                         name: "fk_publication_complaints_files_attachment_file_id",
                         column: x => x.attachment_file_id,
                         principalTable: "files",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "id");
                     table.ForeignKey(
                         name: "fk_publication_complaints_persons_author_id",
                         column: x => x.author_id,
@@ -363,8 +367,7 @@ namespace Wiedza.Api.Migrations
                         name: "fk_chats_offers_offer_id",
                         column: x => x.offer_id,
                         principalTable: "offers",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
@@ -384,14 +387,12 @@ namespace Wiedza.Api.Migrations
                         name: "fk_messages_chats_chat_id",
                         column: x => x.chat_id,
                         principalTable: "chats",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "id");
                     table.ForeignKey(
                         name: "fk_messages_persons_author_id",
                         column: x => x.author_id,
                         principalTable: "persons",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
@@ -415,20 +416,17 @@ namespace Wiedza.Api.Migrations
                         name: "fk_message_complaints_administrators_administrator_id",
                         column: x => x.administrator_id,
                         principalTable: "administrators",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "id");
                     table.ForeignKey(
                         name: "fk_message_complaints_messages_message_id",
                         column: x => x.message_id,
                         principalTable: "messages",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "id");
                     table.ForeignKey(
                         name: "fk_message_complaints_persons_author_id",
                         column: x => x.author_id,
                         principalTable: "persons",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
@@ -616,6 +614,9 @@ namespace Wiedza.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "person_complaints");
+
+            migrationBuilder.DropTable(
+                name: "person_salts");
 
             migrationBuilder.DropTable(
                 name: "publication_complaints");

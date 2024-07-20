@@ -17,22 +17,4 @@ public class Publication
     public Guid? CategoryId { get; set; }
     public Person Author { get; set; }
     public Guid AuthorId { get; set; }
-
-    public Publication() { }
-
-    public Publication(Publication other)
-    {
-        Id = other.Id;
-        IsProject = other.IsProject;
-        Title = other.Title;
-        Description = other.Description;
-        Price = other.Price;
-        CreatedAt = other.CreatedAt;
-        Status = other.Status;
-        ExpiresAt = other.ExpiresAt;
-        Category = other.Category;
-        CategoryId = other.CategoryId;
-        Author = other.Author;
-        AuthorId = other.AuthorId;
-    }
 }

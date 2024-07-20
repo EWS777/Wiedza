@@ -8,5 +8,5 @@ public class PersonNotFoundException : NotFoundException
     public PersonNotFoundException(string usernameOrEmail) : base($"Person with username or email `{usernameOrEmail}` not found!") { }
 }
 
-public class PublicationNotFoundException(ulong publicationId) : NotFoundException($"Publication with id `{publicationId}` not found!");
+public class PublicationNotFoundException(ulong? publicationId) : NotFoundException($"Publication with id `{publicationId}` not found!");
 

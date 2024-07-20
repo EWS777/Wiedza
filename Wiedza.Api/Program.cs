@@ -40,6 +40,9 @@ builder.Services.AddScoped<IProfileService, DbProfileService>();
 builder.Services.AddScoped<IPublicationService, DbPublicationService>();
 builder.Services.AddScoped<IPublicationRepository, DbPublicationRepository>();
 
+builder.Services.AddScoped<IOfferService, DbOfferService>();
+builder.Services.AddScoped<IOfferRepository,DbOfferRepository>();
+
 builder.Services.AddSingleton<ExceptionHandlerService>();
 
 builder.Services.AddScoped<DbUnitOfWork>();
