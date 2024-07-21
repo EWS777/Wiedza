@@ -12,9 +12,9 @@ public class Offer
     public float CompanyProfit { get; set; }
     public float FreelancerProfit { get; set; }
 
-    public PublicationBase? Publication { get; set; }
+    public Publication? Publication { get; set; }
     public ulong? PulicationId { get; set; }
 
-    public Person Person { get; set; }
-    public Guid PersonId { get; set; }
+    public Person? Person { get; set; }
+    public Guid? PersonId { get; set; }
 }

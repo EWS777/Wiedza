@@ -2,7 +2,7 @@
 
 namespace Wiedza.Core.Models.Data.Base;
 
-public abstract class PublicationBase
+public abstract class Publication
 {
     public ulong Id { get; set; }
     public string Title { get; set; }

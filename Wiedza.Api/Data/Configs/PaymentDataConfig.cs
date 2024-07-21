@@ -9,7 +9,7 @@ internal class PaymentDataConfig : IEntityTypeConfiguration<Payment>
 {
     public void Configure(EntityTypeBuilder<Payment> builder)
     {
-        builder.Property(p => p.CreatedAt).HasValueGenerator<DateTimeOffsetValueGenerator>();
+        builder.Property(p => p.CreatedAt).HasValueGenerator<DateTimeOffsetNowValueGenerator>();
         builder.Property(p => p.Email).HasMaxLength(50);
         builder.Property(p => p.Name).HasMaxLength(50);
         builder.Property(p => p.Surname).HasMaxLength(50);

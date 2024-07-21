@@ -10,7 +10,7 @@ internal class PersonDataConfig : IEntityTypeConfiguration<Person>
 {
     public void Configure(EntityTypeBuilder<Person> builder)
     {
-        builder.Property(p => p.CreatedAt).HasValueGenerator<DateTimeOffsetValueGenerator>();
+        builder.Property(p => p.CreatedAt).HasValueGenerator<DateTimeOffsetNowValueGenerator>();
 
         builder.HasIndex(p => p.Username).IsUnique();
         builder.HasIndex(p => p.Email).IsUnique();

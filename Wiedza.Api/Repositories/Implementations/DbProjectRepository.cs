@@ -21,6 +21,15 @@ public class DbProjectRepository(DataContext dataContext) : IProjectRepository
         return await projects.ToArrayAsync();
     }
 
+    public async Task<Project[]> GetPersonProjectsAsync(Guid personId)
+    {
+        return await dataContext.Projects
+            .Include(p=>p.Author)
+            .Include(p=>p.Category)
+            .Where(p=>p.AuthorId == personId)
+            .AsNoTracking().ToArrayAsync();
+    }
+
     public async Task<Result<Project>> GetProjectAsync(ulong projectId)
     {
         var project = await dataContext.Projects.SingleOrDefaultAsync(p => p.Id == projectId);

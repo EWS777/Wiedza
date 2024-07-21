@@ -14,7 +14,7 @@ internal class PersonComplaintDataConfig : IEntityTypeConfiguration<PersonCompla
 
         builder.Property(p => p.Title).HasMaxLength(50);
         builder.Property(p => p.Description).HasMaxLength(500);
-        builder.Property(p => p.CreatedAt).HasValueGenerator<DateTimeOffsetValueGenerator>();
+        builder.Property(p => p.CreatedAt).HasValueGenerator<DateTimeOffsetNowValueGenerator>();
 
         builder.HasOne(p => p.Author).WithMany().HasForeignKey(p => p.AuthorId).OnDelete(DeleteBehavior.ClientCascade);
         builder.HasOne(p => p.Person).WithMany().HasForeignKey(p => p.PersonId).OnDelete(DeleteBehavior.ClientCascade);

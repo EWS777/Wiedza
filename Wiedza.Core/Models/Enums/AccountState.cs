@@ -4,6 +4,5 @@ public enum AccountState
 {
     Active,
     Banned,
-    Freezed,
-    Deleted
+    Freezed
 }

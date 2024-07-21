@@ -8,6 +8,6 @@ public class Message
 
     public Chat Chat { get; set; }
     public Guid ChatId { get; set; }
-    public Person Author { get; set; }
-    public Guid AuthorId { get; set; }
+    public Person? Author { get; set; }
+    public Guid? AuthorId { get; set; }
 }

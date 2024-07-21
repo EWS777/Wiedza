@@ -14,7 +14,7 @@ internal class PublicationComplaintDataConfig : IEntityTypeConfiguration<Publica
 
         builder.Property(p => p.Title).HasMaxLength(50);
         builder.Property(p => p.Description).HasMaxLength(500);
-        builder.Property(p => p.CreatedAt).HasValueGenerator<DateTimeOffsetValueGenerator>();
+        builder.Property(p => p.CreatedAt).HasValueGenerator<DateTimeOffsetNowValueGenerator>();
 
         builder.HasOne(p => p.Author).WithMany().HasForeignKey(p => p.AuthorId);
         builder.HasOne(p => p.Administrator).WithMany().HasForeignKey(p => p.AdministratorId).OnDelete(DeleteBehavior.ClientCascade);

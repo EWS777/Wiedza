@@ -19,6 +19,8 @@ using Wiedza.Api.Data;
 using Wiedza.Api.Repositories;
 using Wiedza.Api.Repositories.Implementations;
 using Wiedza.Api.Services;
+using Wiedza.Core.Models.Data;
+using Wiedza.Core.Models.Enums;
 using Wiedza.Core.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -113,5 +115,34 @@ app.UseExceptionHandler(errApp =>
         await result.ExecuteResultAsync(new ActionContext(context, context.GetRouteData(), new ControllerActionDescriptor()));
     });
 });
+
+using var dataContext = app.Services.CreateScope().ServiceProvider.GetRequiredService<DataContext>();
+
+var author = new Person()
+{
+    PasswordHash = "sdakl;djkasld"
+};
+dataContext.Persons.Add(author);
+
+dataContext.Projects.Add(new Project()
+{
+    Author = author,
+    Price = 0,
+    Title = "turuur",
+    Description = "dfd",
+    Status = PublicationStatus.Pending
+});
+
+dataContext.Services.Add(new Service()
+{
+    Author = author,
+    Price = 45,
+    Title = "qweqwuoeiqwe",
+    Description = "sdsd"
+});
+
+dataContext.SaveChanges();
+
+return;
 
 app.Run();

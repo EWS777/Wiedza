@@ -2,7 +2,4 @@
 
 namespace Wiedza.Core.Models.Data;
 
-public class Service : PublicationBase
-{
-    
-}
+public class Service : Publication;

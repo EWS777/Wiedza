@@ -12,14 +12,14 @@ public class PublicationUpdateRequest : IValidatableObject
     public PublicationUpdateStatus Status { get; set; }
     public Guid? CategoryId { get; set; }
 
-    public PublicationUpdateRequest(PublicationBase publicationBase)
+    public PublicationUpdateRequest(Publication publication)
     {
-        Title = publicationBase.Title;
-        Description = publicationBase.Description;
-        Price = publicationBase.Price;
-        CategoryId = publicationBase.CategoryId;
+        Title = publication.Title;
+        Description = publication.Description;
+        Price = publication.Price;
+        CategoryId = publication.CategoryId;
 
-        Status = publicationBase.Status switch
+        Status = publication.Status switch
         {
             PublicationStatus.Active => PublicationUpdateStatus.Active,
             PublicationStatus.Inactive => PublicationUpdateStatus.Inactive,

@@ -6,6 +6,7 @@ namespace Wiedza.Api.Repositories;
 public interface IProjectRepository
 {
     Task<Project[]> GetProjectsAsync(bool onlyActive = true);
+    Task<Project[]> GetPersonProjectsAsync(Guid personId);
     Task<Result<Project>> GetProjectAsync(ulong projectId);
     Task<Project> AddProjectAsync(Project project);
     Task<Result<Project>> UpdateProjectAsync(ulong projectId, Action<Project> updateAction);

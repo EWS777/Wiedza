@@ -10,7 +10,7 @@ internal class WithdrawDataConfig : IEntityTypeConfiguration<Withdraw>
 {
     public void Configure(EntityTypeBuilder<Withdraw> builder)
     {
-        builder.Property(p => p.CreatedAt).HasValueGenerator<DateTimeOffsetValueGenerator>();
+        builder.Property(p => p.CreatedAt).HasValueGenerator<DateTimeOffsetNowValueGenerator>();
         builder.Property(p => p.Status).HasDefaultValue(WithdrawStatus.New);
 
         builder.HasOne(p => p.Person).WithMany().HasForeignKey(p => p.PersonId).OnDelete(DeleteBehavior.ClientCascade);

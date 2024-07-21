@@ -9,6 +9,6 @@ internal class AttachmentFileDataConfig : IEntityTypeConfiguration<AttachmentFil
 {
     public void Configure(EntityTypeBuilder<AttachmentFile> builder)
     {
-        builder.Property(p => p.UploadedAt).HasValueGenerator<DateTimeOffsetValueGenerator>();
+        builder.Property(p => p.UploadedAt).HasValueGenerator<DateTimeOffsetNowValueGenerator>();
     }
 }

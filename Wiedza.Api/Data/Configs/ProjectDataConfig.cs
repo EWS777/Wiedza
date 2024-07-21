@@ -9,6 +9,6 @@ public class ProjectDataConfig : IEntityTypeConfiguration<Project>
 {
     public void Configure(EntityTypeBuilder<Project> builder)
     {
-        builder.ToTable("projects");
+        builder.HasBaseType<Publication>().ToTable("projects");
     }
 }

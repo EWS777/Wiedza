@@ -13,7 +13,7 @@ public class PublicationComplaint
     public DateTimeOffset? FinishAt { get; set; }
     public Person Author { get; set; }
     public Guid AuthorId { get; set; }
-    public PublicationBase PublicationBase { get; set; }
+    public Publication Publication { get; set; }
     public ulong PublicationId { get; set; }
     public AttachmentFile AttachmentFile { get; set; }
     public Guid AttachmentFileId { get; set; }

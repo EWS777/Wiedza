@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Wiedza.Api.Data.Models;
 using Wiedza.Core.Models.Data;
-using Wiedza.Core.Models.Data.Base;
 
 namespace Wiedza.Api.Data;
 
@@ -34,9 +33,6 @@ public sealed class DataContext : DbContext
 
     public DataContext(DbContextOptions<DataContext> options, ILogger<DataContext> logger) : base(options)
     {
-        Database.EnsureDeleted();
-        Database.EnsureCreated();
-        return; //TODO delete
         if (_isFirstCreation is false) return;
         try
         {

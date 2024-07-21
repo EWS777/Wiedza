@@ -10,7 +10,7 @@ internal class VerificationDataConfig : IEntityTypeConfiguration<Verification>
 {
     public void Configure(EntityTypeBuilder<Verification> builder)
     {
-        builder.Property(p => p.CreatedAt).HasValueGenerator<DateTimeOffsetValueGenerator>();
+        builder.Property(p => p.CreatedAt).HasValueGenerator<DateTimeOffsetNowValueGenerator>();
 
         builder.Property(p => p.Name).HasMaxLength(50);
         builder.Property(p => p.Surname).HasMaxLength(50);
