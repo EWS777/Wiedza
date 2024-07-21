@@ -41,6 +41,10 @@ builder.Services.AddScoped<IPersonSaltRepository, DbPersonSaltRepository>();
 builder.Services.AddScoped<IProjectRepository, DbProjectRepository>();
 builder.Services.AddScoped<IServiceRepository, DbServiceRepository>();
 
+builder.Services.AddScoped<IProjectService, DbProjectService>();
+builder.Services.AddScoped<IServiceService, DbServiceService>();
+
+
 builder.Services.AddScoped<IAuthService, DbAuthService>();
 builder.Services.AddScoped<IProfileService, DbProfileService>();
 
@@ -117,32 +121,5 @@ app.UseExceptionHandler(errApp =>
 });
 
 using var dataContext = app.Services.CreateScope().ServiceProvider.GetRequiredService<DataContext>();
-
-var author = new Person()
-{
-    PasswordHash = "sdakl;djkasld"
-};
-dataContext.Persons.Add(author);
-
-dataContext.Projects.Add(new Project()
-{
-    Author = author,
-    Price = 0,
-    Title = "turuur",
-    Description = "dfd",
-    Status = PublicationStatus.Pending
-});
-
-dataContext.Services.Add(new Service()
-{
-    Author = author,
-    Price = 45,
-    Title = "qweqwuoeiqwe",
-    Description = "sdsd"
-});
-
-dataContext.SaveChanges();
-
-return;
 
 app.Run();

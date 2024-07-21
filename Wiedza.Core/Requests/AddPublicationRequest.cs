@@ -7,7 +7,6 @@ public class AddPublicationRequest : IValidatableObject
     public string Title { get; set; }
     public string Description { get; set; }
     public float Price { get; set; }
-    public bool IsProject { get; set; }
     public Guid? CategoryId { get; set; }
     
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

@@ -21,6 +21,15 @@ public class DbServiceRepository(DataContext dataContext) : IServiceRepository
         return await services.ToArrayAsync();
     }
 
+    public async Task<Service[]> GetPersonServicesAsync(Guid personId)
+    {
+        return await dataContext.Services
+            .Include(p=>p.Author)
+            .Include(p=>p.Category)
+            .Where(p=>p.AuthorId == personId)
+            .AsNoTracking().ToArrayAsync();
+    }
+
     public async Task<Result<Service>> GetServiceAsync(ulong serviceId)
     {
         var service = await dataContext.Services.SingleOrDefaultAsync(p => p.Id == serviceId);

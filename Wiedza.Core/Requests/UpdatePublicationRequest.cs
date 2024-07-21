@@ -4,7 +4,7 @@ using Wiedza.Core.Models.Enums;
 
 namespace Wiedza.Core.Requests;
 
-public class PublicationUpdateRequest : IValidatableObject
+public class UpdatePublicationRequest : IValidatableObject
 {
     public string Title { get; set; }
     public string Description { get; set; }
@@ -12,7 +12,7 @@ public class PublicationUpdateRequest : IValidatableObject
     public PublicationUpdateStatus Status { get; set; }
     public Guid? CategoryId { get; set; }
 
-    public PublicationUpdateRequest(Publication publication)
+    public UpdatePublicationRequest(Publication publication)
     {
         Title = publication.Title;
         Description = publication.Description;
