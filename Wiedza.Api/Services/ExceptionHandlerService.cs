@@ -26,12 +26,21 @@ public sealed class ExceptionHandlerService(ProblemDetailsFactory problemDetails
 
         var details = problemDetailsFactory.CreateProblemDetails(context, statusCode, exception.GetType().Name,
             detail: exception.Message, instance: instance);
-        
-        details.Extensions.Add("extensions", new
+
+        using var reader = new StreamReader(request.BodyReader.AsStream());
+
+        details.Extensions.Add("error_details", new
         {
-            Message = exception.Message,
-            Source = exception.TargetSite?.ReflectedType?.FullName ?? exception.Source,
-            StackTrace = exception.StackTrace
+                Message = exception.Message,
+                Source = exception.TargetSite?.ReflectedType?.FullName ?? exception.Source,
+                StackTrace = exception.StackTrace
+        });
+
+        details.Extensions.Add("request_details", new
+        {
+            Headers = request.Headers,
+            Query = request.Query,
+            Body = reader.ReadToEnd()
         });
 
         return new ObjectResult(details)
