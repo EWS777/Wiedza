@@ -1,18 +1,17 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SystemTextJsonPatch;
+using Wiedza.Api.Core;
 using Wiedza.Api.Core.Extensions;
 using Wiedza.Core.Models;
 using Wiedza.Core.Models.Data;
-using Wiedza.Core.Requests;
 using Wiedza.Core.Services;
 
 namespace Wiedza.Api.Controllers;
 
-[ApiController, Route("[controller]"), Authorize]
+[ApiController, Route("[controller]")]
 public class ProfilesController(
-    IProfileService profileService,
-    IAuthService authService
+    IProfileService profileService
 ) : ControllerBase
 {
     [HttpGet, Route("id/{personId:guid}")]
@@ -30,7 +29,7 @@ public class ProfilesController(
         return profileResult.Match(profile => profile, e => throw e);
     }
 
-    [HttpPatch, Route("my")]
+    [HttpPatch, Route("my"), Authorize(Policy = Policies.PersonPolicy)]
     public async Task<ActionResult<Profile>> UpdateProfile([FromBody] JsonPatchDocument<Profile> updateProfile)
     {
         var userId = User.Claims.GetUserId();
@@ -40,13 +39,17 @@ public class ProfilesController(
         return updateResult.Match(profile => profile, e => throw e);
     }
 
-    [HttpDelete, Route("delete")]
+    [HttpDelete, Route("delete"), Authorize(Policy = Policies.PersonPolicy)]
     public async Task<IActionResult> DeleteProfile([FromBody] string passwordHash)
     {
-        throw new NotImplementedException();
+        var userId = User.Claims.GetUserId();
+
+        var result = await profileService.DeleteProfileAsync(userId, passwordHash);
+
+        return result.Match(_ => Ok("Profile was deleted!"), e => throw e);
     }
 
-    [HttpPost, Route("verification")]
+    [HttpPost, Route("verification"), Authorize(Policy = Policies.PersonPolicy)]
     public async Task<ActionResult<Verification>> VerifyProfile()
     {
         throw new NotImplementedException();

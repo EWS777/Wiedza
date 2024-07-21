@@ -1,6 +1,4 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Cryptography;
-using System.Text;
 using Wiedza.Api.Configs;
 using Wiedza.Api.Core;
 using Wiedza.Api.Core.Extensions;
@@ -36,7 +34,7 @@ public class DbAuthService(
         var salt = await personSaltRepository.GetSaltAsync(person.Id);
         if (salt is null) throw new Exception($"Salt was null. User id `{person.Id}`");
 
-        var passwordHash = GetPasswordHash(request.PasswordHash, salt);
+        var passwordHash = CryptographyTools.GetPasswordHash(request.PasswordHash, salt);
         if (person.PasswordHash != passwordHash) return new InvalidCredentialsException("User credentials are invalid");
 
         var (session, refreshToken) = await SetUserRefreshTokenAsync(person.Id);
@@ -66,7 +64,7 @@ public class DbAuthService(
 
             var updateResult = await personRepository.UpdatePersonAsync(person.Id, person1 =>
             {
-                person1.PasswordHash = GetPasswordHash(request.PasswordHash, salt);
+                person1.PasswordHash = CryptographyTools.GetPasswordHash(request.PasswordHash, salt);
             });
 
             if (updateResult.IsFailed) throw updateResult.Exception;
@@ -115,10 +113,10 @@ public class DbAuthService(
         var salt = await personSaltRepository.GetSaltAsync(personId);
         if (salt is null) throw new Exception($"Salt was null! User id `{personId}`");
 
-        var oldPasswordHash = GetPasswordHash(changePasswordRequest.OldPasswordHash, salt);
+        var oldPasswordHash = CryptographyTools.GetPasswordHash(changePasswordRequest.OldPasswordHash, salt);
         if (person.PasswordHash != oldPasswordHash) return new BadRequestException("Old password is incorrect");
 
-        var newPasswordHash = GetPasswordHash(changePasswordRequest.NewPasswordHash, salt);
+        var newPasswordHash = CryptographyTools.GetPasswordHash(changePasswordRequest.NewPasswordHash, salt);
 
         var result = await personRepository.UpdatePersonAsync(personId, person1 =>
         {
@@ -127,11 +125,6 @@ public class DbAuthService(
 
         if (result.IsFailed) return result.Exception;
         return true;
-    }
-
-    public async Task<Result<bool>> DeleteProfileAsync(Guid personId, string passwordHash)
-    {
-        throw new NotImplementedException();
     }
 
     public async Task<Result<Verification>> VerifyProfileAsync(Guid personId, VerifyProfileRequest verifyProfileRequest)
@@ -160,7 +153,7 @@ public class DbAuthService(
 
     private async Task<string> SetUserRefreshTokenAsync(Guid userId, string session)
     {
-        var refreshToken = GenerateRefreshToken();
+        var refreshToken = CryptographyTools.GenerateToken();
         await tokenRepository.SetRefreshTokenAsync(userId, session, refreshToken);
 
         return refreshToken;
@@ -177,23 +170,6 @@ public class DbAuthService(
             ExpiresAt = DateTimeOffset.UtcNow.Add(jwtConfiguration.TokenLifetime).ToUnixTimeSeconds()
         };
     }
-
-    private static string GenerateRefreshToken()
-    {
-        Span<byte> bytes = stackalloc byte[64];
-        RandomNumberGenerator.Fill(bytes);
-        return Convert.ToBase64String(bytes);
-    }
-
-    private static string GetPasswordHash(string passwordHash, string salt)
-    {
-        using var rfc2898DeriveBytes = new Rfc2898DeriveBytes(passwordHash.ToLower(), Encoding.UTF8.GetBytes(salt),
-            10_000, HashAlgorithmName.SHA256);
-
-        var hashBytes = rfc2898DeriveBytes.GetBytes(256);
-        var result = string.Concat(hashBytes.Select(p => p.ToString("X2")));
-        return result;
-    }
-
+    
     #endregion
 }

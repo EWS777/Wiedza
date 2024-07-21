@@ -1,4 +1,5 @@
-﻿using Wiedza.Api.Core.Extensions;
+﻿using Wiedza.Api.Core;
+using Wiedza.Api.Core.Extensions;
 using Wiedza.Api.Repositories;
 using Wiedza.Core.Exceptions;
 using Wiedza.Core.Models;
@@ -7,7 +8,10 @@ using Wiedza.Core.Utilities;
 
 namespace Wiedza.Api.Services;
 
-public class DbProfileService(IPersonRepository personRepository) : IProfileService
+public class DbProfileService(
+    IPersonRepository personRepository,
+    IPersonSaltRepository personSaltRepository
+    ) : IProfileService
 {
     public async Task<Result<Profile>> GetProfileAsync(Guid personId)
     {
@@ -53,5 +57,19 @@ public class DbProfileService(IPersonRepository personRepository) : IProfileServ
 
         return new Profile(updateResult.Value);
     }
-    
+
+    public async Task<Result<bool>> DeleteProfileAsync(Guid personId, string passwordHash)
+    {
+        var personResult = await personRepository.GetPersonAsync(personId);
+        if (personResult.IsFailed) return personResult.Exception;
+
+        var person = personResult.Value;
+        var salt = await personSaltRepository.GetSaltAsync(personId);
+
+        var hash = CryptographyTools.GetPasswordHash(passwordHash, salt ?? string.Empty);
+
+        if (person.PasswordHash != hash) return new BadRequestException("Password is incorrect!");
+
+        return await personRepository.DeletePersonAsync(personId);
+    }
 }

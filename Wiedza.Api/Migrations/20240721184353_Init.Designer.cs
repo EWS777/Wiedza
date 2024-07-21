@@ -12,7 +12,7 @@ using Wiedza.Api.Data;
 namespace Wiedza.Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240721173300_Init")]
+    [Migration("20240721184353_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -59,33 +59,6 @@ namespace Wiedza.Api.Migrations
                         .HasName("pk_person_salts");
 
                     b.ToTable("person_salts", (string)null);
-                });
-
-            modelBuilder.Entity("Wiedza.Core.Models.Data.Administrator", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id");
-
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("password_hash");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)")
-                        .HasColumnName("username");
-
-                    b.HasKey("Id")
-                        .HasName("pk_administrators");
-
-                    b.HasIndex("Username")
-                        .IsUnique()
-                        .HasDatabaseName("ix_administrators_username");
-
-                    b.ToTable("administrators", (string)null);
                 });
 
             modelBuilder.Entity("Wiedza.Core.Models.Data.AttachmentFile", b =>
@@ -175,6 +148,53 @@ namespace Wiedza.Api.Migrations
                         .HasDatabaseName("ix_publications_category_id");
 
                     b.ToTable("publications", (string)null);
+
+                    b.UseTptMappingStrategy();
+                });
+
+            modelBuilder.Entity("Wiedza.Core.Models.Data.Base.User", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("email");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("password_hash");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasColumnName("username");
+
+                    b.Property<string>("type")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("type");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasDatabaseName("ix_users_email");
+
+                    b.HasIndex("Username")
+                        .IsUnique()
+                        .HasDatabaseName("ix_users_username");
+
+                    b.ToTable("users", (string)null);
 
                     b.UseTptMappingStrategy();
                 });
@@ -451,80 +471,6 @@ namespace Wiedza.Api.Migrations
                         .HasDatabaseName("ix_payments_person_id");
 
                     b.ToTable("payments", (string)null);
-                });
-
-            modelBuilder.Entity("Wiedza.Core.Models.Data.Person", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id");
-
-                    b.Property<int>("AccountState")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0)
-                        .HasColumnName("account_state");
-
-                    b.Property<byte[]>("AvatarBytes")
-                        .HasColumnType("varbinary(max)")
-                        .HasColumnName("avatar_bytes");
-
-                    b.Property<float>("Balance")
-                        .HasColumnType("real")
-                        .HasColumnName("balance");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset")
-                        .HasColumnName("created_at");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
-                        .HasColumnName("description");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("email");
-
-                    b.Property<bool>("IsVerificated")
-                        .HasColumnType("bit")
-                        .HasColumnName("is_verificated");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("name");
-
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("password_hash");
-
-                    b.Property<float?>("Rating")
-                        .HasColumnType("real")
-                        .HasColumnName("rating");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)")
-                        .HasColumnName("username");
-
-                    b.HasKey("Id")
-                        .HasName("pk_persons");
-
-                    b.HasIndex("Email")
-                        .IsUnique()
-                        .HasDatabaseName("ix_persons_email");
-
-                    b.HasIndex("Username")
-                        .IsUnique()
-                        .HasDatabaseName("ix_persons_username");
-
-                    b.ToTable("persons", (string)null);
                 });
 
             modelBuilder.Entity("Wiedza.Core.Models.Data.PersonComplaint", b =>
@@ -835,6 +781,52 @@ namespace Wiedza.Api.Migrations
                     b.ToTable("services", (string)null);
                 });
 
+            modelBuilder.Entity("Wiedza.Core.Models.Data.Administrator", b =>
+                {
+                    b.HasBaseType("Wiedza.Core.Models.Data.Base.User");
+
+                    b.ToTable("admins", (string)null);
+                });
+
+            modelBuilder.Entity("Wiedza.Core.Models.Data.Person", b =>
+                {
+                    b.HasBaseType("Wiedza.Core.Models.Data.Base.User");
+
+                    b.Property<int>("AccountState")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0)
+                        .HasColumnName("account_state");
+
+                    b.Property<byte[]>("AvatarBytes")
+                        .HasColumnType("varbinary(max)")
+                        .HasColumnName("avatar_bytes");
+
+                    b.Property<float>("Balance")
+                        .HasColumnType("real")
+                        .HasColumnName("balance");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("description");
+
+                    b.Property<bool>("IsVerificated")
+                        .HasColumnType("bit")
+                        .HasColumnName("is_verificated");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("name");
+
+                    b.Property<float?>("Rating")
+                        .HasColumnType("real")
+                        .HasColumnName("rating");
+
+                    b.ToTable("persons", (string)null);
+                });
+
             modelBuilder.Entity("Wiedza.Api.Data.Models.MessageFile", b =>
                 {
                     b.HasOne("Wiedza.Core.Models.Data.AttachmentFile", "AttachmentFile")
@@ -937,7 +929,7 @@ namespace Wiedza.Api.Migrations
                         .WithMany()
                         .HasForeignKey("AdministratorId")
                         .OnDelete(DeleteBehavior.ClientCascade)
-                        .HasConstraintName("fk_message_complaints_administrators_administrator_id");
+                        .HasConstraintName("fk_message_complaints_admins_administrator_id");
 
                     b.HasOne("Wiedza.Core.Models.Data.Person", "Author")
                         .WithMany()
@@ -997,7 +989,7 @@ namespace Wiedza.Api.Migrations
                         .WithMany()
                         .HasForeignKey("AdministratorId")
                         .OnDelete(DeleteBehavior.ClientCascade)
-                        .HasConstraintName("fk_person_complaints_administrators_administrator_id");
+                        .HasConstraintName("fk_person_complaints_admins_administrator_id");
 
                     b.HasOne("Wiedza.Core.Models.Data.AttachmentFile", "AttachmentFile")
                         .WithMany()
@@ -1035,7 +1027,7 @@ namespace Wiedza.Api.Migrations
                         .WithMany()
                         .HasForeignKey("AdministratorId")
                         .OnDelete(DeleteBehavior.ClientCascade)
-                        .HasConstraintName("fk_publication_complaints_administrators_administrator_id");
+                        .HasConstraintName("fk_publication_complaints_admins_administrator_id");
 
                     b.HasOne("Wiedza.Core.Models.Data.AttachmentFile", "AttachmentFile")
                         .WithMany()
@@ -1130,6 +1122,26 @@ namespace Wiedza.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_services_publications_id");
+                });
+
+            modelBuilder.Entity("Wiedza.Core.Models.Data.Administrator", b =>
+                {
+                    b.HasOne("Wiedza.Core.Models.Data.Base.User", null)
+                        .WithOne()
+                        .HasForeignKey("Wiedza.Core.Models.Data.Administrator", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_admins_users_id");
+                });
+
+            modelBuilder.Entity("Wiedza.Core.Models.Data.Person", b =>
+                {
+                    b.HasOne("Wiedza.Core.Models.Data.Base.User", null)
+                        .WithOne()
+                        .HasForeignKey("Wiedza.Core.Models.Data.Person", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_persons_users_id");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,7 +1,5 @@
-using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Azure.Core;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
@@ -15,12 +13,11 @@ using Microsoft.Extensions.Options;
 using StackExchange.Redis;
 using Wiedza.Api.Configs;
 using Wiedza.Api.Configs.ConfigureOptions;
+using Wiedza.Api.Core;
 using Wiedza.Api.Data;
 using Wiedza.Api.Repositories;
 using Wiedza.Api.Repositories.Implementations;
 using Wiedza.Api.Services;
-using Wiedza.Core.Models.Data;
-using Wiedza.Core.Models.Enums;
 using Wiedza.Core.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -90,6 +87,18 @@ builder.Services.AddAuthentication(options =>
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer();
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(Policies.PersonPolicy, policyBuilder =>
+    {
+        policyBuilder.RequireRole(Roles.PersonRole);
+    });
+    options.AddPolicy(Policies.AdminPolicy, policyBuilder =>
+    {
+        policyBuilder.RequireRole(Roles.AdministratorRole);
+    });
+});
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -119,7 +128,5 @@ app.UseExceptionHandler(errApp =>
         await result.ExecuteResultAsync(new ActionContext(context, context.GetRouteData(), new ControllerActionDescriptor()));
     });
 });
-
-using var dataContext = app.Services.CreateScope().ServiceProvider.GetRequiredService<DataContext>();
 
 app.Run();

@@ -8,6 +8,6 @@ internal class AdministratorDataConfig : IEntityTypeConfiguration<Administrator>
 {
     public void Configure(EntityTypeBuilder<Administrator> builder)
     {
-        builder.HasIndex(p => p.Username).IsUnique();
+        builder.ToTable("admins");
     }
 }

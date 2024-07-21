@@ -57,4 +57,14 @@ public class DbPersonRepository(DataContext dataContext) : IPersonRepository
         await dataContext.SaveChangesAsync();
         return verification;
     }
+
+    public async Task<bool> DeletePersonAsync(Guid personId)
+    {
+        var personResult = await GetPersonAsync(personId);
+        if (personResult.IsFailed) return false;
+
+        dataContext.Persons.Remove(personResult.Value);
+        await dataContext.SaveChangesAsync();
+        return true;
+    }
 }

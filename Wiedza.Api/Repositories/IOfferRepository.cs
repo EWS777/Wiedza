@@ -4,5 +4,5 @@ namespace Wiedza.Api.Repositories;
 
 public interface IOfferRepository
 {
-    public Task<Offer> AddOfferAsync(Offer offer);
+    Task<Offer> AddOfferAsync(Offer offer);
 }

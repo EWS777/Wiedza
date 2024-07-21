@@ -12,21 +12,21 @@ public interface IPersonRepository
     /// <param name="personId">ID of requested person</param>
     /// <returns><see cref="Person"/> if exists</returns>
     /// <exception cref="PersonNotFoundException"></exception>
-    public Task<Result<Person>> GetPersonAsync(Guid personId);
+    Task<Result<Person>> GetPersonAsync(Guid personId);
     /// <summary>
     /// Get person by username or email
     /// </summary>
     /// <param name="usernameOrEmail">Username or email of requested person</param>
     /// <returns><see cref="Person"/> if exists</returns>
     /// <exception cref="PersonNotFoundException"></exception>
-    public Task<Result<Person>> GetPersonAsync(string usernameOrEmail);
+    Task<Result<Person>> GetPersonAsync(string usernameOrEmail);
     /// <summary>
     /// Adds person to the repository
     /// </summary>
     /// <param name="person"><see cref="Person"/> to add</param>
     /// <returns>Added person if successful</returns>
     /// <exception cref="CreationException"></exception>
-    public Task<Result<Person>> AddPersonAsync(Person person);
+    Task<Result<Person>> AddPersonAsync(Person person);
     /// <summary>
     /// Updates the requested person
     /// </summary>
@@ -34,6 +34,7 @@ public interface IPersonRepository
     /// <param name="update">Action perfomed on a person</param>
     /// <returns>Updated <see cref="Person"/>> if successful</returns>
     /// <exception cref="PersonNotFoundException"></exception>
-    public Task<Result<Person>> UpdatePersonAsync(Guid personId, Action<Person> update);
-    public Task<Result<Verification>> VerifyProfileAsync(Verification verification);
+    Task<Result<Person>> UpdatePersonAsync(Guid personId, Action<Person> update);
+    Task<Result<Verification>> VerifyProfileAsync(Verification verification);
+    Task<bool> DeletePersonAsync(Guid personId);
 }

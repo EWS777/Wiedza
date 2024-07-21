@@ -48,6 +48,7 @@ public class DbProjectService(IProjectRepository projectRepository) : IProjectSe
 
         var request = new UpdatePublicationRequest(project);
         update(request);
+
         if (request.IsValidationFailed(out var exception)) return exception;
 
         return await projectRepository.UpdateProjectAsync(projectId, projectUpdate =>

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SystemTextJsonPatch;
+using Wiedza.Api.Core;
 using Wiedza.Api.Core.Extensions;
 using Wiedza.Core.Models.Data;
 using Wiedza.Core.Requests;
@@ -20,14 +21,14 @@ public class ProjectsController(
         return await projectService.GetProjectsAsync();
     }
 
-    [HttpGet, Route("my"), Authorize]
+    [HttpGet, Route("my"), Authorize(Policy = Policies.PersonPolicy)]
     public async Task<ActionResult<Project[]>> GetPersonProjects()
     {
         var userId = User.Claims.GetUserId();
         return await projectService.GetPersonProjectsAsync(userId);
     }
 
-    [HttpGet, Route("all"), Authorize] // TODO: Only admin
+    [HttpGet, Route("all"), Authorize(Policy = Policies.AdminPolicy)]
     public async Task<ActionResult<Project[]>> GetAllProjects()
     {
         return await projectService.GetProjectsAsync(false);
@@ -39,14 +40,14 @@ public class ProjectsController(
         return await projectService.GetProjectAsync(projectId);
     }
 
-    [HttpPut, Route("add"), Authorize]
+    [HttpPut, Route("add"), Authorize(Policy = Policies.PersonPolicy)]
     public async Task<ActionResult<Project>> AddProject(AddPublicationRequest addPublicationRequest)
     {
         var userId = User.Claims.GetUserId();
         return await projectService.AddProjectAsync(userId, addPublicationRequest);
     }
 
-    [HttpPatch, Route("{projectId}/modify"), Authorize]
+    [HttpPatch, Route("{projectId}"), Authorize(Policy = Policies.PersonPolicy)]
     public async Task<ActionResult<Project>> UpdateProject(ulong projectId, [FromBody] JsonPatchDocument<UpdatePublicationRequest> update)
     {
         var userId = User.Claims.GetUserId();
@@ -54,11 +55,11 @@ public class ProjectsController(
         return result.Match(res => res, e => throw e);
     }
 
-    [HttpDelete, Route("delete"), Authorize]
-    public async Task<IActionResult> DeleteProject([FromQuery] ulong projectId)
+    [HttpDelete, Route("{projectId}"), Authorize(Policy = Policies.PersonPolicy)]
+    public async Task<IActionResult> DeleteProject([FromRoute] ulong projectId)
     {
         var userId = User.Claims.GetUserId();
         var result = await projectService.DeleteProjectAsync(userId, projectId);
-        return result.Match(_=>Ok("Publication was deleted!"), e => throw e);
+        return result.Match(_ => Ok("Publication was deleted!"), e => throw e);
     }
 }

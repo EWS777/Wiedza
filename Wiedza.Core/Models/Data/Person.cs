@@ -5,7 +5,6 @@ namespace Wiedza.Core.Models.Data;
 
 public class Person : User
 {
-    public DateTimeOffset CreatedAt { get; set; }
     public string? Name { get; set; }
     public string? Description { get; set; }
     public float Balance { get; set; }

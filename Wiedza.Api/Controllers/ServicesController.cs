@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SystemTextJsonPatch;
+using Wiedza.Api.Core;
 using Wiedza.Api.Core.Extensions;
 using Wiedza.Core.Models.Data;
 using Wiedza.Core.Requests;
@@ -18,14 +19,14 @@ public class ServicesController(IServiceService serviceService) : ControllerBase
         return await serviceService.GetServicesAsync();
     }
 
-    [HttpGet, Route("my"), Authorize]
+    [HttpGet, Route("my"), Authorize(Policy = Policies.PersonPolicy)]
     public async Task<ActionResult<Service[]>> GetPersonServices()
     {
         var userId = User.Claims.GetUserId();
         return await serviceService.GetPersonServicesAsync(userId);
     }
 
-    [HttpGet, Route("all"), Authorize] // TODO: Only admin
+    [HttpGet, Route("all"), Authorize(Policy = Policies.AdminPolicy)]
     public async Task<ActionResult<Service[]>> GetAllServices()
     {
         return await serviceService.GetServicesAsync(false);
@@ -37,14 +38,14 @@ public class ServicesController(IServiceService serviceService) : ControllerBase
         return await serviceService.GetServiceAsync(serviceId);
     }
 
-    [HttpPut, Route("add"), Authorize]
+    [HttpPut, Route("add"), Authorize(Policy = Policies.PersonPolicy)]
     public async Task<ActionResult<Service>> AddService(AddPublicationRequest addPublicationRequest)
     {
         var userId = User.Claims.GetUserId();
         return await serviceService.AddServiceAsync(userId, addPublicationRequest);
     }
 
-    [HttpPatch, Route("{serviceId}/modify"), Authorize]
+    [HttpPatch, Route("{serviceId}"), Authorize(Policy = Policies.PersonPolicy)]
     public async Task<ActionResult<Service>> UpdateService(ulong serviceId, [FromBody] JsonPatchDocument<UpdatePublicationRequest> update)
     {
         var userId = User.Claims.GetUserId();
@@ -52,11 +53,11 @@ public class ServicesController(IServiceService serviceService) : ControllerBase
         return result.Match(res => res, e => throw e);
     }
 
-    [HttpDelete, Route("delete"), Authorize]
+    [HttpDelete, Route("{serviceId}"), Authorize(Policy = Policies.PersonPolicy)]
     public async Task<IActionResult> DeleteService([FromQuery] ulong serviceId)
     {
         var userId = User.Claims.GetUserId();
         var result = await serviceService.DeleteServiceAsync(userId, serviceId);
-        return result.Match(_=>Ok("Publication was deleted!"), e => throw e);
+        return result.Match(_ => Ok("Publication was deleted!"), e => throw e);
     }
 }

@@ -10,11 +10,11 @@ public interface IPersonSaltRepository
     /// Person's salt if exists;
     /// otherwise <see langword="null"/>
     /// </returns>
-    public Task<string?> GetSaltAsync(Guid personId);
+    Task<string?> GetSaltAsync(Guid personId);
     /// <summary>
     /// Creates salt for the person
     /// </summary>
     /// <param name="personId">ID of the person</param>
     /// <returns>Created salt for the person</returns>
-    public Task<string> AddPersonSalt(Guid personId);
+    Task<string> AddPersonSalt(Guid personId);
 }

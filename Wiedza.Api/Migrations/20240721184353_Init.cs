@@ -12,19 +12,6 @@ namespace Wiedza.Api.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "administrators",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    username = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    password_hash = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_administrators", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "categories",
                 columns: table => new
                 {
@@ -57,25 +44,19 @@ namespace Wiedza.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "persons",
+                name: "users",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    created_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    balance = table.Column<float>(type: "real", nullable: false),
-                    is_verificated = table.Column<bool>(type: "bit", nullable: false),
-                    rating = table.Column<float>(type: "real", nullable: true),
-                    avatar_bytes = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
-                    account_state = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     username = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    password_hash = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    password_hash = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    type = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_persons", x => x.id);
+                    table.PrimaryKey("PK_users", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -89,6 +70,47 @@ namespace Wiedza.Api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_website_balances", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "admins",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_admins", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_admins_users_id",
+                        column: x => x.id,
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "persons",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    balance = table.Column<float>(type: "real", nullable: false),
+                    is_verificated = table.Column<bool>(type: "bit", nullable: false),
+                    rating = table.Column<float>(type: "real", nullable: true),
+                    avatar_bytes = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    account_state = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_persons", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_persons_users_id",
+                        column: x => x.id,
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -140,9 +162,9 @@ namespace Wiedza.Api.Migrations
                 {
                     table.PrimaryKey("pk_person_complaints", x => x.id);
                     table.ForeignKey(
-                        name: "fk_person_complaints_administrators_administrator_id",
+                        name: "fk_person_complaints_admins_administrator_id",
                         column: x => x.administrator_id,
-                        principalTable: "administrators",
+                        principalTable: "admins",
                         principalColumn: "id");
                     table.ForeignKey(
                         name: "fk_person_complaints_files_attachment_file_id",
@@ -348,9 +370,9 @@ namespace Wiedza.Api.Migrations
                 {
                     table.PrimaryKey("pk_publication_complaints", x => x.id);
                     table.ForeignKey(
-                        name: "fk_publication_complaints_administrators_administrator_id",
+                        name: "fk_publication_complaints_admins_administrator_id",
                         column: x => x.administrator_id,
-                        principalTable: "administrators",
+                        principalTable: "admins",
                         principalColumn: "id");
                     table.ForeignKey(
                         name: "fk_publication_complaints_files_attachment_file_id",
@@ -449,9 +471,9 @@ namespace Wiedza.Api.Migrations
                 {
                     table.PrimaryKey("pk_message_complaints", x => x.id);
                     table.ForeignKey(
-                        name: "fk_message_complaints_administrators_administrator_id",
+                        name: "fk_message_complaints_admins_administrator_id",
                         column: x => x.administrator_id,
-                        principalTable: "administrators",
+                        principalTable: "admins",
                         principalColumn: "id");
                     table.ForeignKey(
                         name: "fk_message_complaints_messages_message_id",
@@ -488,12 +510,6 @@ namespace Wiedza.Api.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "ix_administrators_username",
-                table: "administrators",
-                column: "username",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "ix_categories_parent_category_id",
@@ -571,18 +587,6 @@ namespace Wiedza.Api.Migrations
                 column: "person_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_persons_email",
-                table: "persons",
-                column: "email",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "ix_persons_username",
-                table: "persons",
-                column: "username",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "ix_publication_complaints_administrator_id",
                 table: "publication_complaints",
                 column: "administrator_id");
@@ -621,6 +625,18 @@ namespace Wiedza.Api.Migrations
                 name: "ix_reviews_person_id",
                 table: "reviews",
                 column: "person_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_users_email",
+                table: "users",
+                column: "email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_users_username",
+                table: "users",
+                column: "username",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "ix_verifications_person_id",
@@ -677,7 +693,7 @@ namespace Wiedza.Api.Migrations
                 name: "messages");
 
             migrationBuilder.DropTable(
-                name: "administrators");
+                name: "admins");
 
             migrationBuilder.DropTable(
                 name: "files");
@@ -696,6 +712,9 @@ namespace Wiedza.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "persons");
+
+            migrationBuilder.DropTable(
+                name: "users");
         }
     }
 }

@@ -1,7 +1,5 @@
 ﻿using Wiedza.Api.Repositories;
-using Wiedza.Core.Exceptions;
 using Wiedza.Core.Models.Data;
-using Wiedza.Core.Requests;
 using Wiedza.Core.Services;
 using Wiedza.Core.Utilities;
 
