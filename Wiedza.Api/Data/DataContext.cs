@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Wiedza.Api.Data.Models;
 using Wiedza.Core.Models.Data;
+using Wiedza.Core.Models.Data.Base;
 
 namespace Wiedza.Api.Data;
 
@@ -18,6 +19,8 @@ public sealed class DataContext : DbContext
     public DbSet<Administrator> Administrators { get; set; }
     public DbSet<Project> Projects { get; set; }
     public DbSet<Service> Services { get; set; }
+    public DbSet<Publication> Publications { get; set; }
+    
     public DbSet<Review> Reviews { get; set; }
     public DbSet<Verification> Verifications { get; set; }
     public DbSet<WebsiteBalance> WebsiteBalances { get; set; }

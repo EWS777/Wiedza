@@ -12,7 +12,7 @@ using Wiedza.Api.Data;
 namespace Wiedza.Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240721184353_Init")]
+    [Migration("20240721190140_Init")]
     partial class Init
     {
         /// <inheritdoc />

@@ -5,5 +5,6 @@ public enum PublicationStatus
     Pending,
     Active,
     Inactive,
-    Completed
+    Completed,
+    Processing
 }

@@ -10,4 +10,5 @@ public class PersonNotFoundException : NotFoundException
 
 public class ProjectNotFoundException(ulong publicationId) : NotFoundException($"Project with id `{publicationId}` not found!");
 public class ServiceNotFoundException(ulong publicationId) : NotFoundException($"Service with id `{publicationId}` not found!");
+public class OfferNotFoundException(Guid offerId) : NotFoundException($"Offer with id `{offerId}` not found!");
 
