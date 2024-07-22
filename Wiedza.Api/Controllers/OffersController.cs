@@ -1,12 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SystemTextJsonPatch;
 using Wiedza.Api.Core;
 using Wiedza.Api.Core.Extensions;
 using Wiedza.Core.Models.Data;
-using Wiedza.Core.Requests;
+using Wiedza.Core.Models.Enums;
 using Wiedza.Core.Services;
-using Wiedza.Core.Utilities;
 
 namespace Wiedza.Api.Controllers;
 
@@ -15,50 +13,60 @@ public class OffersController(
     IOfferService offerService
     ) : ControllerBase
 {
-    [HttpPut, Route("addService")]
-    public async Task<ActionResult<Offer>> AddOfferToService([FromQuery] ulong publicationId, [FromQuery] string? message)
-    {
-        var userId = User.Claims.GetUserId();
-        var result = await offerService.AddOfferToServiceAsync(userId, publicationId, message);
-        return result.Match(offer => offer, e => throw e);
-    }
-    [HttpPut, Route("addProject")]
-    public async Task<ActionResult<Offer>> AddOfferToProject([FromQuery] ulong publicationId, [FromQuery] string? message)
-    {
-        var userId = User.Claims.GetUserId();
-        var result = await offerService.AddOfferToProjectAsync(userId, publicationId, message);
-        return result.Match(offer => offer, e => throw e);
-    }
-
-    [HttpGet, Route("{offerId}")]
-    public async Task<Result<Offer>> GetOffer(Guid offerId)
-    {
-        var userId = User.Claims.GetUserId();
-        return await offerService.GetOfferAsync(userId, offerId);
-    }
-    
-    //endpoint to return offers list to some post
     [HttpGet, Route("received")]
-    public async Task<ActionResult<Offer[]>> GetReceivedOfferList([FromQuery] ulong postId)
+    public async Task<ActionResult<Offer[]>> GetReceivedOffers([FromQuery] ulong publicationId)
     {
         var userId = User.Claims.GetUserId();
-        return await offerService.GetReceivedOfferListAsync(userId, postId);
-    }
-    
-    //endpoint to return my sent offers list to some post
-    [HttpGet, Route("sent")]
-    public async Task<ActionResult<Offer[]>> GetSentOfferList()
-    {
-        var userId = User.Claims.GetUserId();
-        return await offerService.GetSentOfferListAsync(userId);
+        var result = await offerService.GetReceivedOffersAsync(userId, publicationId);
+        return result.Match(offers => offers, e => throw e);
     }
 
-    [HttpPatch]
-    public async Task<ActionResult<Offer>> UpdateOfferStatus(Guid offerId,
-        [FromBody] JsonPatchDocument<UpdateOfferStatusRequest> update)
+    //endpoint to return my sent offers list to some post
+    [HttpGet, Route("sended")]
+    public async Task<ActionResult<Offer[]>> GetSendedOffers()
     {
         var userId = User.Claims.GetUserId();
-        var result = await offerService.UpdateOfferStatusAsync(userId, offerId, update.ApplyTo);
-        return result.Match(res => res, e => throw e);
+        return await offerService.GetSendedOffersAsync(userId);
+    }
+
+    [HttpGet, Route("{offerId:guid}")]
+    public async Task<ActionResult<Offer>> GetOffer(Guid offerId)
+    {
+        var userId = User.Claims.GetUserId();
+        var result = await offerService.GetOfferAsync(userId, offerId);
+        return result.Match(offer => offer, e => throw e);
+    }
+
+    [HttpPost, Route("add")]
+    public async Task<ActionResult<Offer>> AddOfferToPublication([FromQuery] ulong publicationId, [FromQuery] string? message)
+    {
+        var userId = User.Claims.GetUserId();
+        var result = await offerService.AddOfferToPublicationAsync(userId, publicationId, message);
+        return result.Match(offer => offer, e => throw e);
+    }
+
+    [HttpPost, Route("{offerId:guid}/respond")]
+    public async Task<ActionResult<Offer>> RespondToOffer(Guid offerId, [FromQuery] bool isApprove)
+    {
+        var userId = User.Claims.GetUserId();
+        var result = await offerService.RespondToOfferAsync(userId, offerId, isApprove);
+        throw new NotImplementedException();
+    }
+
+    [HttpPost, Route("{offerId:guid}/change-status")]
+    public async Task<ActionResult<Offer>> ChangeOfferStatus(Guid offerId, [FromQuery] bool isCompleted)
+    {
+        var userId = User.Claims.GetUserId();
+        offerService.ChangeOfferStatusAsync(userId, offerId, isCompleted);
+        throw new NotImplementedException();
+    }
+
+    [HttpDelete, Route("{offerId:guid}")]
+    public async Task<IActionResult> DeleteOffer(Guid offerId)
+    {
+        var userId = User.Claims.GetUserId();
+        var result = await offerService.DeleteOfferAsync(userId, offerId);
+
+        return result.Match(_ => Ok("Offer was deleted!"), e => throw e);
     }
 }

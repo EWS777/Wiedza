@@ -26,7 +26,10 @@ public class DbProfileService(
         var personResult = await personRepository.GetPersonAsync(username);
         if (personResult.IsFailed) return personResult.Exception;
 
-        return new Profile(personResult.Value);
+        var person = personResult.Value;
+        if (person.Email == username) return new PersonNotFoundException(username);
+
+        return new Profile(person);
     }
 
     public async Task<Result<Profile>> UpdateProfileAsync(Guid personId, Action<Profile> update)

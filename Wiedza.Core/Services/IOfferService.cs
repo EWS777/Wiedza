@@ -6,10 +6,12 @@ namespace Wiedza.Core.Services;
 
 public interface IOfferService
 {
-    public Task<Result<Offer>> AddOfferToServiceAsync(Guid personId, ulong publicationId, string? message);
-    public Task<Result<Offer>> AddOfferToProjectAsync(Guid personId, ulong publicationId, string? message);
     Task<Result<Offer>> GetOfferAsync(Guid userId, Guid offerId);
-    Task<Offer[]> GetReceivedOfferListAsync(Guid userId, ulong postId);
-    Task<Offer[]> GetSentOfferListAsync(Guid userId);
-    Task<Result<Offer>> UpdateOfferStatusAsync(Guid userId, Guid offerId, Action<UpdateOfferStatusRequest> update);
+    Task<Result<Offer[]>> GetReceivedOffersAsync(Guid userId, ulong publicationId);
+    Task<Offer[]> GetSendedOffersAsync(Guid userId);
+
+    Task<Result<Offer>> AddOfferToPublicationAsync(Guid userId, ulong publicationId, string? message);
+    Task<Result<bool>> DeleteOfferAsync(Guid userId, Guid offerId);
+    Task<Result<Offer>> RespondToOfferAsync(Guid userId, Guid offerId, bool isApprove);
+    Task<Result<Offer>> ChangeOfferStatusAsync(Guid userId, Guid offerId, bool isCompleted);
 }

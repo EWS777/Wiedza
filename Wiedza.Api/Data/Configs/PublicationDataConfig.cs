@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Wiedza.Api.Data.ValueGenerators;
 using Wiedza.Core.Models.Data.Base;
@@ -23,8 +24,11 @@ internal class PublicationDataConfig : IEntityTypeConfiguration<Publication>
         builder.Property(p => p.Title).HasMaxLength(50);
         builder.Property(p => p.Description).HasMaxLength(500);
 
-        builder.Property<string>("type").HasValueGenerator<TypeValueGenerator>();
+        builder.Property(p => p.PublicationType).HasValueGenerator<TypeValueGenerator>()
+            .ValueGeneratedOnAdd()
+            .HasConversion(type => type.FullName, s => Type.GetType(s ?? "") ?? typeof(User),
+                ValueComparer.CreateDefault<Type>(false), ValueComparer.CreateDefault<string>(false));
 
-        builder.UseTptMappingStrategy().ToTable("publications");
+        builder.UseTptMappingStrategy();
     }
 }

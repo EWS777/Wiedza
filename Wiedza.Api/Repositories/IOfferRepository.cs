@@ -5,9 +5,10 @@ namespace Wiedza.Api.Repositories;
 
 public interface IOfferRepository
 {
-    Task<Result<Offer>> AddOfferAsync(Offer offer);
-    Task<Result<Offer>> GetOfferAsync(Guid userId, Guid offerId);
-    Task<Offer[]> GetReceivedOfferListAsync(Guid userId, ulong postId);
-    Task<Offer[]> GetSentOfferListAsync(Guid userId);
-    Task<Result<Offer>> UpdateOfferStatusAsync(Guid userId, Guid offerId, Action<Offer> update);
+    Task<Result<Offer>> GetOfferAsync(Guid offerId);
+    Task<Offer[]> GetReceivedOffersAsync(ulong publicationId);
+    Task<Offer[]> GetSendedOffersByPersonAsync(Guid personId);
+    Task<Offer> AddOfferAsync(Offer offer);
+    Task<Result<Offer>> UpdateOfferStatusAsync(Guid offerId, Action<Offer> update);
+    Task<bool> DeleteOfferAsync(Guid offerId);
 }

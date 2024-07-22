@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.ValueGeneration;
 
 namespace Wiedza.Api.Data.ValueGenerators;
 
-public class TypeValueGenerator : ValueGenerator<string>
+public class TypeValueGenerator : ValueGenerator<Type>
 {
-    public override string Next(EntityEntry entry) => entry.Entity.GetType().Name;
+    public override Type Next(EntityEntry entry) => entry.Entity.GetType();
 
     public override bool GeneratesTemporaryValues => false;
 }

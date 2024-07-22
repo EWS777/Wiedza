@@ -35,7 +35,7 @@ public class AuthController(
         return refreshResult.Match(response => response, e => throw e);
     }
 
-    [HttpPut, Route("change-password"), Authorize]
+    [HttpPost, Route("change-password"), Authorize]
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest changePasswordRequest)
     {
         var userId = User.Claims.GetUserId();

@@ -38,7 +38,7 @@ public class ServicesController(IServiceService serviceService) : ControllerBase
         return await serviceService.GetServiceAsync(serviceId);
     }
 
-    [HttpPut, Route("add"), Authorize(Policy = Policies.PersonPolicy)]
+    [HttpPost, Route("add"), Authorize(Policy = Policies.PersonPolicy)]
     public async Task<ActionResult<Service>> AddService(AddPublicationRequest addPublicationRequest)
     {
         var userId = User.Claims.GetUserId();

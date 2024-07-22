@@ -40,7 +40,7 @@ public class ProjectsController(
         return await projectService.GetProjectAsync(projectId);
     }
 
-    [HttpPut, Route("add"), Authorize(Policy = Policies.PersonPolicy)]
+    [HttpPost, Route("add"), Authorize(Policy = Policies.PersonPolicy)]
     public async Task<ActionResult<Project>> AddProject(AddPublicationRequest addPublicationRequest)
     {
         var userId = User.Claims.GetUserId();

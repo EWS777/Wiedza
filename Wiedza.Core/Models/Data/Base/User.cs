@@ -1,4 +1,6 @@
-﻿namespace Wiedza.Core.Models.Data.Base;
+﻿using System.Text.Json.Serialization;
+
+namespace Wiedza.Core.Models.Data.Base;
 
 public abstract class User
 {
@@ -7,4 +9,6 @@ public abstract class User
     public string Username { get; set; }
     public string PasswordHash { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
+
+    [JsonIgnore] public Type UserType { get; }
 }

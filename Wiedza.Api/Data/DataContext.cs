@@ -8,6 +8,9 @@ namespace Wiedza.Api.Data;
 
 public sealed class DataContext : DbContext
 {
+    public DbSet<Publication> Publications { get; set; }
+    public DbSet<User> Users { get; set; }
+
     public DbSet<Category> Categories { get; set; }
     public DbSet<Chat> Chats { get; set; }
     public DbSet<AttachmentFile> Files { get; set; }
@@ -19,7 +22,6 @@ public sealed class DataContext : DbContext
     public DbSet<Administrator> Administrators { get; set; }
     public DbSet<Project> Projects { get; set; }
     public DbSet<Service> Services { get; set; }
-    public DbSet<Publication> Publications { get; set; }
     
     public DbSet<Review> Reviews { get; set; }
     public DbSet<Verification> Verifications { get; set; }

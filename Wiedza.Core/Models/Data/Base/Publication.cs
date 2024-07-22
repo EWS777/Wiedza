@@ -1,4 +1,5 @@
-﻿using Wiedza.Core.Models.Enums;
+﻿using System.Text.Json.Serialization;
+using Wiedza.Core.Models.Enums;
 
 namespace Wiedza.Core.Models.Data.Base;
 
@@ -16,4 +17,6 @@ public abstract class Publication
     public Guid? CategoryId { get; set; }
     public Person Author { get; set; }
     public Guid AuthorId { get; set; }
+
+    [JsonIgnore] public Type PublicationType { get; }
 }

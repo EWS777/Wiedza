@@ -27,13 +27,21 @@ public sealed class ExceptionHandlerService(ProblemDetailsFactory problemDetails
         var details = problemDetailsFactory.CreateProblemDetails(context, statusCode, exception.GetType().Name,
             detail: exception.Message, instance: instance);
 
+        if (statusCode != (int)HttpStatusCode.InternalServerError)
+        {
+            return new ObjectResult(details)
+            {
+                StatusCode = statusCode
+            };
+        }
+
         using var reader = new StreamReader(request.BodyReader.AsStream());
 
         details.Extensions.Add("error_details", new
         {
-                Message = exception.Message,
-                Source = exception.TargetSite?.ReflectedType?.FullName ?? exception.Source,
-                StackTrace = exception.StackTrace
+            Message = exception.Message,
+            Source = exception.TargetSite?.ReflectedType?.FullName ?? exception.Source,
+            StackTrace = exception.StackTrace
         });
 
         details.Extensions.Add("request_details", new

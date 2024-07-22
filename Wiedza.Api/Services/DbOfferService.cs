@@ -10,85 +10,125 @@ namespace Wiedza.Api.Services;
 
 public class DbOfferService(
     IOfferRepository offerRepository,
-    IPersonRepository personRepository,
-    IServiceRepository serviceRepository,
-    IProjectRepository projectRepository) : IOfferService
+    IPublicationRepository publicationRepository,
+    IPersonRepository personRepository) : IOfferService
 {
-    public async Task<Result<Offer>> AddOfferToServiceAsync(Guid personId, ulong publicationId, string? message)
-    {
-        var serviceResult = await serviceRepository.GetServiceAsync(publicationId);
-        if (serviceResult.IsFailed) return new ServiceNotFoundException(publicationId);
-        var service = serviceResult.Value;
-        
-        var personResult = await personRepository.GetPersonAsync(personId);
-        var person = personResult.Value;
-        
-        //check if the person have enough balance to buy service
-        if (person.Balance < service.Price) return new NotEnoughMoneyException("The balance is less then service's price");
-        
-        return await offerRepository.AddOfferAsync(new Offer
-        {
-            Message = message,
-            PulicationId = publicationId,
-            PersonId = personId,
-            FreelancerProfit = service.Price*0.9f,
-            CompanyProfit = service.Price - service.Price*0.9f
-        });
-    }
-
-    public async Task<Result<Offer>> AddOfferToProjectAsync(Guid personId, ulong publicationId, string? message)
-    {
-        var projectResult = await projectRepository.GetProjectAsync(publicationId);
-        if (projectResult.IsFailed) return new ProjectNotFoundException(publicationId);
-        var project = projectResult.Value;
-        
-        return await offerRepository.AddOfferAsync(new Offer
-        {
-            Message = message,
-            PulicationId = publicationId,
-            PersonId = personId,
-            FreelancerProfit = project.Price*0.9f,
-            CompanyProfit = project.Price - project.Price*0.9f
-        });
-    }
-
     public async Task<Result<Offer>> GetOfferAsync(Guid userId, Guid offerId)
     {
-        return await offerRepository.GetOfferAsync(userId, offerId);
-    }
-
-    public async Task<Offer[]> GetReceivedOfferListAsync(Guid userId, ulong postId)
-    {
-        return await offerRepository.GetReceivedOfferListAsync(userId,postId);
-    }
-
-    public async Task<Offer[]> GetSentOfferListAsync(Guid userId)
-    {
-        return await offerRepository.GetSentOfferListAsync(userId);
-    }
-
-    public async Task<Result<Offer>> UpdateOfferStatusAsync(Guid userId, Guid offerId, Action<UpdateOfferStatusRequest> update)
-    {
-        var offerResult = await offerRepository.GetOfferAsync(userId, offerId);
+        var offerResult = await offerRepository.GetOfferAsync(offerId);
         if (offerResult.IsFailed) return offerResult.Exception;
 
         var offer = offerResult.Value;
-        var request = new UpdateOfferStatusRequest(offer);
-        update(request);
 
-        return await offerRepository.UpdateOfferStatusAsync(userId, offerId, offerUpdate =>
+        if (offer.PersonId != userId && offer.Publication?.AuthorId != userId)
+            return new ForbiddenException("You don't have permission to get this offer!");
+
+        return offer;
+    }
+
+    public async Task<Result<Offer[]>> GetReceivedOffersAsync(Guid userId, ulong publicationId)
+    {
+        var publicationResult = await publicationRepository.GetPublicationAsync(publicationId);
+        if (publicationResult.IsFailed) return publicationResult.Exception;
+
+        var publication = publicationResult.Value;
+
+        if (publication.AuthorId != userId) return new ForbiddenException("You are not owner of publication!");
+
+        return await offerRepository.GetReceivedOffersAsync(publicationId);
+    }
+
+    public async Task<Offer[]> GetSendedOffersAsync(Guid userId)
+    {
+        return await offerRepository.GetSendedOffersByPersonAsync(userId);
+    }
+
+    public async Task<Result<Offer>> AddOfferToPublicationAsync(Guid userId, ulong publicationId, string? message)
+    {
+        var publicationResult = await publicationRepository.GetPublicationAsync(publicationId);
+        if (publicationResult.IsFailed) return publicationResult.Exception;
+
+        var publication = publicationResult.Value;
+
+        if (publication.Status != PublicationStatus.Active) return new BadRequestException("Publication is not active!");
+
+        if (publication.AuthorId == userId)
+            return new BadRequestException("You cannot send offer on your own publication!");
+
+        if (publication.PublicationType == typeof(Service))
         {
-            if (request.Status != UpdateOfferStatus.Other)
-            {
-                offerUpdate.Status = request.Status switch
-                {
-                    UpdateOfferStatus.Approved => OfferStatus.Approved,
-                    UpdateOfferStatus.Rejected => OfferStatus.Rejected,
-                    UpdateOfferStatus.Completed => OfferStatus.Completed,
-                    UpdateOfferStatus.Canceled => OfferStatus.Canceled,
-                    _ => throw new ArgumentOutOfRangeException(nameof(request.Status))
-                };
-            }
+            var personResult = await personRepository.GetPersonAsync(userId);
+            if (personResult.IsFailed) return personResult.Exception;
+            var person = personResult.Value;
+
+            if (person.Balance < publication.Price)
+                return new NotEnoughMoneyException($"Price of service is {publication.Price}");
+        }
+
+        return await offerRepository.AddOfferAsync(new Offer
+        {
+            PersonId = userId,
+            Message = message,
+            PulicationId = publicationId
+        });
+    }
+
+    public async Task<Result<bool>> DeleteOfferAsync(Guid userId, Guid offerId)
+    {
+        var offerResult = await offerRepository.GetOfferAsync(offerId);
+        if (offerResult.IsFailed) return offerResult.Exception;
+
+        var offer = offerResult.Value;
+
+        if (offer.PersonId != userId)
+            return new ForbiddenException("You are not owner of the offer!");
+
+        if (offer.Status is OfferStatus.Approved)
+            return new BadRequestException("Offer is approved. You cannot delete this offer!");
+
+        return await offerRepository.DeleteOfferAsync(offerId);
+    }
+
+    public async Task<Result<Offer>> RespondToOfferAsync(Guid userId, Guid offerId, bool isApprove)
+    {
+        var offerResult = await offerRepository.GetOfferAsync(offerId);
+        if (offerResult.IsFailed) throw offerResult.Exception;
+
+        var offer = offerResult.Value;
+
+        if (offer.Publication?.AuthorId != userId)
+            return new ForbiddenException("You don't have permission to change this offer! You are not a owner of the publication!");
+
+        if (offer.Status != OfferStatus.New)
+            return new BadRequestException("Offer's status has been already set!");
+
+        return await offerRepository.UpdateOfferStatusAsync(offerId, offerUpdate =>
+        {
+            offerUpdate.Status = isApprove ? OfferStatus.Approved : OfferStatus.Rejected;
+        });
+    }
+
+    public async Task<Result<Offer>> ChangeOfferStatusAsync(Guid userId, Guid offerId, bool isCompleted)
+    {
+        var offerResult = await offerRepository.GetOfferAsync(offerId);
+        if (offerResult.IsFailed) return offerResult.Exception;
+        
+        var offer = offerResult.Value;
+
+        if (offer.Publication?.AuthorId != userId)
+            return new ForbiddenException("You don't have permission to change this offer! You are not a owner of the publication!");
+
+        if (offer.Status != OfferStatus.Approved)
+            return new BadRequestException("Offer's status must be `Approved`!");
+
+        if (isCompleted)
+        {
+            //Todo change person's balance and publication status if project
+        }
+
+        return await offerRepository.UpdateOfferStatusAsync(offerId, offerUpdate =>
+        {
+            offerUpdate.Status = isCompleted ? OfferStatus.Completed : OfferStatus.Canceled;
         });
     }
 }
