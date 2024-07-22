@@ -36,12 +36,21 @@ public class OffersController(
         var userId = User.Claims.GetUserId();
         return await offerService.GetOfferAsync(userId, offerId);
     }
-
-    [HttpGet, Route("all")]
-    public async Task<ActionResult<Offer[]>> GetListOffer([FromQuery] ulong postId)
+    
+    //endpoint to return offers list to some post
+    [HttpGet, Route("received")]
+    public async Task<ActionResult<Offer[]>> GetReceivedOfferList([FromQuery] ulong postId)
     {
         var userId = User.Claims.GetUserId();
-        return await offerService.GetOfferListAsync(userId, postId);
+        return await offerService.GetReceivedOfferListAsync(userId, postId);
+    }
+    
+    //endpoint to return my sent offers list to some post
+    [HttpGet, Route("sent")]
+    public async Task<ActionResult<Offer[]>> GetSentOfferList()
+    {
+        var userId = User.Claims.GetUserId();
+        return await offerService.GetSentOfferListAsync(userId);
     }
 
     [HttpPatch]

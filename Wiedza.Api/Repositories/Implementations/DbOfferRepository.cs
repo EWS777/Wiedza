@@ -31,13 +31,20 @@ public class DbOfferRepository(DataContext dataContext) : IOfferRepository
         return offer;
     }
 
-    public async Task<Offer[]> GetOfferListAsync(Guid userId, ulong postId)
+    public async Task<Offer[]> GetReceivedOfferListAsync(Guid userId, ulong postId)
     {
         return await dataContext.Offers
             .Include(x=>x.Publication!.Author)
             .AsNoTracking()
             .Where(x => x.Publication != null && x.Publication.Id == postId && x.Publication.AuthorId == userId
             && x.Status == OfferStatus.New).ToArrayAsync();
+    }
+
+    public async Task<Offer[]> GetSentOfferListAsync(Guid userId)
+    {
+        return await dataContext.Offers
+            .AsNoTracking()
+            .Where(x => x.PersonId == userId).ToArrayAsync();
     }
 
     public async Task<Result<Offer>> UpdateOfferStatusAsync(Guid userId, Guid offerId, Action<Offer> update)

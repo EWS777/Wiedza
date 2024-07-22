@@ -57,9 +57,14 @@ public class DbOfferService(
         return await offerRepository.GetOfferAsync(userId, offerId);
     }
 
-    public async Task<Offer[]> GetOfferListAsync(Guid userId, ulong postId)
+    public async Task<Offer[]> GetReceivedOfferListAsync(Guid userId, ulong postId)
     {
-        return await offerRepository.GetOfferListAsync(userId,postId);
+        return await offerRepository.GetReceivedOfferListAsync(userId,postId);
+    }
+
+    public async Task<Offer[]> GetSentOfferListAsync(Guid userId)
+    {
+        return await offerRepository.GetSentOfferListAsync(userId);
     }
 
     public async Task<Result<Offer>> UpdateOfferStatusAsync(Guid userId, Guid offerId, Action<UpdateOfferStatusRequest> update)
