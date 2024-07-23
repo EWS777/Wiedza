@@ -3,8 +3,11 @@ using Wiedza.Api.Core.Extensions;
 using Wiedza.Api.Repositories;
 using Wiedza.Core.Exceptions;
 using Wiedza.Core.Models;
+using Wiedza.Core.Models.Data;
+using Wiedza.Core.Requests;
 using Wiedza.Core.Services;
 using Wiedza.Core.Utilities;
+using Administrator = Wiedza.Core.Models.Data.Administrator;
 
 namespace Wiedza.Api.Services;
 
@@ -74,5 +77,30 @@ public class DbProfileService(
         if (person.PasswordHash != hash) return new BadRequestException("Password is incorrect!");
 
         return await personRepository.DeletePersonAsync(personId);
+    }
+
+    public async Task<Review> AddReviewAsync(Guid personId, Guid userId, AddReviewRequest addReviewRequest)
+    {
+        return await personRepository.AddReviewAsync(new Review
+        {
+            Message = addReviewRequest.Message,
+            Rating = addReviewRequest.Rating,
+            AuthorId = userId,
+            PersonId = personId
+        });
+    }
+
+    public async Task<Review[]> GetReviewsAsync(Guid personId)
+    {
+        return await personRepository.GetReviewsAsync(personId);
+    }
+
+    public async Task<Result<Administrator>> GetAdministratorAsync(Guid adminId)
+    {
+        var personResult = await personRepository.GetAdministratorAsync(adminId);
+        if (personResult.IsFailed) return personResult.Exception;
+        var person = personResult.Value;
+
+        return person;
     }
 }

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Wiedza.Api.Core;
 using Wiedza.Api.Core.Extensions;
 using Wiedza.Core.Models.Data;
-using Wiedza.Core.Models.Enums;
 using Wiedza.Core.Services;
 
 namespace Wiedza.Api.Controllers;
@@ -50,15 +49,15 @@ public class OffersController(
     {
         var userId = User.Claims.GetUserId();
         var result = await offerService.RespondToOfferAsync(userId, offerId, isApprove);
-        throw new NotImplementedException();
+        return result.Match(offer => offer, e => throw e);
     }
 
     [HttpPost, Route("{offerId:guid}/change-status")]
     public async Task<ActionResult<Offer>> ChangeOfferStatus(Guid offerId, [FromQuery] bool isCompleted)
     {
         var userId = User.Claims.GetUserId();
-        offerService.ChangeOfferStatusAsync(userId, offerId, isCompleted);
-        throw new NotImplementedException();
+        var result = await offerService.ChangeOfferStatusAsync(userId, offerId, isCompleted);
+        return result.Match(offer => offer, e => throw e);
     }
 
     [HttpDelete, Route("{offerId:guid}")]

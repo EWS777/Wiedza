@@ -3,6 +3,7 @@ using Wiedza.Api.Data;
 using Wiedza.Core.Exceptions;
 using Wiedza.Core.Models.Data;
 using Wiedza.Core.Utilities;
+using Administrator = Wiedza.Core.Models.Data.Administrator;
 
 namespace Wiedza.Api.Repositories.Implementations;
 
@@ -66,5 +67,28 @@ public class DbPersonRepository(DataContext dataContext) : IPersonRepository
         dataContext.Persons.Remove(personResult.Value);
         await dataContext.SaveChangesAsync();
         return true;
+    }
+
+    public async Task<Review> AddReviewAsync(Review review)
+    {
+        await dataContext.Reviews.AddAsync(review);
+        await dataContext.SaveChangesAsync();
+        return review;
+    }
+
+    public async Task<Review[]> GetReviewsAsync(Guid personId)
+    {
+        return await dataContext.Reviews
+            .Include(x => x.Author)
+            .AsNoTracking()
+            .Where(x => x.PersonId == personId).ToArrayAsync();
+    }
+
+    public async Task<Result<Administrator>> GetAdministratorAsync(Guid adminId)
+    {
+        var person = await dataContext.Administrators.SingleOrDefaultAsync(x => x.Id == adminId);
+
+        if (person is null) return new PersonNotFoundException(adminId);
+        return person;
     }
 }

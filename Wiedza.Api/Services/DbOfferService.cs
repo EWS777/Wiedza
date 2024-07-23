@@ -2,13 +2,13 @@
 using Wiedza.Core.Exceptions;
 using Wiedza.Core.Models.Data;
 using Wiedza.Core.Models.Enums;
-using Wiedza.Core.Requests;
 using Wiedza.Core.Services;
 using Wiedza.Core.Utilities;
 
 namespace Wiedza.Api.Services;
 
 public class DbOfferService(
+    IStatisticRepository statisticRepository,
     IOfferRepository offerRepository,
     IPublicationRepository publicationRepository,
     IPersonRepository personRepository) : IOfferService
@@ -123,12 +123,27 @@ public class DbOfferService(
 
         if (isCompleted)
         {
-            //Todo change person's balance and publication status if project
+            if (offer.Publication.PublicationType == typeof(Service))
+            {
+                offer.Person!.Balance -= offer.Publication.Price;
+                offer.Publication.Author.Balance += offer.CompanyProfit;
+                await statisticRepository.AddIncomeBalanceAsync(offer.CompanyProfit);
+            }
+            else if (offer.Publication.PublicationType == typeof(Project))
+            {
+                offer.Person!.Balance += offer.Publication.Price;
+                offer.Publication.Author.Balance -= offer.CompanyProfit;
+                await statisticRepository.AddIncomeBalanceAsync(offer.CompanyProfit);
+                
+                offer.Publication.Status = PublicationStatus.Completed;
+            }
+            else return new BadRequestException($"Unknown type of publication {offer.Publication.PublicationType}");
+
         }
 
-        return await offerRepository.UpdateOfferStatusAsync(offerId, offerUpdate =>
+        return await offerRepository.UpdateOfferStatusAsync(offerId, (offerUpdate =>
         {
             offerUpdate.Status = isCompleted ? OfferStatus.Completed : OfferStatus.Canceled;
-        });
+        }));
     }
 }

@@ -48,6 +48,14 @@ builder.Services.AddScoped<IProfileService, DbProfileService>();
 builder.Services.AddScoped<IOfferService, DbOfferService>();
 builder.Services.AddScoped<IOfferRepository,DbOfferRepository>();
 
+builder.Services.AddScoped<IPublicationRepository,DbPublicationRepository>();
+
+builder.Services.AddScoped<IStatisticService, DbStatisticService>();
+builder.Services.AddScoped<IStatisticRepository, DbStatisticRepository>();
+
+builder.Services.AddScoped<IComplaintService, DbComplaintService>();
+builder.Services.AddScoped<IComplaintRepository, DbComplaintRepository>();
+
 builder.Services.AddSingleton<ExceptionHandlerService>();
 
 builder.Services.AddScoped<DbUnitOfWork>();

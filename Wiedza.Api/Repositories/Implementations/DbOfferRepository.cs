@@ -47,7 +47,13 @@ public class DbOfferRepository(DataContext dataContext) : IOfferRepository
 
     public async Task<Result<Offer>> UpdateOfferStatusAsync(Guid offerId, Action<Offer> update)
     {
-        throw new NotImplementedException();
+        var offerResult = await GetOfferAsync(offerId);
+        if (offerResult.IsFailed) return offerResult.Exception;
+
+        var offer = offerResult.Value;
+        update(offer);
+        await dataContext.SaveChangesAsync();
+        return offer;
     }
 
     public async Task<bool> DeleteOfferAsync(Guid offerId)

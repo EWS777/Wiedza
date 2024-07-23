@@ -8,11 +8,6 @@ namespace Wiedza.Api.Repositories.Implementations;
 
 public class DbPublicationRepository(DataContext dataContext) : IPublicationRepository
 {
-    public async Task<Publication[]> GetPublicationsAsync()
-    {
-        return await dataContext.Publications.ToArrayAsync();
-    }
-
     public async Task<Result<Publication>> GetPublicationAsync(ulong publicationId)
     {
         var publication = await dataContext.Publications.SingleOrDefaultAsync(p => p.Id == publicationId);

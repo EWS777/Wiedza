@@ -27,9 +27,9 @@ public sealed class DataContext : DbContext
     public DbSet<Verification> Verifications { get; set; }
     public DbSet<WebsiteBalance> WebsiteBalances { get; set; }
     public DbSet<Withdraw> Withdraws { get; set; }
-
-    public DbSet<MessageComplaint> MessageComplaints { get; set; }
+    
     public DbSet<PersonComplaint> PersonComplaints { get; set; }
+    
     public DbSet<PublicationComplaint> PublicationComplaints { get; set; }
     public DbSet<PersonSalt> PersonSalts { get; set; }
 

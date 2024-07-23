@@ -5,7 +5,9 @@ using Wiedza.Api.Core;
 using Wiedza.Api.Core.Extensions;
 using Wiedza.Core.Models;
 using Wiedza.Core.Models.Data;
+using Wiedza.Core.Requests;
 using Wiedza.Core.Services;
+using Administrator = Wiedza.Core.Models.Data.Administrator;
 
 namespace Wiedza.Api.Controllers;
 
@@ -53,5 +55,30 @@ public class ProfilesController(
     public async Task<ActionResult<Verification>> VerifyProfile()
     {
         throw new NotImplementedException();
+    }
+
+    [HttpPost, Route("{username}/add-review"), Authorize(Policy = Policies.PersonPolicy)]
+    public async Task<ActionResult<Review>> AddReview(string username, AddReviewRequest addReviewRequest)
+    {
+        var userId = User.Claims.GetUserId();
+        var profileResult = await profileService.GetProfileAsync(username);
+        if (profileResult.IsFailed) return NotFound("User is not exist!");
+        return await profileService.AddReviewAsync(profileResult.Value.PersonId, userId, addReviewRequest);
+    }
+
+    [HttpGet, Route("{username}/reviews"), Authorize(Policy = Policies.AdminPolicy)]
+    public async Task<ActionResult<Review[]>> GetReviews(string username)
+    {
+        var profileResult = await profileService.GetProfileAsync(username);
+        if (profileResult.IsFailed) return NotFound("User is not exist!");
+        return await profileService.GetReviewsAsync(profileResult.Value.PersonId);
+    }
+    
+    
+    [HttpGet, Route("admin/{personId:guid}"), Authorize(Policy = Policies.AdminPolicy)]
+    public async Task<ActionResult<Administrator>> GetAdministrator(Guid adminId)
+    {
+        var profileResult = await profileService.GetAdministratorAsync(adminId);
+        return profileResult.Match(profile => profile, e => throw e);
     }
 }

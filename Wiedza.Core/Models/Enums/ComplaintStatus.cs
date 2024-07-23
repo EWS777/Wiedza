@@ -3,6 +3,6 @@
 public enum ComplaintStatus
 {
     New,
-    Approved,
+    Completed,
     Rejected
 }
