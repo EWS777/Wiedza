@@ -16,7 +16,7 @@ public class ProfilesController(
     IProfileService profileService
 ) : ControllerBase
 {
-    [HttpGet, Route("id/{UserId:guid}")]
+    [HttpGet, Route("id/{personId:guid}")]
     public async Task<ActionResult<Profile>> GetProfile(Guid personId)
     {
         var profileResult = await profileService.GetProfileAsync(personId);
@@ -75,7 +75,7 @@ public class ProfilesController(
     }
     
     
-    [HttpGet, Route("admin/{UserId:guid}"), Authorize(Policy = Policies.AdminPolicy)]
+    [HttpGet, Route("admin/{personId:guid}"), Authorize(Policy = Policies.AdminPolicy)]
     public async Task<ActionResult<Administrator>> GetAdministrator(Guid adminId)
     {
         var profileResult = await profileService.GetAdministratorAsync(adminId);

@@ -25,17 +25,17 @@ public class DbPersonRepository(DataContext dataContext) : IPersonRepository
         return person;
     }
 
-    public async Task<Result<Person>> AddPersonAsync(Person user)
+    public async Task<Result<Person>> AddPersonAsync(Person person)
     {
-        if(await dataContext.Persons.AnyAsync(p=>p.Email == user.Email))
+        if(await dataContext.Persons.AnyAsync(p=>p.Email == person.Email))
             return new CreationException("Email is taken!");
 
-        if (await dataContext.Persons.AnyAsync(p => p.Username == user.Username))
+        if (await dataContext.Persons.AnyAsync(p => p.Username == person.Username))
             return new CreationException("Username is taken!");
 
-        await dataContext.Persons.AddAsync(user);
+        await dataContext.Persons.AddAsync(person);
         await dataContext.SaveChangesAsync();
-        return user;
+        return person;
     }
 
     public async Task<Result<Person>> UpdatePersonAsync(Guid personId, Action<Person> update)

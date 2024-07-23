@@ -172,7 +172,7 @@ public class DbAuthService(
         return new LoginResponse()
         {
             AuthorizationToken = token,
-            UserId = userId,
+            PersonId = userId,
             Role = role,
             ExpiresAt = DateTimeOffset.UtcNow.Add(jwtConfiguration.TokenLifetime).ToUnixTimeSeconds()
         };

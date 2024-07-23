@@ -3,5 +3,6 @@
 public enum WithdrawStatus
 {
     New,
-    Completed
+    Completed,
+    Rejected
 }

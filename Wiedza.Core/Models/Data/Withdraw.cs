@@ -12,4 +12,6 @@ public class Withdraw
     public ulong CardNumber { get; set; }
     public Person Person { get; set; }
     public Guid PersonId { get; set; }
+    public Administrator? Administrator { get; set; }
+    public Guid? AdministratorId { get; set; }
 }
