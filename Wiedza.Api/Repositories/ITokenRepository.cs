@@ -5,7 +5,7 @@ public interface ITokenRepository
     /// <summary>
     /// Checks refresh token for the user session
     /// </summary>
-    /// <param name="userId">User ID of the token owner</param>
+    /// <param name="userId">Person ID of the token owner</param>
     /// <param name="session">Session of the token</param>
     /// <param name="refresh">Refresh token</param>
     /// <returns>

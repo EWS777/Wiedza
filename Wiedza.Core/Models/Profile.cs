@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using Wiedza.Core.Models.Data;
+using Wiedza.Core.Models.Data.Base;
 
 namespace Wiedza.Core.Models;
 
@@ -13,14 +14,14 @@ public class Profile : IValidatableObject
     [JsonPropertyName("description")] public string? Description { get; set; }
     [JsonPropertyName("avatar")] public byte[]? AvatarBytes { get; set; }
 
-    public Profile(Person person)
+    public Profile(Person user)
     {
-        PersonId = person.Id;
-        Username = person.Username;
-        Name = person.Name;
-        Email = person.Email;
-        Description = person.Description;
-        AvatarBytes = person.AvatarBytes;
+        PersonId = user.Id;
+        Username = user.Username;
+        Name = user.Name;
+        Email = user.Email;
+        Description = user.Description;
+        AvatarBytes = user.AvatarBytes;
     }
 
     public Profile(Profile other)

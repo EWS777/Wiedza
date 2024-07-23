@@ -31,9 +31,11 @@ builder.Services.AddSingleton<DatabaseConfiguration>();
 builder.Services.AddSingleton<JwtConfiguration>();
 builder.Services.AddSingleton<RedisConfiguration>();
 
+builder.Services.AddScoped<IUserRepository, DbUserRepository>();
 builder.Services.AddScoped<IPersonRepository, DbPersonRepository>();
+
 builder.Services.AddScoped<ITokenRepository, RedisTokenRepository>();
-builder.Services.AddScoped<IPersonSaltRepository, DbPersonSaltRepository>();
+builder.Services.AddScoped<IUserSaltRepository, DbUserSaltRepository>();
 
 builder.Services.AddScoped<IProjectRepository, DbProjectRepository>();
 builder.Services.AddScoped<IServiceRepository, DbServiceRepository>();

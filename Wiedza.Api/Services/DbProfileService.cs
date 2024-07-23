@@ -13,7 +13,7 @@ namespace Wiedza.Api.Services;
 
 public class DbProfileService(
     IPersonRepository personRepository,
-    IPersonSaltRepository personSaltRepository
+    IUserSaltRepository userSaltRepository
     ) : IProfileService
 {
     public async Task<Result<Profile>> GetProfileAsync(Guid personId)
@@ -70,7 +70,7 @@ public class DbProfileService(
         if (personResult.IsFailed) return personResult.Exception;
 
         var person = personResult.Value;
-        var salt = await personSaltRepository.GetSaltAsync(personId);
+        var salt = await userSaltRepository.GetSaltAsync(personId);
 
         var hash = CryptographyTools.GetPasswordHash(passwordHash, salt ?? string.Empty);
 

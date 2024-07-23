@@ -23,7 +23,7 @@ public class ComplaintsController(
     {
         var authorId = User.Claims.GetUserId();
         var profileResult = await profileService.GetProfileAsync(username);
-        if (profileResult.IsFailed) return NotFound("User is not exist!");
+        if (profileResult.IsFailed) return NotFound("Person is not exist!");
         return await complaintService.AddPersonComplaintAsync(authorId, profileResult.Value.PersonId, addComplaintRequest);
     }
     
@@ -37,13 +37,13 @@ public class ComplaintsController(
         return await complaintService.AddPublicationComplaintAsync(authorId, publicationResult.Value.Id, addComplaintRequest);
     }
 
-    [HttpGet, Route("/all-person"), Authorize(Policy = Policies.AdminPolicy)]
+    [HttpGet, Route("/all-user"), Authorize(Policy = Policies.AdminPolicy)]
     public async Task<ActionResult<PersonComplaint[]>> GetPersonComplaints()
     {
         return await complaintService.GetPersonComplaintsAsync();
     }
     
-    [HttpGet, Route("person/{personComplaintId}"), Authorize(Policy = Policies.AdminPolicy)]
+    [HttpGet, Route("user/{personComplaintId}"), Authorize(Policy = Policies.AdminPolicy)]
     public async Task<Result<PersonComplaint>> GetPersonComplaint(Guid personComplaintId)
     {
         return await complaintService.GetPersonComplaintAsync(personComplaintId);
@@ -61,7 +61,7 @@ public class ComplaintsController(
         return await complaintService.GetPublicationComplaintAsync(publicationComplaintId);
     }
 
-    [HttpPost, Route("{personComplaintId}/modify-person"), Authorize(Policy = Policies.AdminPolicy)]
+    [HttpPost, Route("{personComplaintId}/modify-user"), Authorize(Policy = Policies.AdminPolicy)]
     public async Task<Result<PersonComplaint>> ModifyPersonComplaint(Guid personComplaintId, [FromQuery]bool isCompleted)
     {
         var adminId = User.Claims.GetUserId();

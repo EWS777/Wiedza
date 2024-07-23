@@ -16,7 +16,7 @@ public class ProfilesController(
     IProfileService profileService
 ) : ControllerBase
 {
-    [HttpGet, Route("id/{personId:guid}")]
+    [HttpGet, Route("id/{UserId:guid}")]
     public async Task<ActionResult<Profile>> GetProfile(Guid personId)
     {
         var profileResult = await profileService.GetProfileAsync(personId);
@@ -62,7 +62,7 @@ public class ProfilesController(
     {
         var userId = User.Claims.GetUserId();
         var profileResult = await profileService.GetProfileAsync(username);
-        if (profileResult.IsFailed) return NotFound("User is not exist!");
+        if (profileResult.IsFailed) return NotFound("Person is not exist!");
         return await profileService.AddReviewAsync(profileResult.Value.PersonId, userId, addReviewRequest);
     }
 
@@ -70,12 +70,12 @@ public class ProfilesController(
     public async Task<ActionResult<Review[]>> GetReviews(string username)
     {
         var profileResult = await profileService.GetProfileAsync(username);
-        if (profileResult.IsFailed) return NotFound("User is not exist!");
+        if (profileResult.IsFailed) return NotFound("Person is not exist!");
         return await profileService.GetReviewsAsync(profileResult.Value.PersonId);
     }
     
     
-    [HttpGet, Route("admin/{personId:guid}"), Authorize(Policy = Policies.AdminPolicy)]
+    [HttpGet, Route("admin/{UserId:guid}"), Authorize(Policy = Policies.AdminPolicy)]
     public async Task<ActionResult<Administrator>> GetAdministrator(Guid adminId)
     {
         var profileResult = await profileService.GetAdministratorAsync(adminId);

@@ -8,6 +8,6 @@ internal class ChatDataConfig : IEntityTypeConfiguration<Chat>
 {
     public void Configure(EntityTypeBuilder<Chat> builder)
     {
-        builder.HasOne(p => p.Offer).WithMany().HasForeignKey(p => p.OfferId).OnDelete(DeleteBehavior.ClientCascade);
+        builder.HasOne(p => p.Offer).WithMany().HasForeignKey(p => p.OfferId);
     }
 }

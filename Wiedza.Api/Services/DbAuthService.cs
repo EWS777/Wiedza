@@ -16,30 +16,36 @@ namespace Wiedza.Api.Services;
 
 public class DbAuthService(
     JwtConfiguration jwtConfiguration,
+    IUserRepository userRepository,
     IPersonRepository personRepository,
     ITokenRepository tokenRepository,
-    IPersonSaltRepository personSaltRepository,
+    IUserSaltRepository userSaltRepository,
     DbUnitOfWork dbUnitOfWork
     ) : IAuthService
 {
     public async Task<Result<LoginResponse>> LoginAsync(LoginRequest request)
     {
-        var personResult = await personRepository.GetPersonAsync(request.UsernameOrEmail);
+        var userResult = await userRepository.GetUserAsync(request.UsernameOrEmail);
 
-        if (personResult.IsFailed) return new InvalidCredentialsException("User credentials are invalid");
+        if (userResult.IsFailed) return new InvalidCredentialsException("User credentials are invalid");
 
-        var person = personResult.Value;
-        if (person.AccountState != AccountState.Active) return new BadRequestException($"Account state is `{person.AccountState:G}`");
+        var user = userResult.Value;
+        if (user.AccountState != AccountState.Active) return new BadRequestException($"Account state is `{user.AccountState:G}`");
 
-        var salt = await personSaltRepository.GetSaltAsync(person.Id);
-        if (salt is null) throw new Exception($"Salt was null. User id `{person.Id}`");
+        var salt = await userSaltRepository.GetSaltAsync(user.Id);
+        if (salt is null) throw new Exception($"Salt was null. User id `{user.Id}`");
 
         var passwordHash = CryptographyTools.GetPasswordHash(request.PasswordHash, salt);
-        if (person.PasswordHash != passwordHash) return new InvalidCredentialsException("User credentials are invalid");
+        if (user.PasswordHash != passwordHash) return new InvalidCredentialsException("User credentials are invalid");
 
-        var (session, refreshToken) = await SetUserRefreshTokenAsync(person.Id);
+        var (session, refreshToken) = await SetUserRefreshTokenAsync(user.Id);
+        
+        string role;
 
-        return GenerateTokenResponse(person.Id, refreshToken, session);
+        if (user.UserType == typeof(Administrator)) role = Roles.AdministratorRole;
+        else role = Roles.PersonRole;
+
+        return GenerateTokenResponse(user.Id, refreshToken, session, role);
     }
 
 
@@ -59,8 +65,8 @@ public class DbAuthService(
 
             var person = personResult.Value;
 
-            var salt = await personSaltRepository.AddPersonSalt(person.Id);
-            if (salt is null) throw new Exception($"Salt was null! User id `{person.Id}`");
+            var salt = await userSaltRepository.AddPersonSalt(person.Id);
+            if (salt is null) throw new Exception($"Salt was null! Person id `{person.Id}`");
 
             var updateResult = await personRepository.UpdatePersonAsync(person.Id, person1 =>
             {
@@ -72,7 +78,7 @@ public class DbAuthService(
             await transaction.CommitAsync();
 
             var (session, refreshToken) = await SetUserRefreshTokenAsync(person.Id);
-            return GenerateTokenResponse(person.Id, refreshToken, session);
+            return GenerateTokenResponse(person.Id, refreshToken, session, Roles.PersonRole);
         }
         catch (Exception e)
         {
@@ -92,6 +98,7 @@ public class DbAuthService(
 
         var userId = validate.ClaimsIdentity.Claims.GetUserId();
         var session = validate.ClaimsIdentity.Claims.GetSession();
+        var role = validate.ClaimsIdentity.Claims.GetRole();
         var refreshToken = validate.ClaimsIdentity.Claims.GetRefreshToken();
 
         var isValid = await tokenRepository.IsRefreshTokenValidAsync(userId, session, refreshToken);
@@ -99,7 +106,7 @@ public class DbAuthService(
 
         var refresh = await SetUserRefreshTokenAsync(userId, session);
 
-        return GenerateTokenResponse(userId, refresh, session);
+        return GenerateTokenResponse(userId, refresh, session, role);
     }
 
 
@@ -110,8 +117,8 @@ public class DbAuthService(
 
         var person = personResult.Value;
 
-        var salt = await personSaltRepository.GetSaltAsync(personId);
-        if (salt is null) throw new Exception($"Salt was null! User id `{personId}`");
+        var salt = await userSaltRepository.GetSaltAsync(personId);
+        if (salt is null) throw new Exception($"Salt was null! Person id `{personId}`");
 
         var oldPasswordHash = CryptographyTools.GetPasswordHash(changePasswordRequest.OldPasswordHash, salt);
         if (person.PasswordHash != oldPasswordHash) return new BadRequestException("Old password is incorrect");
@@ -159,7 +166,7 @@ public class DbAuthService(
         return refreshToken;
     }
 
-    private LoginResponse GenerateTokenResponse(Guid userId, string refreshToken, string session, string role = Roles.PersonRole)
+    private LoginResponse GenerateTokenResponse(Guid userId, string refreshToken, string session, string role)
     {
         var token = jwtConfiguration.GetJwtToken(userId, role, refreshToken, session);
         return new LoginResponse()
@@ -170,6 +177,6 @@ public class DbAuthService(
             ExpiresAt = DateTimeOffset.UtcNow.Add(jwtConfiguration.TokenLifetime).ToUnixTimeSeconds()
         };
     }
-    
+
     #endregion
 }

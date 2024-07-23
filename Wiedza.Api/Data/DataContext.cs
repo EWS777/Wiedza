@@ -31,7 +31,7 @@ public sealed class DataContext : DbContext
     public DbSet<PersonComplaint> PersonComplaints { get; set; }
     
     public DbSet<PublicationComplaint> PublicationComplaints { get; set; }
-    public DbSet<PersonSalt> PersonSalts { get; set; }
+    public DbSet<UserSalt> UserSalts { get; set; }
 
 
     private static bool _isFirstCreation = true;

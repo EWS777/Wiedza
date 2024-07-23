@@ -23,7 +23,7 @@ public class DbComplaintService(
             AttachmentFile = new AttachmentFile
             {
                 FileBytes = addComplaintRequest.FileBytes!,
-                personId = authorId
+                PersonId = authorId
             }
         });
     }
@@ -39,7 +39,7 @@ public class DbComplaintService(
             AttachmentFile = new AttachmentFile
             {
                 FileBytes = addComplaintRequest.FileBytes!,
-                personId = authorId
+                PersonId = authorId
             }
         });
     }

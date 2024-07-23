@@ -3,8 +3,8 @@
 public enum OfferStatus
 {
     /// <summary>
-    /// Rejected - on start when the client don't choose this person
-    /// Canceled - decide cancel this person while performing task 
+    /// Rejected - on start when the client don't choose this user
+    /// Canceled - decide cancel this user while performing task 
     /// </summary>
     New,
     Approved,

@@ -1,5 +1,4 @@
 ﻿using Wiedza.Core.Models.Data.Base;
-using Wiedza.Core.Models.Enums;
 
 namespace Wiedza.Core.Models.Data;
 
@@ -11,5 +10,4 @@ public class Person : User
     public bool IsVerificated { get; set; }
     public float? Rating { get; set; }
     public byte[]? AvatarBytes { get; set; }
-    public AccountState AccountState { get; set; }
 }

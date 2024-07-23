@@ -5,22 +5,22 @@ using Wiedza.Api.Data.Models;
 
 namespace Wiedza.Api.Repositories.Implementations;
 
-public class DbPersonSaltRepository(DataContext dataContext) : IPersonSaltRepository
+public class DbUserSaltRepository(DataContext dataContext) : IUserSaltRepository
 {
-    public async Task<string?> GetSaltAsync(Guid personId)
+    public async Task<string?> GetSaltAsync(Guid userId)
     {
-        var personSalt = await dataContext.PersonSalts.SingleOrDefaultAsync(p => p.PersonId == personId);
+        var personSalt = await dataContext.UserSalts.SingleOrDefaultAsync(p => p.UserId == userId);
         return personSalt?.Salt;
     }
 
-    public async Task<string> AddPersonSalt(Guid personId)
+    public async Task<string> AddPersonSalt(Guid userId)
     {
-        var personSalt = new PersonSalt()
+        var personSalt = new UserSalt()
         {
-            PersonId = personId,
+            UserId = userId,
             Salt = GenerateSalt()
         };
-        await dataContext.PersonSalts.AddAsync(personSalt);
+        await dataContext.UserSalts.AddAsync(personSalt);
         await dataContext.SaveChangesAsync();
         return personSalt.Salt;
     }

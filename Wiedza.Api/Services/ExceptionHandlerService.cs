@@ -36,12 +36,11 @@ public sealed class ExceptionHandlerService(ProblemDetailsFactory problemDetails
         }
 
         using var reader = new StreamReader(request.BodyReader.AsStream());
-
         details.Extensions.Add("error_details", new
         {
             Message = exception.Message,
             Source = exception.TargetSite?.ReflectedType?.FullName ?? exception.Source,
-            StackTrace = exception.StackTrace
+            Details = exception.ToString()
         });
 
         details.Extensions.Add("request_details", new

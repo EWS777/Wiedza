@@ -1,6 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Wiedza.Api.Data.ValueConvertors;
 using Wiedza.Api.Data.ValueGenerators;
 using Wiedza.Core.Models.Data.Base;
 using Wiedza.Core.Models.Enums;
@@ -18,16 +21,15 @@ internal class PublicationDataConfig : IEntityTypeConfiguration<Publication>
             return generator;
         });
 
-        builder.HasOne(p => p.Author).WithMany().HasForeignKey(p => p.AuthorId).OnDelete(DeleteBehavior.ClientCascade);
-        builder.HasOne(p => p.Category).WithMany().HasForeignKey(p => p.CategoryId).OnDelete(DeleteBehavior.ClientCascade);
+        builder.HasOne(p => p.Author).WithMany().HasForeignKey(p => p.AuthorId);
+        builder.HasOne(p => p.Category).WithMany().HasForeignKey(p => p.CategoryId);
         builder.Property(p => p.Status).HasDefaultValue(PublicationStatus.Pending);
         builder.Property(p => p.Title).HasMaxLength(50);
         builder.Property(p => p.Description).HasMaxLength(500);
 
-        builder.Property(p => p.PublicationType).HasValueGenerator<TypeValueGenerator>()
-            .ValueGeneratedOnAdd()
-            .HasConversion(type => type.FullName, s => Type.GetType(s ?? "") ?? typeof(User),
-                ValueComparer.CreateDefault<Type>(false), ValueComparer.CreateDefault<string>(false));
+        builder.Property(p => p.PublicationType)
+            .HasValueGenerator<TypeValueGenerator>().ValueGeneratedOnAdd()
+            .HasConversion<TypeValueConverter>();
 
         builder.UseTptMappingStrategy();
     }

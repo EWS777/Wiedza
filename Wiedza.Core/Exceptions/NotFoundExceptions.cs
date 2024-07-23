@@ -2,6 +2,10 @@
 
 public class NotFoundException(string message) : Exception(message);
 
+
+public class UserNotFoundException(string usernameOrEmail) 
+    : NotFoundException($"User `{usernameOrEmail}` not found!");
+
 public class PersonNotFoundException : NotFoundException
 {
     public PersonNotFoundException(Guid personId) : base($"Person with id `{personId}` not found!") { }
