@@ -5,7 +5,7 @@ namespace Wiedza.Core.Models.Data;
 public class Verification
 {
     public Guid Id { get; set; }
-    public ulong Pesel { get; set; }
+    public string Pesel { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset? VerificationTime { get; set; }
     public string Name { get; set; }
@@ -14,4 +14,6 @@ public class Verification
     public Person Person { get; set; }
     public Guid PersonId { get; set; }
     public VerificationStatus Status { get; set; }
+    public Administrator? Administrator { get; set; }
+    public Guid? AdministratorId { get; set; }
 }

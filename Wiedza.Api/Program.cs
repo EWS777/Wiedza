@@ -58,6 +58,9 @@ builder.Services.AddScoped<IComplaintRepository, DbComplaintRepository>();
 builder.Services.AddScoped<IWithdrawService, DbWithdrawService>();
 builder.Services.AddScoped<IWithdrawRepository, DbWithdrawRepository>();
 
+builder.Services.AddScoped<IVerificationService, DbVerificationService>();
+builder.Services.AddScoped<IVerificationRepository, DbVerificationRepository>();
+
 builder.Services.AddSingleton<ExceptionHandlerService>();
 
 builder.Services.AddScoped<DbUnitOfWork>();

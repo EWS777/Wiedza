@@ -33,8 +33,7 @@ public class ServiceNotFoundException(ulong serviceId) : NotFoundException($"Ser
 
 public class OfferNotFoundException(Guid offerId) : NotFoundException($"Offer with id `{offerId}` not found!");
 
-public class ComplaintNotFoundException(Guid complaintId)
-    : NotFoundException($"Complaint with id `{complaintId}` not found!");
+public class ComplaintNotFoundException(Guid complaintId) : NotFoundException($"Complaint with id `{complaintId}` not found!");
 
-public class WithdrawNotFoundException(Guid withdrawId)
-    : NotFoundException($"Withdraw with id `{withdrawId}` not found!");
+public class WithdrawNotFoundException(Guid withdrawId) : NotFoundException($"Withdraw with id `{withdrawId}` not found!");
+public class VerificationNotFoundException(Guid verificationId) : NotFoundException($"Verification with id `{verificationId}` not found!");

@@ -2,7 +2,7 @@
 
 public enum VerificationStatus
 {
-    Pending,
+    New,
     Completed,
     Cancelled
 }

@@ -15,7 +15,7 @@ internal class VerificationDataConfig : IEntityTypeConfiguration<Verification>
         builder.Property(p => p.Name).HasMaxLength(50);
         builder.Property(p => p.Surname).HasMaxLength(50);
         builder.Property(p => p.ImageDocumentBytes).HasMaxLength(10 * 1024 * 1024);
-        builder.Property(p => p.Status).HasDefaultValue(VerificationStatus.Pending);
+        builder.Property(p => p.Status).HasDefaultValue(VerificationStatus.New);
 
         builder.HasOne(p => p.Person).WithMany().HasForeignKey(p => p.PersonId).OnDelete(DeleteBehavior.ClientCascade);
         builder.HasIndex(p => p.PersonId).IsUnique();
