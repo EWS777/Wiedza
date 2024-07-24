@@ -50,6 +50,7 @@ public class DbWithdrawService(
 
         var person = personResult.Value;
 
+
         if (!person.IsVerificated) return new ForbiddenException("You are not verified!");
 
         var amount = request.Amount;
