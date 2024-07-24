@@ -9,7 +9,6 @@ using Wiedza.Core.Utilities;
 namespace Wiedza.Api.Services;
 
 public class DbOfferService(
-    IStatisticRepository statisticRepository,
     IOfferRepository offerRepository,
     IPublicationRepository publicationRepository,
     IPersonRepository personRepository) : IOfferService
@@ -51,11 +50,12 @@ public class DbOfferService(
 
         var publication = publicationResult.Value;
 
-        if (publication.Status != PublicationStatus.Active) return new BadRequestException("Publication is not active!");
+        if (publication.Status != PublicationStatus.Active)
+            return new BadRequestException("Publication is not active!");
 
         if (publication.AuthorId == userId)
             return new BadRequestException("You cannot send offer on your own publication!");
-            
+
         if (publication.PublicationType is PublicationType.Service)
         {
             var personResult = await personRepository.GetPersonAsync(userId);
@@ -98,26 +98,26 @@ public class DbOfferService(
         var offer = offerResult.Value;
 
         if (offer.Publication?.AuthorId != userId)
-            return new ForbiddenException("You don't have permission to change this offer! You are not a owner of the publication!");
+            return new ForbiddenException(
+                "You don't have permission to change this offer! You are not a owner of the publication!");
 
         if (offer.Status != OfferStatus.New)
             return new BadRequestException("Offer's status has been already set!");
 
-        return await offerRepository.UpdateOfferStatusAsync(offerId, offerUpdate =>
-        {
-            offerUpdate.Status = isApprove ? OfferStatus.Approved : OfferStatus.Rejected;
-        });
+        return await offerRepository.UpdateOfferStatusAsync(offerId,
+            offerUpdate => { offerUpdate.Status = isApprove ? OfferStatus.Approved : OfferStatus.Rejected; });
     }
 
     public async Task<Result<Offer>> ChangeOfferStatusAsync(Guid userId, Guid offerId, bool isCompleted)
     {
         var offerResult = await offerRepository.GetOfferAsync(offerId);
         if (offerResult.IsFailed) return offerResult.Exception;
-        
+
         var offer = offerResult.Value;
 
         if (offer.Publication?.AuthorId != userId)
-            return new ForbiddenException("You don't have permission to change this offer! You are not a owner of the publication!");
+            return new ForbiddenException(
+                "You don't have permission to change this offer! You are not a owner of the publication!");
 
         if (offer.Status != OfferStatus.Approved)
             return new BadRequestException("Offer's status must be `Approved`!");
@@ -128,23 +128,21 @@ public class DbOfferService(
             {
                 offer.Person!.Balance -= offer.Publication.Price;
                 offer.Publication.Author.Balance += offer.CompanyProfit;
-                await statisticRepository.AddIncomeBalanceAsync(offer.CompanyProfit);
             }
             else if (offer.Publication.PublicationType is PublicationType.Project)
             {
                 offer.Person!.Balance += offer.Publication.Price;
                 offer.Publication.Author.Balance -= offer.CompanyProfit;
-                await statisticRepository.AddIncomeBalanceAsync(offer.CompanyProfit);
-                
+
                 offer.Publication.Status = PublicationStatus.Completed;
             }
-            else return new BadRequestException($"Unknown type of publication {offer.Publication.PublicationType}");
-
+            else
+            {
+                return new BadRequestException($"Unknown type of publication {offer.Publication.PublicationType}");
+            }
         }
 
-        return await offerRepository.UpdateOfferStatusAsync(offerId, (offerUpdate =>
-        {
-            offerUpdate.Status = isCompleted ? OfferStatus.Completed : OfferStatus.Canceled;
-        }));
+        return await offerRepository.UpdateOfferStatusAsync(offerId,
+            offerUpdate => { offerUpdate.Status = isCompleted ? OfferStatus.Completed : OfferStatus.Canceled; });
     }
 }

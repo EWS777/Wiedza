@@ -15,16 +15,14 @@ using Wiedza.Api.Configs;
 using Wiedza.Api.Configs.ConfigureOptions;
 using Wiedza.Api.Core;
 using Wiedza.Api.Data;
-using Wiedza.Api.Data.Models;
 using Wiedza.Api.Repositories;
 using Wiedza.Api.Repositories.Implementations;
 using Wiedza.Api.Services;
-using Wiedza.Core.Models.Data;
 using Wiedza.Core.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.AddJsonFile("appsettings.secret.json", optional: true);
+builder.Configuration.AddJsonFile("appsettings.secret.json", true);
 builder.Services.AddProblemDetails();
 
 builder.Services.AddSingleton<IConfigureOptions<JwtBearerOptions>, ConfigureJwtOptions>();
@@ -53,9 +51,6 @@ builder.Services.AddScoped<IOfferService, DbOfferService>();
 builder.Services.AddScoped<IOfferRepository, DbOfferRepository>();
 
 builder.Services.AddScoped<IPublicationRepository, DbPublicationRepository>();
-
-builder.Services.AddScoped<IStatisticService, DbStatisticService>();
-builder.Services.AddScoped<IStatisticRepository, DbStatisticRepository>();
 
 builder.Services.AddScoped<IComplaintService, DbComplaintService>();
 builder.Services.AddScoped<IComplaintRepository, DbComplaintRepository>();
@@ -90,7 +85,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 
 builder.Services.AddDataProtection()
     .PersistKeysToFileSystem(new DirectoryInfo("/app/data/keys"))
-    .UseCryptographicAlgorithms(new AuthenticatedEncryptorConfiguration()
+    .UseCryptographicAlgorithms(new AuthenticatedEncryptorConfiguration
     {
         EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
         ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
@@ -104,14 +99,10 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy(Policies.PersonPolicy, policyBuilder =>
-    {
-        policyBuilder.RequireRole(Roles.PersonRole);
-    });
-    options.AddPolicy(Policies.AdminPolicy, policyBuilder =>
-    {
-        policyBuilder.RequireRole(Roles.AdministratorRole);
-    });
+    options.AddPolicy(Policies.PersonPolicy, policyBuilder => policyBuilder.RequireRole(Roles.PersonRole));
+    options.AddPolicy(Policies.AdminPolicy, policyBuilder => policyBuilder.RequireRole(Roles.AdministratorRole));
+    options.AddPolicy(Policies.AdminAndPersonPolicy,
+        policyBuilder => policyBuilder.RequireRole(Roles.AdministratorRole, Roles.PersonRole));
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -140,7 +131,8 @@ app.UseExceptionHandler(errApp =>
     {
         var feature = context.Features.GetRequiredFeature<IExceptionHandlerFeature>();
         var result = handlerService.HandleException(feature.Error, context);
-        await result.ExecuteResultAsync(new ActionContext(context, context.GetRouteData(), new ControllerActionDescriptor()));
+        await result.ExecuteResultAsync(new ActionContext(context, context.GetRouteData(),
+            new ControllerActionDescriptor()));
     });
 });
 

@@ -6,12 +6,6 @@ namespace Wiedza.Core.Requests;
 
 public class UpdatePublicationRequest : IValidatableObject
 {
-    public string Title { get; set; }
-    public string Description { get; set; }
-    public float Price { get; set; }
-    public PublicationUpdateStatus Status { get; set; }
-    public Guid? CategoryId { get; set; }
-
     public UpdatePublicationRequest(Publication publication)
     {
         Title = publication.Title;
@@ -26,6 +20,12 @@ public class UpdatePublicationRequest : IValidatableObject
             _ => PublicationUpdateStatus.Other
         };
     }
+
+    public string Title { get; set; }
+    public string Description { get; set; }
+    public float Price { get; set; }
+    public PublicationUpdateStatus Status { get; set; }
+    public Guid? CategoryId { get; set; }
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
@@ -44,5 +44,7 @@ public class UpdatePublicationRequest : IValidatableObject
 
 public enum PublicationUpdateStatus
 {
-    Active, Inactive, Other
+    Active,
+    Inactive,
+    Other
 }

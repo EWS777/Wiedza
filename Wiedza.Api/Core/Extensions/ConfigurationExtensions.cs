@@ -12,8 +12,10 @@ internal static class ConfigurationExtensions
         return section;
     }
 
-    public static TValue GetValueOrThrow<TValue>(this IConfiguration configuration, string key) => 
-        configuration.GetSectionOrThrow(key).GetValueOrThrow<TValue>();
+    public static TValue GetValueOrThrow<TValue>(this IConfiguration configuration, string key)
+    {
+        return configuration.GetSectionOrThrow(key).GetValueOrThrow<TValue>();
+    }
 
     public static TValue GetValueOrThrow<TValue>(this IConfigurationSection section)
     {

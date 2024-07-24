@@ -5,7 +5,10 @@ namespace Wiedza.Api.Configs.ConfigureOptions;
 
 public class ConfigureJwtOptions(JwtConfiguration configuration) : IConfigureNamedOptions<JwtBearerOptions>
 {
-    public void Configure(JwtBearerOptions options) => Configure(Options.DefaultName, options);
+    public void Configure(JwtBearerOptions options)
+    {
+        Configure(Options.DefaultName, options);
+    }
 
     public void Configure(string? name, JwtBearerOptions options)
     {

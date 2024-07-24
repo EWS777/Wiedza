@@ -11,7 +11,7 @@ public class ChangePasswordRequest : IValidatableObject
     {
         var errors = new List<ValidationResult>();
 
-        if (string.IsNullOrWhiteSpace(OldPasswordHash)) 
+        if (string.IsNullOrWhiteSpace(OldPasswordHash))
             errors.Add(new ValidationResult($"{nameof(OldPasswordHash)} is empty!", [nameof(OldPasswordHash)]));
 
         if (string.IsNullOrWhiteSpace(NewPasswordHash))

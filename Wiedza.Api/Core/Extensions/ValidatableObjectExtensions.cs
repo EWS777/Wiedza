@@ -1,8 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text;
-using Microsoft.AspNetCore.Mvc;
-using Wiedza.Api.Services;
-using Wiedza.Core.Exceptions;
 
 namespace Wiedza.Api.Core.Extensions;
 
@@ -22,7 +19,8 @@ public static class ValidatableObjectExtensions
             if (strings.Length == 0) errorMessageSb.Append("; ");
             errorMessageSb.Append(" Member names: ").AppendJoin(", ", strings).Append("; ");
         }
-        return errorMessageSb.Remove(errorMessageSb.Length-2, 2).ToString();
+
+        return errorMessageSb.Remove(errorMessageSb.Length - 2, 2).ToString();
     }
 
     public static bool IsValidationFailed(this IValidatableObject validatable, out ValidationException exception)

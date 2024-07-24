@@ -10,7 +10,7 @@ namespace Wiedza.Api.Controllers;
 [ApiController, Route("[controller]"), Authorize(Policy = Policies.PersonPolicy)]
 public class OffersController(
     IOfferService offerService
-    ) : ControllerBase
+) : ControllerBase
 {
     [HttpGet, Route("received")]
     public async Task<ActionResult<Offer[]>> GetReceivedOffers([FromQuery] ulong publicationId)
@@ -37,7 +37,8 @@ public class OffersController(
     }
 
     [HttpPost, Route("add")]
-    public async Task<ActionResult<Offer>> AddOfferToPublication([FromQuery] ulong publicationId, [FromQuery] string? message)
+    public async Task<ActionResult<Offer>> AddOfferToPublication([FromQuery] ulong publicationId,
+        [FromQuery] string? message)
     {
         var userId = User.Claims.GetUserId();
         var result = await offerService.AddOfferToPublicationAsync(userId, publicationId, message);

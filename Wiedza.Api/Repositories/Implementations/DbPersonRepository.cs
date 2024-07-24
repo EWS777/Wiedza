@@ -3,7 +3,6 @@ using Wiedza.Api.Data;
 using Wiedza.Core.Exceptions;
 using Wiedza.Core.Models.Data;
 using Wiedza.Core.Utilities;
-using Administrator = Wiedza.Core.Models.Data.Administrator;
 
 namespace Wiedza.Api.Repositories.Implementations;
 
@@ -18,7 +17,7 @@ public class DbPersonRepository(DataContext dataContext) : IPersonRepository
 
     public async Task<Result<Person>> GetPersonAsync(string usernameOrEmail)
     {
-        var person = await dataContext.Persons.SingleOrDefaultAsync(p => p.Username == usernameOrEmail 
+        var person = await dataContext.Persons.SingleOrDefaultAsync(p => p.Username == usernameOrEmail
                                                                          || p.Email == usernameOrEmail);
 
         if (person is null) return new PersonNotFoundException(usernameOrEmail);
@@ -27,7 +26,7 @@ public class DbPersonRepository(DataContext dataContext) : IPersonRepository
 
     public async Task<Result<Person>> AddPersonAsync(Person person)
     {
-        if(await dataContext.Persons.AnyAsync(p=>p.Email == person.Email))
+        if (await dataContext.Persons.AnyAsync(p => p.Email == person.Email))
             return new CreationException("Email is taken!");
 
         if (await dataContext.Persons.AnyAsync(p => p.Username == person.Username))
@@ -82,13 +81,5 @@ public class DbPersonRepository(DataContext dataContext) : IPersonRepository
             .Include(x => x.Author)
             .AsNoTracking()
             .Where(x => x.PersonId == personId).ToArrayAsync();
-    }
-
-    public async Task<Result<Administrator>> GetAdministratorAsync(Guid adminId)
-    {
-        var person = await dataContext.Administrators.SingleOrDefaultAsync(x => x.Id == adminId);
-
-        if (person is null) return new PersonNotFoundException(adminId);
-        return person;
     }
 }

@@ -54,7 +54,7 @@ public class ServicesController(IServiceService serviceService) : ControllerBase
     }
 
     [HttpDelete, Route("{serviceId}"), Authorize(Policy = Policies.PersonPolicy)]
-    public async Task<IActionResult> DeleteService([FromQuery] ulong serviceId)
+    public async Task<IActionResult> DeleteService(ulong serviceId)
     {
         var userId = User.Claims.GetUserId();
         var result = await serviceService.DeleteServiceAsync(userId, serviceId);

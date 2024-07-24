@@ -38,7 +38,8 @@ public class DbProjectService(IProjectRepository projectRepository) : IProjectSe
         });
     }
 
-    public async Task<Result<Project>> UpdateProject(Guid personId, ulong projectId, Action<UpdatePublicationRequest> update)
+    public async Task<Result<Project>> UpdateProject(Guid personId, ulong projectId,
+        Action<UpdatePublicationRequest> update)
     {
         var projectResult = await projectRepository.GetProjectAsync(projectId);
         if (projectResult.IsFailed) return projectResult.Exception;
@@ -59,14 +60,12 @@ public class DbProjectService(IProjectRepository projectRepository) : IProjectSe
             projectUpdate.CategoryId = request.CategoryId;
 
             if (request.Status != PublicationUpdateStatus.Other)
-            {
                 projectUpdate.Status = request.Status switch
                 {
                     PublicationUpdateStatus.Active => PublicationStatus.Active,
                     PublicationUpdateStatus.Inactive => PublicationStatus.Inactive,
                     _ => throw new ArgumentOutOfRangeException(nameof(request.Status))
                 };
-            }
         });
     }
 

@@ -13,7 +13,8 @@ public static class ClaimsExtension
 
     public static string GetRole(this IEnumerable<Claim> claims)
     {
-        var claim = claims.SingleOrDefault(p => p.Type == ClaimTypes.Role) ?? throw new MissingClaimException(ClaimTypes.Role);
+        var claim = claims.SingleOrDefault(p => p.Type == ClaimTypes.Role) ??
+                    throw new MissingClaimException(ClaimTypes.Role);
         return claim.Value;
     }
 

@@ -8,6 +8,7 @@ namespace Wiedza.Api.Configs;
 
 public sealed class JwtConfiguration
 {
+    private readonly byte[] _secret;
     public string Issuer { get; set; }
     public string Audience { get; set; }
     public TimeSpan TokenLifetime { get; set; }
@@ -26,10 +27,6 @@ public sealed class JwtConfiguration
         LifetimeValidator = (before, expires, token, parameters) => !(DateTime.UtcNow.AddMinutes(1) > expires)
     };
 
-
-
-    private readonly byte[] _secret;
-
     public JwtConfiguration(IConfiguration configuration)
     {
         var section = configuration.GetSectionOrThrow("Jwt");
@@ -46,8 +43,7 @@ public sealed class JwtConfiguration
 
     public string GetJwtToken(Guid userId, string role, string refreshToken, string session)
     {
-        var token = new JwtSecurityToken(issuer: Issuer, audience: Audience,
-            claims:
+        var token = new JwtSecurityToken(Issuer, Audience,
             [
                 new Claim("userId", userId.ToString()),
                 new Claim(ClaimTypes.Role, role),
@@ -60,5 +56,8 @@ public sealed class JwtConfiguration
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    private SymmetricSecurityKey GetSymmetricSecurityKey() => new(_secret);
+    private SymmetricSecurityKey GetSymmetricSecurityKey()
+    {
+        return new SymmetricSecurityKey(_secret);
+    }
 }

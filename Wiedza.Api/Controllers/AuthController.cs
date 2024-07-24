@@ -10,7 +10,7 @@ namespace Wiedza.Api.Controllers;
 [ApiController, Route("[controller]")]
 public class AuthController(
     IAuthService authService
-        ) : ControllerBase
+) : ControllerBase
 {
     [HttpPost, Route("login")]
     public async Task<ActionResult<LoginResponse>> Login([FromBody] LoginRequest request)

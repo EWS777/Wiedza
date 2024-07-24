@@ -13,7 +13,7 @@ namespace Wiedza.Api.Controllers;
 [ApiController, Route("[controller]")]
 public class ProjectsController(
     IProjectService projectService
-    ) : ControllerBase
+) : ControllerBase
 {
     [HttpGet]
     public async Task<ActionResult<Project[]>> GetActiveProjects()
@@ -48,7 +48,8 @@ public class ProjectsController(
     }
 
     [HttpPatch, Route("{projectId}"), Authorize(Policy = Policies.PersonPolicy)]
-    public async Task<ActionResult<Project>> UpdateProject(ulong projectId, [FromBody] JsonPatchDocument<UpdatePublicationRequest> update)
+    public async Task<ActionResult<Project>> UpdateProject(ulong projectId,
+        [FromBody] JsonPatchDocument<UpdatePublicationRequest> update)
     {
         var userId = User.Claims.GetUserId();
         var result = await projectService.UpdateProject(userId, projectId, update.ApplyTo);

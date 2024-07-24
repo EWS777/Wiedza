@@ -24,9 +24,9 @@ public class DbProjectRepository(DataContext dataContext) : IProjectRepository
     public async Task<Project[]> GetPersonProjectsAsync(Guid personId)
     {
         return await dataContext.Projects
-            .Include(p=>p.Author)
-            .Include(p=>p.Category)
-            .Where(p=>p.AuthorId == personId)
+            .Include(p => p.Author)
+            .Include(p => p.Category)
+            .Where(p => p.AuthorId == personId)
             .AsNoTracking().ToArrayAsync();
     }
 

@@ -12,8 +12,8 @@ public class DbServiceRepository(DataContext dataContext) : IServiceRepository
     public async Task<Service[]> GetServicesAsync(bool onlyActive = true)
     {
         var services = dataContext.Services
-            .Include(p=>p.Author)
-            .Include(p=>p.Category)
+            .Include(p => p.Author)
+            .Include(p => p.Category)
             .AsNoTracking();
 
         if (onlyActive) services = services.Where(p => p.Status == PublicationStatus.Active);
@@ -24,9 +24,9 @@ public class DbServiceRepository(DataContext dataContext) : IServiceRepository
     public async Task<Service[]> GetPersonServicesAsync(Guid personId)
     {
         return await dataContext.Services
-            .Include(p=>p.Author)
-            .Include(p=>p.Category)
-            .Where(p=>p.AuthorId == personId)
+            .Include(p => p.Author)
+            .Include(p => p.Category)
+            .Where(p => p.AuthorId == personId)
             .AsNoTracking().ToArrayAsync();
     }
 

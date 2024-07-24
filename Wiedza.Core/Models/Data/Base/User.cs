@@ -9,7 +9,7 @@ public abstract class User
     public Guid Id { get; set; }
     public string Email { get; set; }
     public string Username { get; set; }
-    public string PasswordHash { get; set; }
+    [JsonIgnore] public string PasswordHash { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
     public AccountState AccountState { get; set; }
 
@@ -18,8 +18,6 @@ public abstract class User
 
 public enum UserType
 {
-    [EnumTypeValue(typeof(Person))]
-    Person,
-    [EnumTypeValue(typeof(Administrator))]
-    Administrator
+    [EnumTypeValue(typeof(Person))] Person,
+    [EnumTypeValue(typeof(Administrator))] Administrator
 }

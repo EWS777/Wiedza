@@ -13,7 +13,9 @@ public class RegisterRequest : IValidatableObject
         var errors = new List<ValidationResult>();
 
         if (string.IsNullOrWhiteSpace(Username))
+        {
             errors.Add(new ValidationResult($"{nameof(Username)} is empty!", [nameof(Username)]));
+        }
         else
         {
             var chars = Username.AsSpan();

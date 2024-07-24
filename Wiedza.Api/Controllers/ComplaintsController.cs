@@ -2,76 +2,78 @@
 using Microsoft.AspNetCore.Mvc;
 using Wiedza.Api.Core;
 using Wiedza.Api.Core.Extensions;
-using Wiedza.Api.Repositories;
 using Wiedza.Core.Models.Data;
+using Wiedza.Core.Models.Data.Base;
 using Wiedza.Core.Requests;
 using Wiedza.Core.Services;
 using Wiedza.Core.Utilities;
 
 namespace Wiedza.Api.Controllers;
 
-[ApiController, Route("[controller]")]
+[ApiController, Route("[controller]"), Authorize(Policy = Policies.AdminPolicy)]
 public class ComplaintsController(
-    IComplaintService complaintService,
-    IProfileService profileService,
-    IPublicationRepository publicationRepository
-    ): ControllerBase
+    IComplaintService complaintService
+) : ControllerBase
 {
-    [HttpPost, Route("{username}/complaint"), Authorize(Policy = Policies.PersonPolicy)]
-    public async Task<ActionResult<PersonComplaint>> AddPersonComplaint(string username,
-        AddComplaintRequest addComplaintRequest)
-    {
-        var authorId = User.Claims.GetUserId();
-        var profileResult = await profileService.GetProfileAsync(username);
-        if (profileResult.IsFailed) return NotFound("Person is not exist!");
-        return await complaintService.AddPersonComplaintAsync(authorId, profileResult.Value.PersonId, addComplaintRequest);
-    }
-    
-    [HttpPost, Route("{publicationId}/publication-complaint"), Authorize(Policy = Policies.PersonPolicy)]
-    public async Task<ActionResult<PublicationComplaint>> AddPublicationComplaint(ulong publicationId,
-        AddComplaintRequest addComplaintRequest)
-    {
-        var authorId = User.Claims.GetUserId();
-        var publicationResult = await publicationRepository.GetPublicationAsync(publicationId);
-        if (publicationResult.IsFailed) return NotFound("Publication is not exist!");
-        return await complaintService.AddPublicationComplaintAsync(authorId, publicationResult.Value.Id, addComplaintRequest);
-    }
-
-    [HttpGet, Route("/all-user"), Authorize(Policy = Policies.AdminPolicy)]
+    [HttpGet, Route("persons/*")]
     public async Task<ActionResult<PersonComplaint[]>> GetPersonComplaints()
     {
         return await complaintService.GetPersonComplaintsAsync();
     }
-    
-    [HttpGet, Route("user/{personComplaintId}"), Authorize(Policy = Policies.AdminPolicy)]
-    public async Task<Result<PersonComplaint>> GetPersonComplaint(Guid personComplaintId)
+
+    [HttpGet, Route("persons/{personId:guid}")]
+    public async Task<ActionResult<PersonComplaint[]>> GetPersonComplaints(Guid personId)
     {
-        return await complaintService.GetPersonComplaintAsync(personComplaintId);
+        return await complaintService.GetPersonComplaintsAsync(personId);
     }
-    
-    [HttpGet, Route("/all-publication"), Authorize(Policy = Policies.AdminPolicy)]
-    public async Task<PublicationComplaint[]> GetPublicationComplaints()
+
+    [HttpGet, Route("publications/*")]
+    public async Task<ActionResult<PublicationComplaint[]>> GetPublicationComplaints()
     {
         return await complaintService.GetPublicationComplaintsAsync();
     }
 
-    [HttpGet, Route("publication/{publicationComplaintId}"), Authorize(Policy = Policies.AdminPolicy)]
-    public async Task<Result<PublicationComplaint>> GetPublicationComplaint(Guid publicationComplaintId)
+    [HttpGet, Route("publications/{publicationId}")]
+    public async Task<ActionResult<PublicationComplaint[]>> GetPublicationComplaints(ulong publicationId)
+    {
+        return await complaintService.GetPublicationComplaintsAsync(publicationId);
+    }
+
+    [HttpGet, Route("persons")]
+    public async Task<Result<PersonComplaint>> GetPersonComplaint([FromQuery(Name = "id")] Guid personComplaintId)
+    {
+        return await complaintService.GetPersonComplaintAsync(personComplaintId);
+    }
+
+    [HttpGet, Route("publications")]
+    public async Task<Result<PublicationComplaint>> GetPublicationComplaint(
+        [FromQuery(Name = "id")] Guid publicationComplaintId)
     {
         return await complaintService.GetPublicationComplaintAsync(publicationComplaintId);
     }
 
-    [HttpPost, Route("{personComplaintId}/modify-user"), Authorize(Policy = Policies.AdminPolicy)]
-    public async Task<Result<PersonComplaint>> ModifyPersonComplaint(Guid personComplaintId, [FromQuery]bool isCompleted)
+    [HttpPost, Route("persons/{username}/add"), Authorize(Policy = Policies.PersonPolicy)]
+    public async Task<ActionResult<PersonComplaint>> AddPersonComplaint(string username, AddComplaintRequest request)
     {
-        var adminId = User.Claims.GetUserId();
-        return await complaintService.ModifyPersonComplaintAsync(adminId, personComplaintId, isCompleted);
+        var authorId = User.Claims.GetUserId();
+        var result = await complaintService.AddPersonComplaintAsync(username, authorId, request);
+        return result.Match(complaint => complaint, e => throw e);
     }
-    
-    [HttpPost, Route("{publicationComplaintId}/modify-publication"), Authorize(Policy = Policies.AdminPolicy)]
-    public async Task<Result<PublicationComplaint>> ModifyPublicationComplaint(Guid publicationComplaintId, [FromQuery]bool isCompleted)
+
+    [HttpPost, Route("publications/{publicationId}/add"), Authorize(Policy = Policies.PersonPolicy)]
+    public async Task<ActionResult<PublicationComplaint>> AddPublicationComplaint(ulong publicationId,
+        AddComplaintRequest request)
+    {
+        var authorId = User.Claims.GetUserId();
+        var result = await complaintService.AddPublicationComplaintAsync(publicationId, authorId, request);
+        return result.Match(complaint => complaint, e => throw e);
+    }
+
+    [HttpPost, Route("{complaintId:guid}/respond")]
+    public async Task<ActionResult<Complaint>> ModifyComplaint(Guid complaintId, [FromQuery] bool isCompleted)
     {
         var adminId = User.Claims.GetUserId();
-        return await complaintService.ModifyPublicationComplaintAsync(adminId, publicationComplaintId, isCompleted);
+        var result = await complaintService.ModifyComplaintAsync(complaintId, adminId, isCompleted);
+        return result.Match(complaint => complaint, e => throw e);
     }
 }

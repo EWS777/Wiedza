@@ -21,11 +21,10 @@ internal class UserDataConfig : IEntityTypeConfiguration<User>
 
         builder.Property(p => p.AccountState).HasDefaultValue(AccountState.Active);
 
-        builder.Property(p=>p.UserType)
+        builder.Property(p => p.UserType)
             .HasValueGenerator<TypeValueGenerator<UserType>>()
             .HasConversion<TypeValueConverter<UserType>>();
 
         builder.UseTptMappingStrategy();
-
     }
 }

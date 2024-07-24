@@ -5,8 +5,7 @@ namespace Wiedza.Api.Configs;
 
 public sealed class RedisConfiguration
 {
-    public EndPointCollection EndPoints { get; }
-
+    public EndPointCollection EndPoints { get; } = new();
     public ConfigurationOptions ConfigurationOptions => new()
     {
         EndPoints = EndPoints
@@ -17,7 +16,6 @@ public sealed class RedisConfiguration
         var section = configuration.GetSectionOrThrow("Redis");
 
         var endPoints = section.GetValueOrThrow<string[]>("EndPoints");
-        EndPoints = new EndPointCollection();
         foreach (var endPoint in endPoints) EndPoints.Add(endPoint);
     }
 }

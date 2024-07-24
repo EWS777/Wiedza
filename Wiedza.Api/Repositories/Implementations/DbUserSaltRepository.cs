@@ -1,5 +1,4 @@
-﻿using System.Security.Cryptography;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Wiedza.Api.Core;
 using Wiedza.Api.Data;
 using Wiedza.Api.Data.Models;
@@ -16,7 +15,7 @@ public class DbUserSaltRepository(DataContext dataContext) : IUserSaltRepository
 
     public async Task<string> AddPersonSalt(Guid userId, string? salt = null)
     {
-        var personSalt = new UserSalt()
+        var personSalt = new UserSalt
         {
             UserId = userId,
             Salt = salt ?? CryptographyTools.GenerateToken(24)

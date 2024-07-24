@@ -38,7 +38,8 @@ public class DbServiceService(IServiceRepository serviceRepository) : IServiceSe
         });
     }
 
-    public async Task<Result<Service>> UpdateService(Guid personId, ulong serviceId, Action<UpdatePublicationRequest> update)
+    public async Task<Result<Service>> UpdateService(Guid personId, ulong serviceId,
+        Action<UpdatePublicationRequest> update)
     {
         var serviceResult = await serviceRepository.GetServiceAsync(serviceId);
         if (serviceResult.IsFailed) return serviceResult.Exception;
@@ -58,14 +59,12 @@ public class DbServiceService(IServiceRepository serviceRepository) : IServiceSe
             serviceUpdate.CategoryId = request.CategoryId;
 
             if (request.Status != PublicationUpdateStatus.Other)
-            {
                 serviceUpdate.Status = request.Status switch
                 {
                     PublicationUpdateStatus.Active => PublicationStatus.Active,
                     PublicationUpdateStatus.Inactive => PublicationStatus.Inactive,
                     _ => throw new ArgumentOutOfRangeException(nameof(request.Status))
                 };
-            }
         });
     }
 

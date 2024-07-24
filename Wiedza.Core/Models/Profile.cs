@@ -6,13 +6,6 @@ namespace Wiedza.Core.Models;
 
 public class Profile : IValidatableObject
 {
-    [JsonPropertyName("person_id")] public Guid PersonId { get; set; }
-    [JsonPropertyName("username")] public string Username { get; set; }
-    [JsonPropertyName("name")] public string? Name { get; set; }
-    [JsonPropertyName("email")] public string Email { get; set; }
-    [JsonPropertyName("description")] public string? Description { get; set; }
-    [JsonPropertyName("avatar")] public byte[]? AvatarBytes { get; set; }
-
     public Profile(Person person)
     {
         PersonId = person.Id;
@@ -33,7 +26,14 @@ public class Profile : IValidatableObject
         AvatarBytes = other.AvatarBytes;
     }
 
-public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    [JsonPropertyName("person_id")] public Guid PersonId { get; set; }
+    [JsonPropertyName("username")] public string Username { get; set; }
+    [JsonPropertyName("name")] public string? Name { get; set; }
+    [JsonPropertyName("email")] public string Email { get; set; }
+    [JsonPropertyName("description")] public string? Description { get; set; }
+    [JsonPropertyName("avatar")] public byte[]? AvatarBytes { get; set; }
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
         var errors = new List<ValidationResult>();
 
@@ -46,7 +46,7 @@ public IEnumerable<ValidationResult> Validate(ValidationContext validationContex
         if (Description is not null && string.IsNullOrWhiteSpace(Description))
             errors.Add(new ValidationResult($"{nameof(Description)} is empty!", [nameof(Description)]));
 
-        if(AvatarBytes is {Length:0})
+        if (AvatarBytes is { Length: 0 })
             errors.Add(new ValidationResult($"{nameof(AvatarBytes)} is empty array!", [nameof(AvatarBytes)]));
 
         return errors;

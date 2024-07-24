@@ -22,8 +22,15 @@ public readonly struct Result<TValue>
         _exception = exception;
     }
 
-    public static implicit operator Result<TValue>(TValue value) => new(value);
-    public static implicit operator Result<TValue>(Exception exception) => new(exception);
+    public static implicit operator Result<TValue>(TValue value)
+    {
+        return new Result<TValue>(value);
+    }
+
+    public static implicit operator Result<TValue>(Exception exception)
+    {
+        return new Result<TValue>(exception);
+    }
 
     public TResult Match<TResult>(Func<TValue, TResult> ifSuccessful, Func<Exception, TResult> ifFailed)
     {

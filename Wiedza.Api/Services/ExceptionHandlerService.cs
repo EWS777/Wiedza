@@ -28,25 +28,23 @@ public sealed class ExceptionHandlerService(ProblemDetailsFactory problemDetails
             detail: exception.Message, instance: instance);
 
         if (statusCode != (int)HttpStatusCode.InternalServerError)
-        {
             return new ObjectResult(details)
             {
                 StatusCode = statusCode
             };
-        }
 
         using var reader = new StreamReader(request.BodyReader.AsStream());
         details.Extensions.Add("error_details", new
         {
-            Message = exception.Message,
+            exception.Message,
             Source = exception.TargetSite?.ReflectedType?.FullName ?? exception.Source,
             Details = exception.ToString()
         });
 
         details.Extensions.Add("request_details", new
         {
-            Headers = request.Headers,
-            Query = request.Query,
+            request.Headers,
+            request.Query,
             Body = reader.ReadToEnd()
         });
 

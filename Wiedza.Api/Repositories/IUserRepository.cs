@@ -6,4 +6,5 @@ namespace Wiedza.Api.Repositories;
 public interface IUserRepository
 {
     Task<Result<User>> GetUserAsync(string usernameOrEmail);
+    Task<Result<User>> GetUserAsync(Guid userId);
 }

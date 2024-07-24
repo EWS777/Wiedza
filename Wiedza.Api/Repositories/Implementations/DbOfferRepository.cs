@@ -11,10 +11,10 @@ public class DbOfferRepository(DataContext dataContext) : IOfferRepository
     public async Task<Result<Offer>> GetOfferAsync(Guid offerId)
     {
         var offer = await dataContext.Offers
-            .Include(p=>p.Person)
-            .Include(p=>p.Publication)
-            .ThenInclude(p=>p!.Author)
-            .SingleOrDefaultAsync(p=>p.Id == offerId);
+            .Include(p => p.Person)
+            .Include(p => p.Publication)
+            .ThenInclude(p => p!.Author)
+            .SingleOrDefaultAsync(p => p.Id == offerId);
         if (offer is null) return new OfferNotFoundException(offerId);
 
         return offer;
@@ -24,20 +24,21 @@ public class DbOfferRepository(DataContext dataContext) : IOfferRepository
     {
         return await dataContext.Offers
             .Include(x => x.Publication)
-            .ThenInclude(p=>p!.Author)
-            .Where(p=>p.PulicationId == publicationId)
+            .ThenInclude(p => p!.Author)
+            .Where(p => p.PulicationId == publicationId)
             .AsNoTracking().ToArrayAsync();
     }
 
     public async Task<Offer[]> GetSendedOffersByPersonAsync(Guid personId)
     {
         return await dataContext.Offers
-            .Include(p=>p.Person)
-            .Include(p=>p.Publication)
-            .ThenInclude(p=>p!.Author)
+            .Include(p => p.Person)
+            .Include(p => p.Publication)
+            .ThenInclude(p => p!.Author)
             .Where(x => x.PersonId == personId)
             .AsNoTracking().ToArrayAsync();
     }
+
     public async Task<Offer> AddOfferAsync(Offer offer)
     {
         await dataContext.Offers.AddAsync(offer);

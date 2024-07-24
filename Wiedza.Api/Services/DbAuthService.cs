@@ -22,7 +22,7 @@ public class DbAuthService(
     ITokenRepository tokenRepository,
     IUserSaltRepository userSaltRepository,
     DbUnitOfWork dbUnitOfWork
-    ) : IAuthService
+) : IAuthService
 {
     public async Task<Result<LoginResponse>> LoginAsync(LoginRequest request)
     {
@@ -31,7 +31,8 @@ public class DbAuthService(
         if (userResult.IsFailed) return new InvalidCredentialsException("User credentials are invalid");
 
         var user = userResult.Value;
-        if (user.AccountState != AccountState.Active) return new BadRequestException($"Account state is `{user.AccountState:G}`");
+        if (user.AccountState != AccountState.Active)
+            return new BadRequestException($"Account state is `{user.AccountState:G}`");
 
         var salt = await userSaltRepository.GetSaltAsync(user.Id);
         if (salt is null) throw new Exception($"Salt was null. User id `{user.Id}`");
@@ -71,10 +72,8 @@ public class DbAuthService(
             var salt = await userSaltRepository.AddPersonSalt(person.Id);
             if (salt is null) throw new Exception($"Salt was null! Person id `{person.Id}`");
 
-            var updateResult = await personRepository.UpdatePersonAsync(person.Id, person1 =>
-            {
-                person1.PasswordHash = CryptographyTools.GetPasswordHash(request.PasswordHash, salt);
-            });
+            var updateResult = await personRepository.UpdatePersonAsync(person.Id,
+                person1 => { person1.PasswordHash = CryptographyTools.GetPasswordHash(request.PasswordHash, salt); });
 
             if (updateResult.IsFailed) throw updateResult.Exception;
 
@@ -128,10 +127,8 @@ public class DbAuthService(
 
         var newPasswordHash = CryptographyTools.GetPasswordHash(changePasswordRequest.NewPasswordHash, salt);
 
-        var result = await personRepository.UpdatePersonAsync(personId, person1 =>
-        {
-            person1.PasswordHash = newPasswordHash;
-        });
+        var result =
+            await personRepository.UpdatePersonAsync(personId, person1 => { person1.PasswordHash = newPasswordHash; });
 
         if (result.IsFailed) return result.Exception;
         return true;
@@ -153,6 +150,7 @@ public class DbAuthService(
     }
 
     #region Private
+
     private async Task<(string session, string refreshToken)> SetUserRefreshTokenAsync(Guid userId)
     {
         var session = Guid.NewGuid().ToString();
@@ -172,7 +170,7 @@ public class DbAuthService(
     private LoginResponse GenerateTokenResponse(Guid userId, string refreshToken, string session, string role)
     {
         var token = jwtConfiguration.GetJwtToken(userId, role, refreshToken, session);
-        return new LoginResponse()
+        return new LoginResponse
         {
             AuthorizationToken = token,
             PersonId = userId,
