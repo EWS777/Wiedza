@@ -66,7 +66,7 @@ public class ProfilesController(
         return await profileService.AddReviewAsync(profileResult.Value.PersonId, userId, addReviewRequest);
     }
 
-    [HttpGet, Route("{username}/reviews"), Authorize(Policy = Policies.AdminPolicy)]
+    [HttpGet, Route("{username}/reviews"), Authorize(Policy = Policies.PersonPolicy)]
     public async Task<ActionResult<Review[]>> GetReviews(string username)
     {
         var profileResult = await profileService.GetProfileAsync(username);

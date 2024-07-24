@@ -80,21 +80,17 @@ public class DbWithdrawService(
         
         var withdrawResult = await withdrawRepository.GetWithdrawAsync(withdrawId);
         if (withdrawResult.IsFailed) return withdrawResult.Exception;
-
-        if (!isCompleted)
-            return await withdrawRepository.UpdateWithdrawStatusAsync(withdrawId, withdrawUpdate =>
-            {
-                withdrawUpdate.Status = isCompleted ? WithdrawStatus.Completed : WithdrawStatus.Rejected;
-                withdrawUpdate.AdministratorId = userId;
-            });
         
         if (withdrawResult.Value.Person.Balance - withdrawResult.Value.Amount < 0.0f)
             return new NotEnoughMoneyException("Not enough money on balance!");
             
-        await personRepository.UpdatePersonAsync(userId, person =>
+        if (isCompleted)
         {
-            person.Balance -= withdrawResult.Value.Amount;
-        });
+            await personRepository.UpdatePersonAsync(userId, person =>
+            {
+                person.Balance -= withdrawResult.Value.Amount;
+            });
+        }
 
         return await withdrawRepository.UpdateWithdrawStatusAsync(withdrawId, withdrawUpdate =>
         {
