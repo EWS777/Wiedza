@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using Wiedza.Core.Attributes;
 using Wiedza.Core.Models.Enums;
 
 namespace Wiedza.Core.Models.Data.Base;
@@ -12,5 +13,13 @@ public abstract class User
     public DateTimeOffset CreatedAt { get; set; }
     public AccountState AccountState { get; set; }
 
-    [JsonIgnore] public Type UserType { get; }
+    [JsonIgnore] public UserType UserType { get; }
+}
+
+public enum UserType
+{
+    [EnumTypeValue(typeof(Person))]
+    Person,
+    [EnumTypeValue(typeof(Administrator))]
+    Administrator
 }

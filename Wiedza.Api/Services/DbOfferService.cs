@@ -1,6 +1,7 @@
 ﻿using Wiedza.Api.Repositories;
 using Wiedza.Core.Exceptions;
 using Wiedza.Core.Models.Data;
+using Wiedza.Core.Models.Data.Base;
 using Wiedza.Core.Models.Enums;
 using Wiedza.Core.Services;
 using Wiedza.Core.Utilities;
@@ -54,8 +55,8 @@ public class DbOfferService(
 
         if (publication.AuthorId == userId)
             return new BadRequestException("You cannot send offer on your own publication!");
-
-        if (publication.PublicationType == typeof(Service))
+            
+        if (publication.PublicationType is PublicationType.Service)
         {
             var personResult = await personRepository.GetPersonAsync(userId);
             if (personResult.IsFailed) return personResult.Exception;
@@ -123,13 +124,13 @@ public class DbOfferService(
 
         if (isCompleted)
         {
-            if (offer.Publication.PublicationType == typeof(Service))
+            if (offer.Publication.PublicationType is PublicationType.Service)
             {
                 offer.Person!.Balance -= offer.Publication.Price;
                 offer.Publication.Author.Balance += offer.CompanyProfit;
                 await statisticRepository.AddIncomeBalanceAsync(offer.CompanyProfit);
             }
-            else if (offer.Publication.PublicationType == typeof(Project))
+            else if (offer.Publication.PublicationType is PublicationType.Project)
             {
                 offer.Person!.Balance += offer.Publication.Price;
                 offer.Publication.Author.Balance -= offer.CompanyProfit;

@@ -11,10 +11,12 @@ public interface IUserSaltRepository
     /// otherwise <see langword="null"/>
     /// </returns>
     Task<string?> GetSaltAsync(Guid userId);
+
     /// <summary>
     /// Creates salt for the user
     /// </summary>
     /// <param name="userId">ID of the user</param>
+    /// <param name="salt">Salt to add. If <see langword="null"/> then it generates itself</param>
     /// <returns>Created salt for the user</returns>
-    Task<string> AddPersonSalt(Guid userId);
+    Task<string> AddPersonSalt(Guid userId, string? salt = null);
 }

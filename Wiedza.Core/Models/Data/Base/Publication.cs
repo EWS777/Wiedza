@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using Wiedza.Core.Attributes;
 using Wiedza.Core.Models.Enums;
 
 namespace Wiedza.Core.Models.Data.Base;
@@ -18,5 +19,13 @@ public abstract class Publication
     public Person Author { get; set; }
     public Guid AuthorId { get; set; }
 
-    [JsonIgnore] public Type PublicationType { get; }
+    [JsonIgnore] public PublicationType PublicationType { get; }
+}
+
+public enum PublicationType
+{
+    [EnumTypeValue(typeof(Project))]
+    Project,
+    [EnumTypeValue(typeof(Service))]
+    Service
 }

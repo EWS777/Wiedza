@@ -15,9 +15,11 @@ using Wiedza.Api.Configs;
 using Wiedza.Api.Configs.ConfigureOptions;
 using Wiedza.Api.Core;
 using Wiedza.Api.Data;
+using Wiedza.Api.Data.Models;
 using Wiedza.Api.Repositories;
 using Wiedza.Api.Repositories.Implementations;
 using Wiedza.Api.Services;
+using Wiedza.Core.Models.Data;
 using Wiedza.Core.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -48,9 +50,9 @@ builder.Services.AddScoped<IAuthService, DbAuthService>();
 builder.Services.AddScoped<IProfileService, DbProfileService>();
 
 builder.Services.AddScoped<IOfferService, DbOfferService>();
-builder.Services.AddScoped<IOfferRepository,DbOfferRepository>();
+builder.Services.AddScoped<IOfferRepository, DbOfferRepository>();
 
-builder.Services.AddScoped<IPublicationRepository,DbPublicationRepository>();
+builder.Services.AddScoped<IPublicationRepository, DbPublicationRepository>();
 
 builder.Services.AddScoped<IStatisticService, DbStatisticService>();
 builder.Services.AddScoped<IStatisticRepository, DbStatisticRepository>();

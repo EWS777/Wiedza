@@ -6,6 +6,7 @@ using Wiedza.Api.Data;
 using Wiedza.Api.Repositories;
 using Wiedza.Core.Exceptions;
 using Wiedza.Core.Models.Data;
+using Wiedza.Core.Models.Data.Base;
 using Wiedza.Core.Models.Enums;
 using Wiedza.Core.Requests;
 using Wiedza.Core.Responses;
@@ -39,11 +40,13 @@ public class DbAuthService(
         if (user.PasswordHash != passwordHash) return new InvalidCredentialsException("User credentials are invalid");
 
         var (session, refreshToken) = await SetUserRefreshTokenAsync(user.Id);
-        
-        string role;
 
-        if (user.UserType == typeof(Administrator)) role = Roles.AdministratorRole;
-        else role = Roles.PersonRole;
+        var role = user.UserType switch
+        {
+            UserType.Administrator => Roles.AdministratorRole,
+            UserType.Person => Roles.PersonRole,
+            _ => throw new ArgumentOutOfRangeException(nameof(user.UserType))
+        };
 
         return GenerateTokenResponse(user.Id, refreshToken, session, role);
     }

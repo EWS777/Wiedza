@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Wiedza.Api.Data.ValueConvertors;
 
-public class TypeValueConverter : ValueConverter<Type, string>
+public class TypeValueConverter<TEnum> : ValueConverter<TEnum, string> where TEnum : Enum
 {
-    public new static Expression<Func<Type, string>> ConvertToProviderExpression => type => type.FullName ?? type.Name;
-    public new static Expression<Func<string, Type>> ConvertFromProviderExpression => s => Type.GetType(s)!;
+    public TypeValueConverter() : base(@enum => ToProvider(@enum), name => ToModel(name)) { }
 
-    public TypeValueConverter() : base(ConvertToProviderExpression, ConvertFromProviderExpression) { }
+    private static TEnum ToModel(string name) => (TEnum)Enum.Parse(typeof(TEnum), name);
+    private static string ToProvider(TEnum @enum) => @enum.ToString("G");
 }

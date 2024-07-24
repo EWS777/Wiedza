@@ -5,9 +5,10 @@ namespace Wiedza.Api.Core;
 
 public static class CryptographyTools
 {
-    public static string GenerateToken()
+    public static string GenerateToken(int size = 64)
     {
-        Span<byte> bytes = stackalloc byte[64];
+        if (size <= 0) throw new ArgumentException("Size must be greeter than zero!", nameof(size));
+        Span<byte> bytes = stackalloc byte[size];
         RandomNumberGenerator.Fill(bytes);
         return Convert.ToBase64String(bytes);
     }

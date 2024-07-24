@@ -75,7 +75,7 @@ public class ProfilesController(
     }
     
     
-    [HttpGet, Route("admin/{personId:guid}"), Authorize(Policy = Policies.AdminPolicy)]
+    [HttpGet, Route("admin/{adminId:guid}"), Authorize(Policy = Policies.AdminPolicy)]
     public async Task<ActionResult<Administrator>> GetAdministrator(Guid adminId)
     {
         var profileResult = await profileService.GetAdministratorAsync(adminId);

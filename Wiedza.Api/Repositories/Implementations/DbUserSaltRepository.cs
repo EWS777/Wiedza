@@ -1,5 +1,6 @@
 ﻿using System.Security.Cryptography;
 using Microsoft.EntityFrameworkCore;
+using Wiedza.Api.Core;
 using Wiedza.Api.Data;
 using Wiedza.Api.Data.Models;
 
@@ -13,26 +14,15 @@ public class DbUserSaltRepository(DataContext dataContext) : IUserSaltRepository
         return personSalt?.Salt;
     }
 
-    public async Task<string> AddPersonSalt(Guid userId)
+    public async Task<string> AddPersonSalt(Guid userId, string? salt = null)
     {
         var personSalt = new UserSalt()
         {
             UserId = userId,
-            Salt = GenerateSalt()
+            Salt = salt ?? CryptographyTools.GenerateToken(24)
         };
         await dataContext.UserSalts.AddAsync(personSalt);
         await dataContext.SaveChangesAsync();
         return personSalt.Salt;
     }
-
-    #region Private
-
-    private static string GenerateSalt()
-    {
-        Span<byte> bytes = stackalloc byte[16];
-        RandomNumberGenerator.Fill(bytes);
-        return Convert.ToBase64String(bytes);
-    }
-
-    #endregion
 }
