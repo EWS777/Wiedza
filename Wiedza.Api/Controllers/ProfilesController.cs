@@ -57,28 +57,18 @@ public class ProfilesController(
         throw new NotImplementedException();
     }
 
-    [HttpPost, Route("{username}/add-review"), Authorize(Policy = Policies.PersonPolicy)]
+    [HttpPost, Route("{username}/reviews/add"), Authorize(Policy = Policies.PersonPolicy)]
     public async Task<ActionResult<Review>> AddReview(string username, AddReviewRequest addReviewRequest)
     {
         var userId = User.Claims.GetUserId();
-        var profileResult = await profileService.GetProfileAsync(username);
-        if (profileResult.IsFailed) return NotFound("Person is not exist!");
-        return await profileService.AddReviewAsync(profileResult.Value.PersonId, userId, addReviewRequest);
+        var result = await profileService.AddReviewAsync(username, userId, addReviewRequest);
+        return result.Match(review => review, e => throw e);
     }
 
     [HttpGet, Route("{username}/reviews"), Authorize(Policy = Policies.PersonPolicy)]
     public async Task<ActionResult<Review[]>> GetReviews(string username)
     {
-        var profileResult = await profileService.GetProfileAsync(username);
-        if (profileResult.IsFailed) return NotFound("Person is not exist!");
-        return await profileService.GetReviewsAsync(profileResult.Value.PersonId);
-    }
-    
-    
-    [HttpGet, Route("admin/{adminId:guid}"), Authorize(Policy = Policies.AdminPolicy)]
-    public async Task<ActionResult<Administrator>> GetAdministrator(Guid adminId)
-    {
-        var profileResult = await profileService.GetAdministratorAsync(adminId);
-        return profileResult.Match(profile => profile, e => throw e);
+        var result = await profileService.GetReviewsAsync(username);
+        return result.Match(reviews => reviews, e => throw e);
     }
 }

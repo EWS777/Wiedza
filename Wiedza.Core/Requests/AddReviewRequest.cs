@@ -4,6 +4,6 @@ namespace Wiedza.Core.Requests;
 
 public class AddReviewRequest
 {
-    public string? Message { get; set; }
+    [StringLength(250)]public string? Message { get; set; }
     [Range(0,5)] public float Rating { get; set; }
 }

@@ -1,7 +1,6 @@
 ﻿using Wiedza.Core.Exceptions;
 using Wiedza.Core.Models.Data;
 using Wiedza.Core.Utilities;
-using Administrator = Wiedza.Core.Models.Data.Administrator;
 
 namespace Wiedza.Api.Repositories;
 
@@ -40,5 +39,4 @@ public interface IPersonRepository
     Task<bool> DeletePersonAsync(Guid personId);
     Task<Review> AddReviewAsync(Review review);
     Task<Review[]> GetReviewsAsync(Guid personId);
-    Task<Result<Administrator>> GetAdministratorAsync(Guid adminId);
 }

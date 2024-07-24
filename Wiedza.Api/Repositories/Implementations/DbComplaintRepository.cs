@@ -2,19 +2,83 @@
 using Wiedza.Api.Data;
 using Wiedza.Core.Exceptions;
 using Wiedza.Core.Models.Data;
+using Wiedza.Core.Models.Data.Base;
 using Wiedza.Core.Utilities;
 
 namespace Wiedza.Api.Repositories.Implementations;
 
 public class DbComplaintRepository(DataContext dataContext) : IComplaintRepository
 {
+    public async Task<PersonComplaint[]> GetPersonComplaintsAsync()
+    {
+        return await dataContext.PersonComplaints
+            .Include(p => p.Person)
+            .Include(p => p.Author)
+            .Include(p => p.Administrator)
+            .Include(p => p.AttachmentFile)
+            .AsNoTracking().ToArrayAsync();
+    }
+    public async Task<PersonComplaint[]> GetPersonComplaintsAsync(Guid personId)
+    {
+        return await dataContext.PersonComplaints
+            .Include(p => p.Person)
+            .Include(p => p.Author)
+            .Include(p => p.Administrator)
+            .Include(p => p.AttachmentFile)
+            .Where(p => p.PersonId == personId)
+            .AsNoTracking().ToArrayAsync();
+    }
+
+    public async Task<PublicationComplaint[]> GetPublicationComplaintsAsync()
+    {
+        return await dataContext.PublicationComplaints
+            .Include(p => p.Publication)
+            .Include(p => p.Author)
+            .Include(p => p.Administrator)
+            .Include(p => p.AttachmentFile)
+            .AsNoTracking().ToArrayAsync();
+    }
+    public async Task<PublicationComplaint[]> GetPublicationComplaintsAsync(ulong publicationId)
+    {
+        return await dataContext.PublicationComplaints
+            .Include(p => p.Publication)
+            .Include(p => p.Author)
+            .Include(p => p.Administrator)
+            .Include(p => p.AttachmentFile)
+            .Where(p=>p.PublicationId == publicationId)
+            .AsNoTracking().ToArrayAsync();
+    }
+
+    public async Task<Result<PersonComplaint>> GetPersonComplaintAsync(Guid complaintId)
+    {
+        var result = await dataContext.PersonComplaints
+            .Include(p => p.Person)
+            .Include(p => p.Author)
+            .Include(p => p.Administrator)
+            .Include(p => p.AttachmentFile)
+            .SingleOrDefaultAsync(x => x.Id == complaintId);
+
+        if (result is null) return new ComplaintNotFoundException(complaintId);
+        return result;
+    }
+    public async Task<Result<PublicationComplaint>> GetPublicationComplaintAsync(Guid complaintId)
+    {
+        var result = await dataContext.PublicationComplaints
+            .Include(p => p.Publication)
+            .Include(p => p.Author)
+            .Include(p => p.Administrator)
+            .Include(p => p.AttachmentFile)
+            .SingleOrDefaultAsync(x => x.Id == complaintId);
+        if (result is null) return new ComplaintNotFoundException(complaintId);
+        return result;
+    }
+
     public async Task<PersonComplaint> AddPersonComplaintAsync(PersonComplaint personComplaint)
     {
         await dataContext.PersonComplaints.AddAsync(personComplaint);
         await dataContext.SaveChangesAsync();
         return personComplaint;
     }
-
     public async Task<PublicationComplaint> AddPublicationComplaintAsync(PublicationComplaint publicationComplaint)
     {
         await dataContext.PublicationComplaints.AddAsync(publicationComplaint);
@@ -22,49 +86,14 @@ public class DbComplaintRepository(DataContext dataContext) : IComplaintReposito
         return publicationComplaint;
     }
 
-    public async Task<PersonComplaint[]> GetPersonComplaintsAsync()
+    public async Task<Result<Complaint>> UpdateComplaintAsync(Guid complaintId, Action<Complaint> updateAction)
     {
-        return await dataContext.PersonComplaints.ToArrayAsync();
-    }
+        var singleOrDefault = await dataContext.Complaints.SingleOrDefaultAsync(p=>p.Id == complaintId);
+        if (singleOrDefault is null) return new ComplaintNotFoundException(complaintId);
 
-    public async Task<PublicationComplaint[]> GetPublicationComplaintsAsync()
-    {
-        return await dataContext.PublicationComplaints.ToArrayAsync();
-    }
-
-    public async Task<Result<PersonComplaint>> GetPersonComplaintAsync(Guid personComplaintId)
-    {
-        var result = await dataContext.PersonComplaints.SingleOrDefaultAsync(x => x.Id == personComplaintId);
-        if (result is null) return new ComplaintNotFoundException(personComplaintId);
-        return result;
-    }
-
-    public async Task<Result<PublicationComplaint>> GetPublicationComplaintAsync(Guid publicationComplaintId)
-    {
-        var result = await dataContext.PublicationComplaints.SingleOrDefaultAsync(x => x.Id == publicationComplaintId);
-        if (result is null) return new ComplaintNotFoundException(publicationComplaintId);
-        return result;
-    }
-
-    public async Task<Result<PersonComplaint>> ModifyPersonComplaintAsync(Guid personComplaintId, Action<PersonComplaint> update)
-    {
-        var complaintResult = await GetPersonComplaintAsync(personComplaintId);
-        if (complaintResult.IsFailed) return complaintResult.Exception;
-
-        var complaint = complaintResult.Value;
-        update(complaint);
+        updateAction(singleOrDefault);
         await dataContext.SaveChangesAsync();
-        return complaint;
-    }
 
-    public async Task<Result<PublicationComplaint>> ModifyPublicationComplaintAsync(Guid publicationComplaintId, Action<PublicationComplaint> update)
-    {
-        var complaintResult = await GetPublicationComplaintAsync(publicationComplaintId);
-        if (complaintResult.IsFailed) return complaintResult.Exception;
-
-        var complaint = complaintResult.Value;
-        update(complaint);
-        await dataContext.SaveChangesAsync();
-        return complaint;
+        return singleOrDefault;
     }
 }

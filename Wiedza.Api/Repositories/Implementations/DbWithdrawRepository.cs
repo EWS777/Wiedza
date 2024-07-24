@@ -8,10 +8,26 @@ namespace Wiedza.Api.Repositories.Implementations;
 
 public class DbWithdrawRepository(DataContext dataContext) : IWithdrawRepository
 {
+    public async Task<Result<Withdraw[]>> GetAllWithdrawsAsync()
+    {
+        return await dataContext.Withdraws
+            .Include(p => p.Person)
+            .Include(p => p.Administrator)
+            .AsNoTracking().ToArrayAsync();
+    }
+
+    public async Task<Result<Withdraw[]>> GetPersonWithdrawsAsync(Guid personId)
+    {
+        return await dataContext.Withdraws
+            .Include(p=>p.Person)
+            .AsNoTracking().ToArrayAsync();
+    }
+
     public async Task<Result<Withdraw>> GetWithdrawAsync(Guid withdrawId)
     {
         var withdraw = await dataContext.Withdraws
             .Include(x => x.Person)
+            .Include(x => x.Administrator)
             .SingleOrDefaultAsync(x => x.Id == withdrawId);
         if (withdraw is null) return new WithdrawNotFoundException(withdrawId);
 
@@ -25,18 +41,15 @@ public class DbWithdrawRepository(DataContext dataContext) : IWithdrawRepository
         return withdraw;
     }
 
-    public async Task<Result<Withdraw[]>> GetWithdrawsAsync(Guid userId)
+    public async Task<Result<Withdraw>> UpdateWithdrawStatusAsync(Guid withdrawId, Action<Withdraw> update)
     {
-        return await dataContext.Withdraws
-            .Where(x => x.PersonId == userId)
-            .AsNoTracking().ToArrayAsync();
-    }
+        var withdrawResult = await GetWithdrawAsync(withdrawId);
+        if (withdrawResult.IsFailed) return withdrawResult.Exception;
 
-    public async Task<Result<Withdraw[]>> GetAdminWithdrawsAsync()
-    {
-        return await dataContext.Withdraws
-            .Include(x=>x.Person)
-            .AsNoTracking().ToArrayAsync();
+        var withdraw = withdrawResult.Value;
+        update(withdraw);
+        await dataContext.SaveChangesAsync();
+        return withdraw;
     }
 
     public async Task<bool> DeleteWithdrawAsync(Guid withdrawId)
@@ -47,16 +60,5 @@ public class DbWithdrawRepository(DataContext dataContext) : IWithdrawRepository
         dataContext.Withdraws.Remove(withdrawResult.Value);
         await dataContext.SaveChangesAsync();
         return true;
-    }
-
-    public async Task<Result<Withdraw>> UpdateWithdrawStatusAsync(Guid withdrawId, Action<Withdraw> update)
-    {
-        var withdrawResult = await GetWithdrawAsync(withdrawId);
-        if (withdrawResult.IsFailed) return withdrawResult.Exception;
-
-        var withdraw = withdrawResult.Value;
-        update(withdraw);
-        await dataContext.SaveChangesAsync();
-        return withdraw;
     }
 }

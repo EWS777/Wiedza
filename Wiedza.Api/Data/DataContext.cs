@@ -10,6 +10,7 @@ public sealed class DataContext : DbContext
 {
     public DbSet<Publication> Publications { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<Complaint> Complaints { get; set; }
 
     public DbSet<Category> Categories { get; set; }
     public DbSet<Chat> Chats { get; set; }
@@ -29,7 +30,6 @@ public sealed class DataContext : DbContext
     public DbSet<Withdraw> Withdraws { get; set; }
     
     public DbSet<PersonComplaint> PersonComplaints { get; set; }
-    
     public DbSet<PublicationComplaint> PublicationComplaints { get; set; }
     public DbSet<UserSalt> UserSalts { get; set; }
 

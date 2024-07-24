@@ -9,7 +9,6 @@ using Wiedza.Core.Utilities;
 namespace Wiedza.Api.Services;
 
 public class DbOfferService(
-    IStatisticRepository statisticRepository,
     IOfferRepository offerRepository,
     IPublicationRepository publicationRepository,
     IPersonRepository personRepository) : IOfferService
@@ -128,13 +127,11 @@ public class DbOfferService(
             {
                 offer.Person!.Balance -= offer.Publication.Price;
                 offer.Publication.Author.Balance += offer.CompanyProfit;
-                await statisticRepository.AddIncomeBalanceAsync(offer.CompanyProfit);
             }
             else if (offer.Publication.PublicationType is PublicationType.Project)
             {
                 offer.Person!.Balance += offer.Publication.Price;
                 offer.Publication.Author.Balance -= offer.CompanyProfit;
-                await statisticRepository.AddIncomeBalanceAsync(offer.CompanyProfit);
                 
                 offer.Publication.Status = PublicationStatus.Completed;
             }

@@ -19,7 +19,7 @@ public abstract class Publication
     public Person Author { get; set; }
     public Guid AuthorId { get; set; }
 
-    [JsonIgnore] public PublicationType PublicationType { get; }
+    public PublicationType PublicationType { get; }
 }
 
 public enum PublicationType

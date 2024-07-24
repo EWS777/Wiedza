@@ -83,12 +83,4 @@ public class DbPersonRepository(DataContext dataContext) : IPersonRepository
             .AsNoTracking()
             .Where(x => x.PersonId == personId).ToArrayAsync();
     }
-
-    public async Task<Result<Administrator>> GetAdministratorAsync(Guid adminId)
-    {
-        var person = await dataContext.Administrators.SingleOrDefaultAsync(x => x.Id == adminId);
-
-        if (person is null) return new PersonNotFoundException(adminId);
-        return person;
-    }
 }

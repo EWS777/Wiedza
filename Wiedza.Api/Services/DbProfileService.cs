@@ -79,28 +79,27 @@ public class DbProfileService(
         return await personRepository.DeletePersonAsync(personId);
     }
 
-    public async Task<Review> AddReviewAsync(Guid personId, Guid userId, AddReviewRequest addReviewRequest)
+    public async Task<Result<Review>> AddReviewAsync(string username, Guid reviewAuthorId, AddReviewRequest addReviewRequest)
     {
+        var personResult = await personRepository.GetPersonAsync(username);
+        if (personResult.IsFailed) return personResult.Exception;
+
+        var person = personResult.Value;
+
         return await personRepository.AddReviewAsync(new Review
         {
             Message = addReviewRequest.Message,
             Rating = addReviewRequest.Rating,
-            AuthorId = userId,
-            PersonId = personId
+            AuthorId = reviewAuthorId,
+            PersonId = person.Id
         });
     }
 
-    public async Task<Review[]> GetReviewsAsync(Guid personId)
+    public async Task<Result<Review[]>> GetReviewsAsync(string username)
     {
-        return await personRepository.GetReviewsAsync(personId);
-    }
-
-    public async Task<Result<Administrator>> GetAdministratorAsync(Guid adminId)
-    {
-        var personResult = await personRepository.GetAdministratorAsync(adminId);
+        var personResult = await personRepository.GetPersonAsync(username);
         if (personResult.IsFailed) return personResult.Exception;
-        var person = personResult.Value;
 
-        return person;
+        return await personRepository.GetReviewsAsync(personResult.Value.Id);
     }
 }

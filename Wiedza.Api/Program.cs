@@ -54,9 +54,6 @@ builder.Services.AddScoped<IOfferRepository, DbOfferRepository>();
 
 builder.Services.AddScoped<IPublicationRepository, DbPublicationRepository>();
 
-builder.Services.AddScoped<IStatisticService, DbStatisticService>();
-builder.Services.AddScoped<IStatisticRepository, DbStatisticRepository>();
-
 builder.Services.AddScoped<IComplaintService, DbComplaintService>();
 builder.Services.AddScoped<IComplaintRepository, DbComplaintRepository>();
 
@@ -104,14 +101,9 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy(Policies.PersonPolicy, policyBuilder =>
-    {
-        policyBuilder.RequireRole(Roles.PersonRole);
-    });
-    options.AddPolicy(Policies.AdminPolicy, policyBuilder =>
-    {
-        policyBuilder.RequireRole(Roles.AdministratorRole);
-    });
+    options.AddPolicy(Policies.PersonPolicy, policyBuilder => policyBuilder.RequireRole(Roles.PersonRole));
+    options.AddPolicy(Policies.AdminPolicy, policyBuilder => policyBuilder.RequireRole(Roles.AdministratorRole));
+    options.AddPolicy(Policies.AdminAndPersonPolicy, policyBuilder => policyBuilder.RequireRole(Roles.AdministratorRole, Roles.PersonRole));
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
