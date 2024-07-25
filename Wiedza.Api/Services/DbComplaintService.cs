@@ -90,7 +90,7 @@ public class DbComplaintService(
         return await complaintRepository.AddPublicationComplaintAsync(complaint);
     }
 
-    public async Task<Result<Complaint>> ModifyComplaintAsync(Guid complaintId, Guid adminId, bool isCompleted)
+    public async Task<Result<Complaint>> UpdateComplaintAsync(Guid complaintId, Guid adminId, bool isCompleted)
     {
         return await complaintRepository.UpdateComplaintAsync(complaintId, complaint =>
         {

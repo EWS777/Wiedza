@@ -14,5 +14,6 @@ internal class WithdrawDataConfig : IEntityTypeConfiguration<Withdraw>
         builder.Property(p => p.Status).HasDefaultValue(WithdrawStatus.New);
 
         builder.HasOne(p => p.Person).WithMany().HasForeignKey(p => p.PersonId).OnDelete(DeleteBehavior.ClientCascade);
+        builder.HasOne(p => p.Administrator).WithMany().HasForeignKey(p => p.AdministratorId);
     }
 }

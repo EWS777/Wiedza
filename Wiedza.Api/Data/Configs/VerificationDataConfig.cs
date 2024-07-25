@@ -18,6 +18,7 @@ internal class VerificationDataConfig : IEntityTypeConfiguration<Verification>
         builder.Property(p => p.Status).HasDefaultValue(VerificationStatus.New);
 
         builder.HasOne(p => p.Person).WithMany().HasForeignKey(p => p.PersonId).OnDelete(DeleteBehavior.ClientCascade);
+        builder.HasOne(p => p.Administrator).WithMany().HasForeignKey(p => p.AdministratorId);
         builder.HasIndex(p => p.PersonId).IsUnique();
     }
 }

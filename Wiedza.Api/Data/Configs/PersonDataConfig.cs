@@ -10,5 +10,6 @@ internal class PersonDataConfig : IEntityTypeConfiguration<Person>
     {
         builder.Property(p => p.Name).HasMaxLength(50);
         builder.Property(p => p.Description).HasMaxLength(500);
+        builder.HasOne(p => p.Administrator).WithMany().HasForeignKey(p => p.AdministratorId);
     }
 }

@@ -50,6 +50,7 @@ builder.Services.AddScoped<IProfileService, DbProfileService>();
 builder.Services.AddScoped<IOfferService, DbOfferService>();
 builder.Services.AddScoped<IOfferRepository, DbOfferRepository>();
 
+builder.Services.AddScoped<IPublicationService, DbPublicationService>();
 builder.Services.AddScoped<IPublicationRepository, DbPublicationRepository>();
 
 builder.Services.AddScoped<IComplaintService, DbComplaintService>();
@@ -60,6 +61,9 @@ builder.Services.AddScoped<IWithdrawRepository, DbWithdrawRepository>();
 
 builder.Services.AddScoped<IVerificationService, DbVerificationService>();
 builder.Services.AddScoped<IVerificationRepository, DbVerificationRepository>();
+
+builder.Services.AddScoped<IReviewService, DbReviewService>();
+builder.Services.AddScoped<IReviewRepository, DbReviewRepository>();
 
 builder.Services.AddSingleton<ExceptionHandlerService>();
 

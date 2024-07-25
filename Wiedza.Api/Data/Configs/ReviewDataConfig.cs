@@ -15,5 +15,6 @@ internal class ReviewDataConfig : IEntityTypeConfiguration<Review>
 
         builder.HasOne(p => p.Author).WithMany().HasForeignKey(p => p.AuthorId).OnDelete(DeleteBehavior.ClientCascade);
         builder.HasOne(p => p.Person).WithMany().HasForeignKey(p => p.PersonId).OnDelete(DeleteBehavior.ClientCascade);
+        builder.HasOne(p => p.Administrator).WithMany().HasForeignKey(p => p.AdministratorId);
     }
 }

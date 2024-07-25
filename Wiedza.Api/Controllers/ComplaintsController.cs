@@ -70,10 +70,10 @@ public class ComplaintsController(
     }
 
     [HttpPost, Route("{complaintId:guid}/respond")]
-    public async Task<ActionResult<Complaint>> ModifyComplaint(Guid complaintId, [FromQuery] bool isCompleted)
+    public async Task<ActionResult<Complaint>> UpdateComplaint(Guid complaintId, [FromQuery] bool isCompleted)
     {
         var adminId = User.Claims.GetUserId();
-        var result = await complaintService.ModifyComplaintAsync(complaintId, adminId, isCompleted);
+        var result = await complaintService.UpdateComplaintAsync(complaintId, adminId, isCompleted);
         return result.Match(complaint => complaint, e => throw e);
     }
 }

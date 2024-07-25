@@ -37,3 +37,4 @@ public class ComplaintNotFoundException(Guid complaintId) : NotFoundException($"
 
 public class WithdrawNotFoundException(Guid withdrawId) : NotFoundException($"Withdraw with id `{withdrawId}` not found!");
 public class VerificationNotFoundException(Guid verificationId) : NotFoundException($"Verification with id `{verificationId}` not found!");
+public class ReviewNotFoundException(Guid reviewId) : NotFoundException($"Review with id `{reviewId}` not found!");

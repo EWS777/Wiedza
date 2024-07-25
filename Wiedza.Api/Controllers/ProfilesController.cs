@@ -4,8 +4,6 @@ using SystemTextJsonPatch;
 using Wiedza.Api.Core;
 using Wiedza.Api.Core.Extensions;
 using Wiedza.Core.Models;
-using Wiedza.Core.Models.Data;
-using Wiedza.Core.Requests;
 using Wiedza.Core.Services;
 
 namespace Wiedza.Api.Controllers;
@@ -50,18 +48,5 @@ public class ProfilesController(
         return result.Match(_ => Ok("Profile was deleted!"), e => throw e);
     }
 
-    [HttpPost, Route("{username}/reviews/add"), Authorize(Policy = Policies.PersonPolicy)]
-    public async Task<ActionResult<Review>> AddReview(string username, AddReviewRequest addReviewRequest)
-    {
-        var userId = User.Claims.GetUserId();
-        var result = await profileService.AddReviewAsync(username, userId, addReviewRequest);
-        return result.Match(review => review, e => throw e);
-    }
-
-    [HttpGet, Route("{username}/reviews"), Authorize(Policy = Policies.PersonPolicy)]
-    public async Task<ActionResult<Review[]>> GetReviews(string username)
-    {
-        var result = await profileService.GetReviewsAsync(username);
-        return result.Match(reviews => reviews, e => throw e);
-    }
+    
 }

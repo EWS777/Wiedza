@@ -1,4 +1,5 @@
-﻿using Wiedza.Core.Models.Enums;
+﻿using System.Text.Json.Serialization;
+using Wiedza.Core.Models.Enums;
 
 namespace Wiedza.Core.Models.Data;
 
@@ -14,6 +15,8 @@ public class Verification
     public Person Person { get; set; }
     public Guid PersonId { get; set; }
     public VerificationStatus Status { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public Administrator? Administrator { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public Guid? AdministratorId { get; set; }
 }

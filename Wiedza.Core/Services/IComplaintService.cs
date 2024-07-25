@@ -20,5 +20,5 @@ public interface IComplaintService
     Task<Result<PublicationComplaint>> AddPublicationComplaintAsync(ulong publicationId, Guid authorId,
         AddComplaintRequest request);
 
-    Task<Result<Complaint>> ModifyComplaintAsync(Guid complaintId, Guid adminId, bool isCompleted);
+    Task<Result<Complaint>> UpdateComplaintAsync(Guid complaintId, Guid adminId, bool isCompleted);
 }

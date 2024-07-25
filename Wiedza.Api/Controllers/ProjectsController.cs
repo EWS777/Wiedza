@@ -18,14 +18,30 @@ public class ProjectsController(
     [HttpGet]
     public async Task<ActionResult<Project[]>> GetActiveProjects()
     {
-        return await projectService.GetProjectsAsync();
+        var result = await projectService.GetProjectsAsync();
+
+        foreach (var projects in result)
+        {
+            projects.Administrator = null;
+            projects.AdministratorId = null;
+        }
+
+        return result;
     }
 
     [HttpGet, Route("my"), Authorize(Policy = Policies.PersonPolicy)]
     public async Task<ActionResult<Project[]>> GetPersonProjects()
     {
         var userId = User.Claims.GetUserId();
-        return await projectService.GetPersonProjectsAsync(userId);
+        var result = await projectService.GetPersonProjectsAsync(userId);
+        
+        foreach (var projects in result)
+        {
+            projects.Administrator = null;
+            projects.AdministratorId = null;
+        }
+
+        return result;
     }
 
     [HttpGet, Route("all"), Authorize(Policy = Policies.AdminPolicy)]
@@ -37,7 +53,10 @@ public class ProjectsController(
     [HttpGet, Route("{projectId}")]
     public async Task<Result<Project>> GetProject(ulong projectId)
     {
-        return await projectService.GetProjectAsync(projectId);
+        var result = await projectService.GetProjectAsync(projectId);
+        result.Value.Administrator = null;
+        result.Value.AdministratorId = null;
+        return result;
     }
 
     [HttpPost, Route("add"), Authorize(Policy = Policies.PersonPolicy)]

@@ -8,6 +8,11 @@ namespace Wiedza.Api.Repositories.Implementations;
 
 public class DbPersonRepository(DataContext dataContext) : IPersonRepository
 {
+    public async Task<Person[]> GetPersonsAsync()
+    {
+        return await dataContext.Persons.ToArrayAsync();
+    }
+
     public async Task<Result<Person>> GetPersonAsync(Guid personId)
     {
         var person = await dataContext.Persons.SingleOrDefaultAsync(p => p.Id == personId);
@@ -51,11 +56,14 @@ public class DbPersonRepository(DataContext dataContext) : IPersonRepository
         return person;
     }
 
-    public async Task<Result<Verification>> VerifyProfileAsync(Verification verification)
+    public async Task<Result<Person>> UpdatePersonStatusAsync(Guid personId, Action<Person> update)
     {
-        await dataContext.Verifications.AddAsync(verification);
+        var personResult = await GetPersonAsync(personId);
+        if (personResult.IsFailed) return personResult.Exception;
+
+        update(personResult.Value);
         await dataContext.SaveChangesAsync();
-        return verification;
+        return personResult.Value;
     }
 
     public async Task<bool> DeletePersonAsync(Guid personId)
@@ -66,20 +74,5 @@ public class DbPersonRepository(DataContext dataContext) : IPersonRepository
         dataContext.Persons.Remove(personResult.Value);
         await dataContext.SaveChangesAsync();
         return true;
-    }
-
-    public async Task<Review> AddReviewAsync(Review review)
-    {
-        await dataContext.Reviews.AddAsync(review);
-        await dataContext.SaveChangesAsync();
-        return review;
-    }
-
-    public async Task<Review[]> GetReviewsAsync(Guid personId)
-    {
-        return await dataContext.Reviews
-            .Include(x => x.Author)
-            .AsNoTracking()
-            .Where(x => x.PersonId == personId).ToArrayAsync();
     }
 }

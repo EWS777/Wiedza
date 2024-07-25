@@ -15,4 +15,24 @@ public class DbPublicationRepository(DataContext dataContext) : IPublicationRepo
 
         return publication;
     }
+
+    public async Task<Result<Publication>> UpdatePublicationStatusAsync(ulong publicationId, Action<Publication> update)
+    {
+        var publicationResult = await GetPublicationAsync(publicationId);
+        if (publicationResult.IsFailed) return publicationResult.Exception;
+
+        update(publicationResult.Value);
+        await dataContext.SaveChangesAsync();
+        return publicationResult.Value;
+    }
+
+    public async Task<bool> DeletePublicationAsync(ulong publicationId)
+    {
+        var publicationResult = await GetPublicationAsync(publicationId);
+        if (publicationResult.IsFailed) return false;
+
+        dataContext.Publications.Remove(publicationResult.Value);
+        await dataContext.SaveChangesAsync();
+        return true;
+    }
 }

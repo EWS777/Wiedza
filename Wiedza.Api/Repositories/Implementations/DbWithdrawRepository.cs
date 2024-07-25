@@ -20,6 +20,7 @@ public class DbWithdrawRepository(DataContext dataContext) : IWithdrawRepository
     {
         return await dataContext.Withdraws
             .Include(p => p.Person)
+            .Where(x=>x.Id == personId)
             .AsNoTracking().ToArrayAsync();
     }
 

@@ -133,22 +133,7 @@ public class DbAuthService(
         if (result.IsFailed) return result.Exception;
         return true;
     }
-
-    public async Task<Result<Verification>> VerifyProfileAsync(Guid personId, VerifyProfileRequest verifyProfileRequest)
-    {
-        var personResult = await personRepository.GetPersonAsync(personId);
-        if (personResult.IsFailed) return personResult.Exception;
-
-        return await personRepository.VerifyProfileAsync(new Verification
-        {
-            Pesel = verifyProfileRequest.Pesel,
-            Name = verifyProfileRequest.Name,
-            Surname = verifyProfileRequest.Surname,
-            ImageDocumentBytes = verifyProfileRequest.ImageDocumentByte,
-            PersonId = personId
-        });
-    }
-
+    
     #region Private
 
     private async Task<(string session, string refreshToken)> SetUserRefreshTokenAsync(Guid userId)

@@ -54,10 +54,10 @@ public class OffersController(
     }
 
     [HttpPost, Route("{offerId:guid}/change-status")]
-    public async Task<ActionResult<Offer>> ChangeOfferStatus(Guid offerId, [FromQuery] bool isCompleted)
+    public async Task<ActionResult<Offer>> UpdateOfferStatus(Guid offerId, [FromQuery] bool isCompleted)
     {
         var userId = User.Claims.GetUserId();
-        var result = await offerService.ChangeOfferStatusAsync(userId, offerId, isCompleted);
+        var result = await offerService.UpdateOfferStatusAsync(userId, offerId, isCompleted);
         return result.Match(offer => offer, e => throw e);
     }
 

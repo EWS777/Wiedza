@@ -6,6 +6,8 @@ namespace Wiedza.Api.Repositories;
 
 public interface IPersonRepository
 {
+    Task<Person[]> GetPersonsAsync();
+
     /// <summary>
     ///     Get person by person id
     /// </summary>
@@ -39,8 +41,6 @@ public interface IPersonRepository
     /// <exception cref="PersonNotFoundException"></exception>
     Task<Result<Person>> UpdatePersonAsync(Guid personId, Action<Person> update);
 
-    Task<Result<Verification>> VerifyProfileAsync(Verification verification);
+    Task<Result<Person>> UpdatePersonStatusAsync(Guid personId, Action<Person> update);
     Task<bool> DeletePersonAsync(Guid personId);
-    Task<Review> AddReviewAsync(Review review);
-    Task<Review[]> GetReviewsAsync(Guid personId);
 }

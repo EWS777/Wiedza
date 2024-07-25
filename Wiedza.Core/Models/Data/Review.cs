@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Wiedza.Core.Models.Data;
 
@@ -15,4 +16,10 @@ public class Review
     public Guid PersonId { get; set; }
     public Person Author { get; set; }
     public Guid AuthorId { get; set; }
+    
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public Administrator? Administrator { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public Guid? AdministratorId { get; set; }
 }

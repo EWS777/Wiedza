@@ -20,6 +20,7 @@ internal class PublicationDataConfig : IEntityTypeConfiguration<Publication>
 
         builder.HasOne(p => p.Author).WithMany().HasForeignKey(p => p.AuthorId);
         builder.HasOne(p => p.Category).WithMany().HasForeignKey(p => p.CategoryId);
+        builder.HasOne(p => p.Administrator).WithMany().HasForeignKey(p => p.AdministratorId);
         builder.Property(p => p.Status).HasDefaultValue(PublicationStatus.Pending);
         builder.Property(p => p.Title).HasMaxLength(50);
         builder.Property(p => p.Description).HasMaxLength(500);

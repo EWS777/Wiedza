@@ -4,7 +4,7 @@ using Wiedza.Api.Repositories;
 using Wiedza.Core.Exceptions;
 using Wiedza.Core.Models;
 using Wiedza.Core.Models.Data;
-using Wiedza.Core.Requests;
+using Wiedza.Core.Models.Enums;
 using Wiedza.Core.Services;
 using Wiedza.Core.Utilities;
 
@@ -15,6 +15,11 @@ public class DbProfileService(
     IUserSaltRepository userSaltRepository
 ) : IProfileService
 {
+    public async Task<Person[]> GetPersonsAsync()
+    {
+        return await personRepository.GetPersonsAsync();
+    }
+
     public async Task<Result<Profile>> GetProfileAsync(Guid personId)
     {
         var personResult = await personRepository.GetPersonAsync(personId);
@@ -63,6 +68,18 @@ public class DbProfileService(
         return new Profile(updateResult.Value);
     }
 
+    public async Task<Result<Person>> UpdatePersonStatusAsync(Guid personId, AccountState status, Guid adminId)
+    {
+        var personResult = await personRepository.GetPersonAsync(personId);
+        if (personResult.IsFailed) return personResult.Exception;
+
+        return await personRepository.UpdatePersonStatusAsync(personId, update =>
+        {
+            update.AccountState = status;
+            update.AdministratorId = adminId;
+        });
+    }
+
     public async Task<Result<bool>> DeleteProfileAsync(Guid personId, string passwordHash)
     {
         var personResult = await personRepository.GetPersonAsync(personId);
@@ -76,30 +93,5 @@ public class DbProfileService(
         if (person.PasswordHash != hash) return new BadRequestException("Password is incorrect!");
 
         return await personRepository.DeletePersonAsync(personId);
-    }
-
-    public async Task<Result<Review>> AddReviewAsync(string username, Guid reviewAuthorId,
-        AddReviewRequest addReviewRequest)
-    {
-        var personResult = await personRepository.GetPersonAsync(username);
-        if (personResult.IsFailed) return personResult.Exception;
-
-        var person = personResult.Value;
-
-        return await personRepository.AddReviewAsync(new Review
-        {
-            Message = addReviewRequest.Message,
-            Rating = addReviewRequest.Rating,
-            AuthorId = reviewAuthorId,
-            PersonId = person.Id
-        });
-    }
-
-    public async Task<Result<Review[]>> GetReviewsAsync(string username)
-    {
-        var personResult = await personRepository.GetPersonAsync(username);
-        if (personResult.IsFailed) return personResult.Exception;
-
-        return await personRepository.GetReviewsAsync(personResult.Value.Id);
     }
 }

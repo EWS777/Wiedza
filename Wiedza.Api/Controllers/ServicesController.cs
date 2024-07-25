@@ -16,14 +16,28 @@ public class ServicesController(IServiceService serviceService) : ControllerBase
     [HttpGet]
     public async Task<ActionResult<Service[]>> GetActiveServices()
     {
-        return await serviceService.GetServicesAsync();
+        var result= await serviceService.GetServicesAsync();
+        foreach (var services in result)
+        {
+            services.Administrator = null;
+            services.AdministratorId = null;
+        }
+
+        return result;
     }
 
     [HttpGet, Route("my"), Authorize(Policy = Policies.PersonPolicy)]
     public async Task<ActionResult<Service[]>> GetPersonServices()
     {
         var userId = User.Claims.GetUserId();
-        return await serviceService.GetPersonServicesAsync(userId);
+        var result = await serviceService.GetPersonServicesAsync(userId);
+        foreach (var services in result)
+        {
+            services.Administrator = null;
+            services.AdministratorId = null;
+        }
+
+        return result;
     }
 
     [HttpGet, Route("all"), Authorize(Policy = Policies.AdminPolicy)]
@@ -35,7 +49,10 @@ public class ServicesController(IServiceService serviceService) : ControllerBase
     [HttpGet, Route("{serviceId}")]
     public async Task<Result<Service>> GetService(ulong serviceId)
     {
-        return await serviceService.GetServiceAsync(serviceId);
+        var result = await serviceService.GetServiceAsync(serviceId);
+        result.Value.Administrator = null;
+        result.Value.AdministratorId = null;
+        return result;
     }
 
     [HttpPost, Route("add"), Authorize(Policy = Policies.PersonPolicy)]

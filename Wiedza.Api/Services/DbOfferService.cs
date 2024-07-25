@@ -74,22 +74,6 @@ public class DbOfferService(
         });
     }
 
-    public async Task<Result<bool>> DeleteOfferAsync(Guid userId, Guid offerId)
-    {
-        var offerResult = await offerRepository.GetOfferAsync(offerId);
-        if (offerResult.IsFailed) return offerResult.Exception;
-
-        var offer = offerResult.Value;
-
-        if (offer.PersonId != userId)
-            return new ForbiddenException("You are not owner of the offer!");
-
-        if (offer.Status is OfferStatus.Approved)
-            return new BadRequestException("Offer is approved. You cannot delete this offer!");
-
-        return await offerRepository.DeleteOfferAsync(offerId);
-    }
-
     public async Task<Result<Offer>> RespondToOfferAsync(Guid userId, Guid offerId, bool isApprove)
     {
         var offerResult = await offerRepository.GetOfferAsync(offerId);
@@ -108,7 +92,7 @@ public class DbOfferService(
             offerUpdate => { offerUpdate.Status = isApprove ? OfferStatus.Approved : OfferStatus.Rejected; });
     }
 
-    public async Task<Result<Offer>> ChangeOfferStatusAsync(Guid userId, Guid offerId, bool isCompleted)
+    public async Task<Result<Offer>> UpdateOfferStatusAsync(Guid userId, Guid offerId, bool isCompleted)
     {
         var offerResult = await offerRepository.GetOfferAsync(offerId);
         if (offerResult.IsFailed) return offerResult.Exception;
@@ -144,5 +128,21 @@ public class DbOfferService(
 
         return await offerRepository.UpdateOfferStatusAsync(offerId,
             offerUpdate => { offerUpdate.Status = isCompleted ? OfferStatus.Completed : OfferStatus.Canceled; });
+    }
+
+    public async Task<Result<bool>> DeleteOfferAsync(Guid userId, Guid offerId)
+    {
+        var offerResult = await offerRepository.GetOfferAsync(offerId);
+        if (offerResult.IsFailed) return offerResult.Exception;
+
+        var offer = offerResult.Value;
+
+        if (offer.PersonId != userId)
+            return new ForbiddenException("You are not owner of the offer!");
+
+        if (offer.Status is OfferStatus.Approved)
+            return new BadRequestException("Offer is approved. You cannot delete this offer!");
+
+        return await offerRepository.DeleteOfferAsync(offerId);
     }
 }

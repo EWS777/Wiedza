@@ -1,4 +1,5 @@
-﻿using Wiedza.Core.Attributes;
+﻿using System.Text.Json.Serialization;
+using Wiedza.Core.Attributes;
 using Wiedza.Core.Models.Enums;
 
 namespace Wiedza.Core.Models.Data.Base;
@@ -19,6 +20,10 @@ public abstract class Publication
     public Guid AuthorId { get; set; }
 
     public PublicationType PublicationType { get; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public Administrator? Administrator { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public Guid? AdministratorId { get; set; }
 }
 
 public enum PublicationType
