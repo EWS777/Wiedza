@@ -26,7 +26,7 @@ public class AuthController(
         var result = await authService.RegisterAsync(request);
         return result.Match<ActionResult<LoginResponse>>(response => response, e => throw e);
     }
-
+    
     [HttpPost, Route("refresh")]
     public async Task<ActionResult<LoginResponse>> Refresh([FromHeader(Name = "Authorization")] string authorization)
     {

@@ -22,6 +22,18 @@ using Wiedza.Core.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000") // Указываем источник (ваш фронтенд)
+                .AllowAnyHeader() // Разрешаем все заголовки
+                .AllowAnyMethod(); // Разрешаем любые HTTP методы
+        });
+});
+
+
 builder.Configuration.AddJsonFile("appsettings.secret.json", true);
 builder.Services.AddProblemDetails();
 
@@ -124,6 +136,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("AllowLocalhost");
 
 app.UseHttpsRedirection();
 
